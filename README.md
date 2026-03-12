@@ -4,6 +4,11 @@
 
 ---
 
+<img width="349" height="409" alt="图片" src="https://github.com/user-attachments/assets/b7666c0e-6e0e-4f2a-8ce5-b92967e40775" />
+
+<img width="377" height="601" alt="图片" src="https://github.com/user-attachments/assets/afccbe35-de98-4e0c-aae6-ddd4a32061a5" />
+
+
 ## English
 
 An Obsidian plugin that organizes sidebar icons into grouped hover menus - declutter your sidebar by grouping plugin icons with hover-to-expand functionality.
