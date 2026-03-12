@@ -1,0 +1,873 @@
+/* Sidebar Organizer - 侧边栏整理插件样式 */
+
+/* ==================== 隐藏原始图标 ==================== */
+
+.sidebar-organizer-hidden {
+	display: none !important;
+}
+
+/* ==================== 数量徽章 ==================== */
+
+.sidebar-organizer-badge {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 16px;
+	text-align: center;
+	color: var(--text-on-accent);
+	background: var(--text-accent);
+	border-radius: 8px;
+	pointer-events: none;
+	z-index: 1;
+}
+
+/* ==================== 弹出菜单样式 ==================== */
+
+.sidebar-organizer-popup {
+	position: fixed;
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 4px;
+	min-width: 180px;
+	max-width: 260px;
+	max-height: 400px;
+	overflow-y: auto;
+	box-shadow: 0 0 0 1px var(--background-modifier-border),
+	            0 2px 8px rgba(0, 0, 0, 0.1);
+	opacity: 0;
+	visibility: hidden;
+	z-index: 99999;
+	transform-origin: left center;
+	transform: scale(0.85) translateX(-8px);
+	transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 毛玻璃效果 */
+.sidebar-organizer-popup.blur-effect {
+	background-color: rgba(var(--background-secondary-rgb, 30, 30, 30), 0.7);
+	backdrop-filter: blur(var(--blur-amount, 16px));
+	-webkit-backdrop-filter: blur(var(--blur-amount, 16px));
+}
+
+.theme-light .sidebar-organizer-popup.blur-effect {
+	background-color: rgba(var(--background-secondary-rgb, 246, 246, 246), 0.7);
+}
+
+/* 显示弹出 - 吐出效果 */
+.sidebar-organizer-popup.visible {
+	opacity: 1;
+	visibility: visible;
+	transform: scale(1) translateX(0);
+}
+
+/* 隐藏动画 - 吸收效果 */
+.sidebar-organizer-popup.hiding {
+	opacity: 0;
+	transform: scale(0.85) translateX(-8px);
+	transition: all 0.15s ease-in;
+}
+
+/* 右侧边栏弹出动画方向 */
+.sidebar-organizer-popup.popup-right {
+	transform-origin: right center;
+	transform: scale(0.85) translateX(8px);
+}
+
+.sidebar-organizer-popup.popup-right.visible {
+	transform: scale(1) translateX(0);
+}
+
+.sidebar-organizer-popup.popup-right.hiding {
+	transform: scale(0.85) translateX(8px);
+}
+
+/* ==================== 插件名称样式 ==================== */
+
+.sidebar-organizer-plugin-name {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--text-muted);
+	padding: 6px 8px 4px 8px;
+	cursor: pointer;
+	letter-spacing: 0.02em;
+}
+
+.sidebar-organizer-plugin-name:hover {
+	color: var(--text-normal);
+}
+
+/* ==================== 功能列表样式 ==================== */
+
+.sidebar-organizer-actions-list {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-bottom: 4px;
+}
+
+.sidebar-organizer-action-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.1s ease;
+	color: var(--text-normal);
+	font-size: 13px;
+}
+
+.sidebar-organizer-action-item:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+.sidebar-organizer-action-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: var(--icon-color);
+}
+
+.sidebar-organizer-action-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.sidebar-organizer-action-label {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ==================== 暗色主题调整 ==================== */
+
+.theme-dark .sidebar-organizer-popup {
+	box-shadow: 0 0 0 1px var(--background-modifier-border-hover),
+	            0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== 设置面板样式 ==================== */
+
+.sidebar-organizer-desc {
+	color: var(--text-muted);
+	margin-bottom: 20px;
+}
+
+.sidebar-organizer-hint {
+	color: var(--text-muted);
+	font-size: 12px;
+	margin-bottom: 12px;
+}
+
+.sidebar-organizer-groups {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 12px;
+	margin-bottom: 16px;
+}
+
+.sidebar-organizer-group-item {
+	padding: 12px;
+	background: var(--background-secondary);
+	border-radius: 8px;
+}
+
+.sidebar-organizer-group-item .group-info {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.sidebar-organizer-group-item .group-name {
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.sidebar-organizer-group-item .group-count {
+	font-size: 12px;
+	color: var(--text-muted);
+	background: var(--background-modifier-border);
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.sidebar-organizer-group-item .group-actions-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-top: 8px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.sidebar-organizer-group-item .action-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	background: var(--background-primary);
+	border-radius: 4px;
+	font-size: 12px;
+}
+
+.sidebar-organizer-group-item .action-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	color: var(--icon-color);
+}
+
+.sidebar-organizer-group-item .action-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.sidebar-organizer-group-item .action-name {
+	color: var(--text-muted);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ==================== 映射列表样式 ==================== */
+
+.sidebar-organizer-mappings {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+/* ==================== 模态框按钮样式 ==================== */
+
+.modal-button-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.modal-button-container button {
+	padding: 6px 16px;
+	border-radius: 6px;
+}
+
+/* ==================== 滚动条样式 ==================== */
+
+.sidebar-organizer-popup::-webkit-scrollbar {
+	width: 6px;
+}
+
+.sidebar-organizer-popup::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.sidebar-organizer-popup::-webkit-scrollbar-thumb {
+	background: var(--background-modifier-border);
+	border-radius: 3px;
+}
+
+.sidebar-organizer-popup::-webkit-scrollbar-thumb:hover {
+	background: var(--background-modifier-border-hover);
+}
+
+/* ==================== 自定义分组设置样式 ==================== */
+
+.sidebar-organizer-custom-groups {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 12px;
+	margin-bottom: 16px;
+}
+
+.sidebar-organizer-custom-group-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	background: var(--background-secondary);
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.sidebar-organizer-custom-group-item .group-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+}
+
+.sidebar-organizer-custom-group-item .drag-handle {
+	cursor: grab;
+	color: var(--text-muted);
+	font-size: 14px;
+	padding: 4px;
+	user-select: none;
+}
+
+.sidebar-organizer-custom-group-item .drag-handle:active {
+	cursor: grabbing;
+}
+
+.sidebar-organizer-custom-group-item .drag-handle.dragging {
+	opacity: 0.5;
+}
+
+.sidebar-organizer-custom-group-item .group-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	color: var(--icon-color);
+}
+
+.sidebar-organizer-custom-group-item .group-icon svg {
+	width: 18px;
+	height: 18px;
+}
+
+.sidebar-organizer-custom-group-item .group-title {
+	flex: 1;
+	font-weight: 500;
+	color: var(--text-normal);
+}
+
+.sidebar-organizer-custom-group-item .group-count {
+	font-size: 12px;
+	color: var(--text-muted);
+	background: var(--background-modifier-border);
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.sidebar-organizer-custom-group-item .group-actions {
+	display: flex;
+	gap: 6px;
+}
+
+.sidebar-organizer-custom-group-item .group-actions button {
+	padding: 4px 12px;
+	font-size: 12px;
+	border-radius: 4px;
+}
+
+/* ==================== 功能选择器样式 ==================== */
+
+.actions-picker-container {
+	max-height: 300px;
+	overflow-y: auto;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 8px;
+	margin: 12px 0;
+	background: var(--background-primary);
+}
+
+.action-picker-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.1s ease;
+}
+
+.action-picker-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.action-picker-item.selected {
+	background: var(--background-modifier-active-hover);
+	border: 1px solid var(--interactive-accent);
+}
+
+.action-picker-item.assigned-elsewhere {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.action-picker-item input[type="checkbox"] {
+	flex-shrink: 0;
+}
+
+.action-picker-item .action-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	color: var(--icon-color);
+}
+
+.action-picker-item .action-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.action-picker-item .action-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.action-picker-item .action-name {
+	font-size: 13px;
+	color: var(--text-normal);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.action-picker-item .action-plugin {
+	font-size: 11px;
+	color: var(--text-muted);
+}
+
+.action-picker-item .assigned-badge {
+	font-size: 10px;
+	color: var(--text-accent);
+	background: var(--background-modifier-border);
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+.search-container {
+	margin-bottom: 12px;
+}
+
+.search-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 13px;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.no-actions-hint {
+	text-align: center;
+	color: var(--text-muted);
+	padding: 20px;
+}
+
+/* ==================== 图标编辑样式 ==================== */
+
+.icon-edit-hint {
+	color: var(--text-muted);
+	font-size: 12px;
+	margin-bottom: 16px;
+}
+
+.icon-preview-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 80px;
+	height: 80px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	margin-bottom: 16px;
+}
+
+.icon-preview-container svg {
+	width: 40px;
+	height: 40px;
+	color: var(--icon-color);
+}
+
+.icon-preview-container .no-preview {
+	color: var(--text-muted);
+	font-size: 12px;
+}
+
+.svg-input {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 12px;
+	font-family: monospace;
+	resize: vertical;
+	min-height: 120px;
+}
+
+.svg-input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.icon-examples {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 16px 0;
+	flex-wrap: wrap;
+}
+
+.icon-examples span {
+	color: var(--text-muted);
+	font-size: 12px;
+}
+
+.icon-examples button {
+	padding: 4px 10px;
+	font-size: 11px;
+	border-radius: 4px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	color: var(--text-normal);
+	cursor: pointer;
+}
+
+.icon-examples button:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+/* ==================== 自定义图标样式 ==================== */
+
+.sidebar-organizer-custom-icon {
+	width: var(--icon-size);
+	height: var(--icon-size);
+	min-width: var(--icon-size);
+	min-height: var(--icon-size);
+	stroke-width: var(--icon-stroke);
+}
+
+/* 侧边栏图标尺寸 */
+.workspace-ribbon-action .sidebar-organizer-custom-icon,
+.side-dock-ribbon-action .sidebar-organizer-custom-icon,
+.clickable-icon .sidebar-organizer-custom-icon {
+	width: 18px;
+	height: 18px;
+	min-width: 18px;
+	min-height: 18px;
+}
+
+/* ==================== 检测分组操作按钮 ==================== */
+
+.sidebar-organizer-group-item .group-actions-buttons {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 0;
+	margin-bottom: 8px;
+}
+
+.sidebar-organizer-group-item .current-icon-preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+}
+
+.sidebar-organizer-group-item .current-icon-preview svg {
+	width: 18px;
+	height: 18px;
+	color: var(--icon-color);
+}
+
+.sidebar-organizer-group-item .group-actions-buttons button {
+	padding: 4px 10px;
+	font-size: 11px;
+	border-radius: 4px;
+}
+
+/* ==================== 简化分组模态框样式 ==================== */
+
+.simple-group-container {
+	display: flex;
+	gap: 20px;
+	margin: 16px 0;
+}
+
+.simple-group-container .panel-left,
+.simple-group-container .panel-right {
+	flex: 1;
+	min-width: 200px;
+}
+
+.simple-group-container h4 {
+	margin: 0 0 8px 0;
+	font-size: 13px;
+	color: var(--text-muted);
+}
+
+.simple-group-container .actions-list {
+	max-height: 300px;
+	overflow-y: auto;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 8px;
+	background: var(--background-primary);
+}
+
+.action-item-draggable {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.action-item-draggable:hover {
+	background: var(--background-modifier-hover);
+}
+
+.action-item-draggable.in-group {
+	background: var(--background-modifier-active-hover);
+	border: 1px solid var(--interactive-accent);
+}
+
+.action-item-draggable .item-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+}
+
+.action-item-draggable .item-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.action-item-draggable .item-name {
+	flex: 1;
+	font-size: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.selected-action-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	background: var(--background-secondary);
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.selected-action-item .item-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+}
+
+.selected-action-item .item-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.selected-action-item .item-name {
+	flex: 1;
+	font-size: 12px;
+}
+
+.selected-action-item .remove-btn {
+	cursor: pointer;
+	color: var(--text-muted);
+	font-size: 16px;
+	padding: 0 4px;
+}
+
+.selected-action-item .remove-btn:hover {
+	color: var(--text-error);
+}
+
+.empty-hint {
+	text-align: center;
+	color: var(--text-muted);
+	font-size: 12px;
+	padding: 20px;
+}
+
+/* 图标编辑区域 */
+.icon-section {
+	display: flex;
+	gap: 16px;
+	margin: 12px 0;
+}
+
+.icon-preview-small {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	flex-shrink: 0;
+}
+
+.icon-preview-small svg {
+	width: 24px;
+	height: 24px;
+	color: var(--icon-color);
+}
+
+.default-icon-hint {
+	color: var(--text-muted);
+	font-size: 11px;
+}
+
+.icon-input-section {
+	flex: 1;
+}
+
+.svg-input-small {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 11px;
+	font-family: monospace;
+	resize: vertical;
+	min-height: 80px;
+}
+
+.svg-input-small:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.default-group-icon {
+	font-size: 18px;
+}
+
+/* ==================== 分组标题样式 ==================== */
+
+.action-group {
+	margin-bottom: 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.action-group-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 10px;
+	background: var(--background-secondary);
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.action-group-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.action-group-header.all-selected {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.action-group-header .group-title {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.action-group-header .select-all-hint {
+	font-size: 10px;
+	color: var(--text-muted);
+}
+
+.action-group-header.all-selected .select-all-hint {
+	color: var(--text-on-accent);
+}
+
+.group-actions {
+	padding: 4px;
+}
+
+.group-actions .action-item-draggable {
+	padding: 6px 8px;
+}
+
+/* ==================== 分组标题样式 ==================== */
+
+.action-group {
+	margin-bottom: 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.action-group-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 10px;
+	background: var(--background-secondary);
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.action-group-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.action-group-header.all-selected {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.action-group-header .group-title {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.action-group-header .select-all-hint {
+	font-size: 10px;
+	color: var(--text-muted);
+}
+
+.action-group-header.all-selected .select-all-hint {
+	color: var(--text-on-accent);
+}
+
+.group-actions {
+	padding: 4px;
+}
+
+.group-actions .action-item-draggable {
+	padding: 6px 8px;
+}
