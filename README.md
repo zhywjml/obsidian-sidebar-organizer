@@ -130,11 +130,11 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 5. 통합된 아이콘에 마우스를 올리면 기능 메뉴가 표시됩니다
 
 
-插件设置截图：
+## 插件设置截图：
 
-<img width="1230" height="1150" alt="图片" src="https://github.com/user-attachments/assets/f1f5e27f-61f1-465e-a4e1-728306512d71" />
+<img width="615" height="575" alt="图片" src="https://github.com/user-attachments/assets/f1f5e27f-61f1-465e-a4e1-728306512d71" />
 
-<img width="1224" height="1149" alt="图片" src="https://github.com/user-attachments/assets/353af33d-eba6-48d7-aed9-40864d04d04b" />
+<img width="615" height="575" alt="图片" src="https://github.com/user-attachments/assets/353af33d-eba6-48d7-aed9-40864d04d04b" />
 
 ---
 
