@@ -1,5 +1,15 @@
 import { App, Plugin, PluginSettingTab, Setting, Notice, Modal, PluginManifest } from 'obsidian';
 
+// ==================== 类型定义 ====================
+
+interface VaultConfig {
+	locale?: string;
+}
+
+interface PluginsContainer {
+	manifests?: Record<string, PluginManifest>;
+}
+
 // ==================== 安全 SVG 插入 ====================
 
 /**
@@ -16,14 +26,6 @@ function setSvgContent(element: HTMLElement, svgContent: string): void {
 	if (svg) {
 		element.appendChild(svg);
 	}
-}
-
-/**
- * 安全地获取元素的 SVG 外部 HTML
- */
-function getSvgOuterHTML(element: HTMLElement): string {
-	const svg = element.querySelector('svg');
-	return svg ? svg.outerHTML : '';
 }
 
 /**
@@ -749,7 +751,8 @@ export default class SidebarOrganizerPlugin extends Plugin {
 	// 获取当前语言
 	getLanguage(): Language {
 		if (this.settings.language === 'auto') {
-			const obsidianLang = (this.app.vault as any).config?.locale || 'en';
+			const vaultConfig = (this.app.vault as unknown as { config?: VaultConfig }).config;
+			const obsidianLang = vaultConfig?.locale || 'en';
 			return getLanguageCode(obsidianLang);
 		}
 		return this.settings.language as Language;
@@ -809,7 +812,8 @@ export default class SidebarOrganizerPlugin extends Plugin {
 
 	loadInstalledPlugins() {
 		this.installedPlugins.clear();
-		const plugins = (this.app as any).plugins?.manifests;
+		const pluginsContainer = (this.app as unknown as { plugins?: PluginsContainer }).plugins;
+		const plugins = pluginsContainer?.manifests;
 		if (plugins) {
 			for (const [id, manifest] of Object.entries(plugins)) {
 				this.installedPlugins.set(id, manifest as PluginManifest);
@@ -888,7 +892,7 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		}
 
 		// 2. 处理手动分组绑定
-		for (const [groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
+		for (const [_groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
 			const groupActions = actionIds
 				.map(id => actionMap.get(id))
 				.filter((a): a is SidebarAction => !!a && !assignedActionIds.has(a.actionId));
@@ -1423,13 +1427,15 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 					});
 
 				actionsEl.createEl('button', { text: t('deleteGroup'), cls: 'mod-warning' })
-					.addEventListener('click', async () => {
-						this.plugin.settings.customGroups = this.plugin.settings.customGroups.filter(g => g.id !== group.id);
-						await this.plugin.saveSettings();
-						this.plugin.restoreOriginalIcons();
-						this.plugin.organizeSidebars();
-						this.display();
-						new Notice(t('groupDeleted'));
+					.addEventListener('click', () => {
+						void (async () => {
+							this.plugin.settings.customGroups = this.plugin.settings.customGroups.filter(g => g.id !== group.id);
+							await this.plugin.saveSettings();
+							this.plugin.restoreOriginalIcons();
+							this.plugin.organizeSidebars();
+							this.display();
+							new Notice(t('groupDeleted'));
+						})();
 					});
 
 				this.setupDragAndDrop(dragHandle, groupsContainer);
@@ -1492,370 +1498,6 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 				container.insertBefore((dragging as HTMLElement).parentElement!, nextItem);
 			}
 		});
-	}
-}
-
-class CustomGroupModal extends Modal {
-	plugin: SidebarOrganizerPlugin;
-	existingGroup: CustomGroup | null;
-	onSave: () => void;
-
-	private nameInput: HTMLInputElement;
-	private selectedActions: Set<string> = new Set();
-	private actionsContainer: HTMLElement;
-	private svgInput: HTMLTextAreaElement;
-	private iconPreviewEl: HTMLElement;
-
-	constructor(app: App, plugin: SidebarOrganizerPlugin, existingGroup: CustomGroup | null, onSave: () => void) {
-		super(app);
-		this.plugin = plugin;
-		this.existingGroup = existingGroup;
-		this.onSave = onSave;
-
-		if (existingGroup) {
-			this.selectedActions = new Set(existingGroup.actionIds);
-		}
-	}
-
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.empty();
-
-		new Setting(contentEl)
-			.setName(this.existingGroup ? '编辑自定义分组' : '创建自定义分组')
-			.setHeading();
-
-		new Setting(contentEl)
-			.setName('分组名称')
-			.setDesc('为分组指定一个名称')
-			.addText(text => {
-				this.nameInput = text.inputEl;
-				text.setPlaceholder('如: 常用工具');
-				if (this.existingGroup) {
-					text.setValue(this.existingGroup.name);
-				}
-			});
-
-		// 图标设置区域
-		new Setting(contentEl)
-			.setName('分组图标')
-			.setHeading();
-
-		const iconContainer = contentEl.createDiv('custom-icon-container');
-
-		// 预览
-		this.iconPreviewEl = iconContainer.createDiv('icon-preview-small');
-		const currentIcon = this.existingGroup?.icon || '';
-		this.updateIconPreview(currentIcon);
-
-		// SVG 输入
-		const inputContainer = iconContainer.createDiv('icon-input-container');
-		this.svgInput = inputContainer.createEl('textarea', {
-			attr: {
-				placeholder: '输入 SVG 代码（可选）',
-				rows: '3',
-				class: 'svg-input-small'
-			}
-		});
-		this.svgInput.value = currentIcon;
-
-		this.svgInput.addEventListener('input', () => {
-			this.updateIconPreview(this.svgInput.value);
-		});
-
-		new Setting(contentEl)
-			.setName('选择功能')
-			.setHeading();
-
-		const searchContainer = contentEl.createDiv('search-container');
-		const searchInput = searchContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				placeholder: '搜索功能...',
-				class: 'search-input'
-			}
-		});
-
-		this.actionsContainer = contentEl.createDiv('actions-picker-container');
-		this.renderActions('');
-
-		searchInput.addEventListener('input', () => {
-			this.renderActions(searchInput.value.toLowerCase());
-		});
-
-		const buttonContainer = contentEl.createDiv('modal-button-container');
-
-		buttonContainer.createEl('button', { text: '取消' })
-			.addEventListener('click', () => this.close());
-
-		buttonContainer.createEl('button', { text: '保存', cls: 'mod-cta' })
-			.addEventListener('click', async () => {
-				const name = this.nameInput.value.trim();
-				if (!name) {
-					new Notice('请输入分组名称');
-					return;
-				}
-
-				if (this.selectedActions.size === 0) {
-					new Notice('请至少选择一个功能');
-					return;
-				}
-
-				const iconSvg = this.svgInput.value.trim();
-
-				if (this.existingGroup) {
-					const group = this.plugin.settings.customGroups.find(g => g.id === this.existingGroup!.id);
-					if (group) {
-						group.name = name;
-						group.icon = iconSvg;
-						group.actionIds = Array.from(this.selectedActions);
-					}
-				} else {
-					const newGroup: CustomGroup = {
-						id: `custom-${Date.now()}`,
-						name,
-						icon: iconSvg,
-						actionIds: Array.from(this.selectedActions),
-						order: this.plugin.settings.customGroups.length
-					};
-					this.plugin.settings.customGroups.push(newGroup);
-				}
-
-				await this.plugin.saveSettings();
-				this.close();
-				this.onSave();
-				new Notice(this.existingGroup ? '分组已更新' : '分组已创建');
-			});
-	}
-
-	private updateIconPreview(svgContent: string) {
-		setSvgContent(this.iconPreviewEl, svgContent);
-
-		if (!svgContent || !svgContent.includes('<svg')) {
-			this.iconPreviewEl.createEl('span', {
-				text: '默认',
-				cls: 'default-icon-hint'
-			});
-		}
-	}
-
-	private renderActions(filter: string) {
-		this.actionsContainer.empty();
-
-		const allActions = this.plugin.getAllActions();
-
-		const assignedToOthers = new Set<string>();
-		this.plugin.settings.customGroups.forEach(g => {
-			if (this.existingGroup && g.id === this.existingGroup.id) return;
-			g.actionIds.forEach(id => assignedToOthers.add(id));
-		});
-
-		const filteredActions = filter
-			? allActions.filter(a =>
-				a.actionName.toLowerCase().includes(filter) ||
-				a.pluginName.toLowerCase().includes(filter))
-			: allActions;
-
-		if (filteredActions.length === 0) {
-			this.actionsContainer.createEl('p', {
-				text: '没有找到匹配的功能',
-				cls: 'no-actions-hint'
-			});
-			return;
-		}
-
-		for (const action of filteredActions) {
-			const isSelected = this.selectedActions.has(action.actionId);
-			const isAssignedElsewhere = assignedToOthers.has(action.actionId);
-
-			const actionEl = this.actionsContainer.createDiv('action-picker-item');
-			if (isSelected) actionEl.classList.add('selected');
-			if (isAssignedElsewhere) actionEl.classList.add('assigned-elsewhere');
-
-			const checkbox = actionEl.createEl('input', {
-				attr: { type: 'checkbox' }
-			});
-			checkbox.checked = isSelected;
-			checkbox.disabled = isAssignedElsewhere && !isSelected;
-
-			const iconEl = actionEl.createDiv('action-icon');
-			setSvgContent(iconEl, action.icon);
-
-			const infoEl = actionEl.createDiv('action-info');
-			infoEl.createDiv('action-name').textContent = action.actionName;
-			infoEl.createDiv('action-plugin').textContent = action.pluginName;
-
-			if (isAssignedElsewhere) {
-				const badge = actionEl.createDiv('assigned-badge');
-				badge.textContent = '已分配';
-			}
-
-			if (!isAssignedElsewhere || isSelected) {
-				actionEl.addEventListener('click', () => {
-					if (this.selectedActions.has(action.actionId)) {
-						this.selectedActions.delete(action.actionId);
-						actionEl.classList.remove('selected');
-						checkbox.checked = false;
-					} else {
-						this.selectedActions.add(action.actionId);
-						actionEl.classList.add('selected');
-						checkbox.checked = true;
-					}
-				});
-			}
-		}
-	}
-
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
-	}
-}
-
-class MergeActionsModal extends Modal {
-	plugin: SidebarOrganizerPlugin;
-	currentGroupActions: SidebarAction[];
-	allActions: SidebarAction[];
-	currentGroupId: string;
-	onSave: () => void;
-
-	private selectedActions: Set<string> = new Set();
-	private actionsContainer: HTMLElement;
-
-	constructor(
-		app: App,
-		plugin: SidebarOrganizerPlugin,
-		currentGroupActions: SidebarAction[],
-		allActions: SidebarAction[],
-		currentGroupId: string,
-		onSave: () => void
-	) {
-		super(app);
-		this.plugin = plugin;
-		this.currentGroupActions = currentGroupActions;
-		this.allActions = allActions;
-		this.currentGroupId = currentGroupId;
-		this.onSave = onSave;
-
-		// 初始化选中当前分组的 actions
-		currentGroupActions.forEach(a => this.selectedActions.add(a.actionId));
-	}
-
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.empty();
-
-		new Setting(contentEl)
-			.setName('合并功能到分组')
-			.setHeading();
-		contentEl.createEl('p', {
-			text: '选择要合并到当前分组的功能，保存后将覆盖自动分组',
-			cls: 'sidebar-organizer-hint'
-		});
-
-		// 显示当前分组
-		new Setting(contentEl)
-			.setName('当前分组功能')
-			.setHeading();
-		const currentList = contentEl.createDiv('current-group-actions');
-		this.currentGroupActions.forEach(action => {
-			const el = currentList.createDiv('merged-action-item');
-			const iconSpan = el.createSpan('action-icon');
-			setSvgContent(iconSpan, action.icon);
-			el.createSpan('action-name').textContent = action.actionName;
-			el.createSpan('action-plugin').textContent = action.pluginName;
-		});
-
-		// 选择其他功能
-		new Setting(contentEl)
-			.setName('选择其他功能合并到此分组')
-			.setHeading();
-		this.actionsContainer = contentEl.createDiv('merge-actions-picker');
-		this.renderActions();
-
-		// 按钮区域
-		const buttonContainer = contentEl.createDiv('modal-button-container');
-
-		buttonContainer.createEl('button', { text: '取消' })
-			.addEventListener('click', () => this.close());
-
-		buttonContainer.createEl('button', { text: '保存', cls: 'mod-cta' })
-			.addEventListener('click', async () => {
-				if (this.selectedActions.size === 0) {
-					new Notice('请至少选择一个功能');
-					return;
-				}
-
-				// 保存到手动分组绑定
-				this.plugin.settings.manualGroupBindings[this.currentGroupId] = Array.from(this.selectedActions);
-				await this.plugin.saveSettings();
-				this.close();
-				this.onSave();
-				new Notice('分组已更新');
-			});
-	}
-
-	private renderActions() {
-		this.actionsContainer.empty();
-
-		// 获取已分配到其他手动分组的 actionIds
-		const assignedElsewhere = new Set<string>();
-		for (const [groupId, actionIds] of Object.entries(this.plugin.settings.manualGroupBindings)) {
-			if (groupId !== this.currentGroupId) {
-				actionIds.forEach(id => assignedElsewhere.add(id));
-			}
-		}
-
-		// 获取自定义分组中的 actionIds
-		this.plugin.settings.customGroups.forEach(g => {
-			g.actionIds.forEach(id => assignedElsewhere.add(id));
-		});
-
-		for (const action of this.allActions) {
-			const isSelected = this.selectedActions.has(action.actionId);
-			const isAssignedElsewhere = assignedElsewhere.has(action.actionId);
-
-			const actionEl = this.actionsContainer.createDiv('action-picker-item');
-			if (isSelected) actionEl.classList.add('selected');
-			if (isAssignedElsewhere && !isSelected) actionEl.classList.add('assigned-elsewhere');
-
-			const checkbox = actionEl.createEl('input', {
-				attr: { type: 'checkbox' }
-			});
-			checkbox.checked = isSelected;
-			checkbox.disabled = isAssignedElsewhere && !isSelected;
-
-			const iconEl = actionEl.createDiv('action-icon');
-			setSvgContent(iconEl, action.icon);
-
-			const infoEl = actionEl.createDiv('action-info');
-			infoEl.createDiv('action-name').textContent = action.actionName;
-			infoEl.createDiv('action-plugin').textContent = action.pluginName;
-
-			if (isAssignedElsewhere && !isSelected) {
-				const badge = actionEl.createDiv('assigned-badge');
-				badge.textContent = '已分配';
-			}
-
-			if (!isAssignedElsewhere || isSelected) {
-				actionEl.addEventListener('click', () => {
-					if (this.selectedActions.has(action.actionId)) {
-						this.selectedActions.delete(action.actionId);
-						actionEl.classList.remove('selected');
-						checkbox.checked = false;
-					} else {
-						this.selectedActions.add(action.actionId);
-						actionEl.classList.add('selected');
-						checkbox.checked = true;
-					}
-				});
-			}
-		}
-	}
-
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
 	}
 }
 
@@ -2141,40 +1783,42 @@ class SimpleGroupModal extends Modal {
 			.addEventListener('click', () => this.close());
 
 		buttonContainer.createEl('button', { text: t('save'), cls: 'mod-cta' })
-			.addEventListener('click', async () => {
-				const name = this.nameInput.value.trim();
-				if (!name) {
-					new Notice(t('pleaseEnterName'));
-					return;
-				}
-
-				if (this.selectedActions.size === 0) {
-					new Notice(t('pleaseSelectOne'));
-					return;
-				}
-
-				if (this.existingGroup) {
-					const group = this.plugin.settings.customGroups.find(g => g.id === this.existingGroup!.id);
-					if (group) {
-						group.name = name;
-						group.icon = this.groupIcon.trim();
-						group.actionIds = Array.from(this.selectedActions);
+			.addEventListener('click', () => {
+				void (async () => {
+					const name = this.nameInput.value.trim();
+					if (!name) {
+						new Notice(t('pleaseEnterName'));
+						return;
 					}
-				} else {
-					const newGroup: CustomGroup = {
-						id: `custom-${Date.now()}`,
-						name,
-						icon: this.groupIcon.trim(),
-						actionIds: Array.from(this.selectedActions),
-						order: this.plugin.settings.customGroups.length
-					};
-					this.plugin.settings.customGroups.push(newGroup);
-				}
 
-				await this.plugin.saveSettings();
-				this.close();
-				this.onSave();
-				new Notice(this.existingGroup ? this.plugin.t('groupUpdated') : this.plugin.t('groupCreated'));
+					if (this.selectedActions.size === 0) {
+						new Notice(t('pleaseSelectOne'));
+						return;
+					}
+
+					if (this.existingGroup) {
+						const group = this.plugin.settings.customGroups.find(g => g.id === this.existingGroup!.id);
+						if (group) {
+							group.name = name;
+							group.icon = this.groupIcon.trim();
+							group.actionIds = Array.from(this.selectedActions);
+						}
+					} else {
+						const newGroup: CustomGroup = {
+							id: `custom-${Date.now()}`,
+							name,
+							icon: this.groupIcon.trim(),
+							actionIds: Array.from(this.selectedActions),
+							order: this.plugin.settings.customGroups.length
+						};
+						this.plugin.settings.customGroups.push(newGroup);
+					}
+
+					await this.plugin.saveSettings();
+					this.close();
+					this.onSave();
+					new Notice(this.existingGroup ? this.plugin.t('groupUpdated') : this.plugin.t('groupCreated'));
+				})();
 			});
 	}
 

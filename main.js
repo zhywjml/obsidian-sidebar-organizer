@@ -646,9 +646,9 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
   }
   // 获取当前语言
   getLanguage() {
-    var _a;
     if (this.settings.language === "auto") {
-      const obsidianLang = ((_a = this.app.vault.config) == null ? void 0 : _a.locale) || "en";
+      const vaultConfig = this.app.vault.config;
+      const obsidianLang = (vaultConfig == null ? void 0 : vaultConfig.locale) || "en";
       return getLanguageCode(obsidianLang);
     }
     return this.settings.language;
@@ -698,9 +698,9 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
     await this.saveData(this.settings);
   }
   loadInstalledPlugins() {
-    var _a;
     this.installedPlugins.clear();
-    const plugins = (_a = this.app.plugins) == null ? void 0 : _a.manifests;
+    const pluginsContainer = this.app.plugins;
+    const plugins = pluginsContainer == null ? void 0 : pluginsContainer.manifests;
     if (plugins) {
       for (const [id, manifest] of Object.entries(plugins)) {
         this.installedPlugins.set(id, manifest);
@@ -760,7 +760,7 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
       }
       this.bindPopupMenu(mainAction.element, customGroup.name, groupActions);
     }
-    for (const [groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
+    for (const [_groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
       const groupActions = actionIds.map((id) => actionMap.get(id)).filter((a) => !!a && !assignedActionIds.has(a.actionId));
       if (groupActions.length === 0)
         continue;
@@ -1140,13 +1140,15 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
           }, group);
           modal.open();
         });
-        actionsEl.createEl("button", { text: t("deleteGroup"), cls: "mod-warning" }).addEventListener("click", async () => {
-          this.plugin.settings.customGroups = this.plugin.settings.customGroups.filter((g) => g.id !== group.id);
-          await this.plugin.saveSettings();
-          this.plugin.restoreOriginalIcons();
-          this.plugin.organizeSidebars();
-          this.display();
-          new import_obsidian.Notice(t("groupDeleted"));
+        actionsEl.createEl("button", { text: t("deleteGroup"), cls: "mod-warning" }).addEventListener("click", () => {
+          void (async () => {
+            this.plugin.settings.customGroups = this.plugin.settings.customGroups.filter((g) => g.id !== group.id);
+            await this.plugin.saveSettings();
+            this.plugin.restoreOriginalIcons();
+            this.plugin.organizeSidebars();
+            this.display();
+            new import_obsidian.Notice(t("groupDeleted"));
+          })();
         });
         this.setupDragAndDrop(dragHandle, groupsContainer);
       }
@@ -1392,37 +1394,39 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     const buttonContainer = contentEl.createDiv("modal-button-container");
     buttonContainer.createEl("button", { text: t("previousStep") }).addEventListener("click", () => this.renderStep1());
     buttonContainer.createEl("button", { text: t("cancel") }).addEventListener("click", () => this.close());
-    buttonContainer.createEl("button", { text: t("save"), cls: "mod-cta" }).addEventListener("click", async () => {
-      const name = this.nameInput.value.trim();
-      if (!name) {
-        new import_obsidian.Notice(t("pleaseEnterName"));
-        return;
-      }
-      if (this.selectedActions.size === 0) {
-        new import_obsidian.Notice(t("pleaseSelectOne"));
-        return;
-      }
-      if (this.existingGroup) {
-        const group = this.plugin.settings.customGroups.find((g) => g.id === this.existingGroup.id);
-        if (group) {
-          group.name = name;
-          group.icon = this.groupIcon.trim();
-          group.actionIds = Array.from(this.selectedActions);
+    buttonContainer.createEl("button", { text: t("save"), cls: "mod-cta" }).addEventListener("click", () => {
+      void (async () => {
+        const name = this.nameInput.value.trim();
+        if (!name) {
+          new import_obsidian.Notice(t("pleaseEnterName"));
+          return;
         }
-      } else {
-        const newGroup = {
-          id: `custom-${Date.now()}`,
-          name,
-          icon: this.groupIcon.trim(),
-          actionIds: Array.from(this.selectedActions),
-          order: this.plugin.settings.customGroups.length
-        };
-        this.plugin.settings.customGroups.push(newGroup);
-      }
-      await this.plugin.saveSettings();
-      this.close();
-      this.onSave();
-      new import_obsidian.Notice(this.existingGroup ? this.plugin.t("groupUpdated") : this.plugin.t("groupCreated"));
+        if (this.selectedActions.size === 0) {
+          new import_obsidian.Notice(t("pleaseSelectOne"));
+          return;
+        }
+        if (this.existingGroup) {
+          const group = this.plugin.settings.customGroups.find((g) => g.id === this.existingGroup.id);
+          if (group) {
+            group.name = name;
+            group.icon = this.groupIcon.trim();
+            group.actionIds = Array.from(this.selectedActions);
+          }
+        } else {
+          const newGroup = {
+            id: `custom-${Date.now()}`,
+            name,
+            icon: this.groupIcon.trim(),
+            actionIds: Array.from(this.selectedActions),
+            order: this.plugin.settings.customGroups.length
+          };
+          this.plugin.settings.customGroups.push(newGroup);
+        }
+        await this.plugin.saveSettings();
+        this.close();
+        this.onSave();
+        new import_obsidian.Notice(this.existingGroup ? this.plugin.t("groupUpdated") : this.plugin.t("groupCreated"));
+      })();
     });
   }
   updatePreview() {
