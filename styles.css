@@ -558,6 +558,11 @@
 	stroke-width: var(--icon-stroke);
 }
 
+/* 图标颜色继承 */
+.sidebar-organizer-inherit-color {
+	stroke: currentColor;
+}
+
 /* 侧边栏图标尺寸 */
 .workspace-ribbon-action .sidebar-organizer-custom-icon,
 .side-dock-ribbon-action .sidebar-organizer-custom-icon,

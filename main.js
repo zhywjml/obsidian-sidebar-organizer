@@ -28,6 +28,24 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 var import_obsidian = require("obsidian");
+function setSvgContent(element, svgContent) {
+  element.empty();
+  if (!svgContent || !svgContent.includes("<svg"))
+    return;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgContent.trim(), "image/svg+xml");
+  const svg = doc.querySelector("svg");
+  if (svg) {
+    element.appendChild(svg);
+  }
+}
+function parseSvg(svgContent) {
+  if (!svgContent || !svgContent.includes("<svg"))
+    return null;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgContent.trim(), "image/svg+xml");
+  return doc.querySelector("svg");
+}
 var translations = {
   zh: {
     // 设置页面
@@ -87,7 +105,13 @@ var translations = {
     assigned: "\u5DF2\u5206\u914D",
     cancel: "\u53D6\u6D88",
     save: "\u4FDD\u5B58",
-    noPreview: "\u6682\u65E0\u9884\u89C8"
+    noPreview: "\u6682\u65E0\u9884\u89C8",
+    // 图标示例
+    svgPlaceholder: "\u8F93\u5165 SVG \u4EE3\u7801\uFF08\u53EF\u9009\uFF09",
+    examples: "\u793A\u4F8B\uFF1A",
+    folder: "\u6587\u4EF6\u5939",
+    star: "\u661F\u6807",
+    grid: "\u7F51\u683C"
   },
   en: {
     // Settings
@@ -147,7 +171,13 @@ var translations = {
     assigned: "Assigned",
     cancel: "Cancel",
     save: "Save",
-    noPreview: "No preview"
+    noPreview: "No preview",
+    // Icon examples
+    svgPlaceholder: "Enter SVG code (optional)",
+    examples: "Examples:",
+    folder: "Folder",
+    star: "Star",
+    grid: "Grid"
   },
   ja: {
     // 設定ページ
@@ -207,7 +237,13 @@ var translations = {
     assigned: "\u5272\u308A\u5F53\u3066\u6E08\u307F",
     cancel: "\u30AD\u30E3\u30F3\u30BB\u30EB",
     save: "\u4FDD\u5B58",
-    noPreview: "\u30D7\u30EC\u30D3\u30E5\u30FC\u306A\u3057"
+    noPreview: "\u30D7\u30EC\u30D3\u30E5\u30FC\u306A\u3057",
+    // アイコン例
+    svgPlaceholder: "SVG\u30B3\u30FC\u30C9\u3092\u5165\u529B\uFF08\u30AA\u30D7\u30B7\u30E7\u30F3\uFF09",
+    examples: "\u4F8B\uFF1A",
+    folder: "\u30D5\u30A9\u30EB\u30C0",
+    star: "\u30B9\u30BF\u30FC",
+    grid: "\u30B0\u30EA\u30C3\u30C9"
   },
   ko: {
     // 설정 페이지
@@ -267,7 +303,13 @@ var translations = {
     assigned: "\uD560\uB2F9\uB428",
     cancel: "\uCDE8\uC18C",
     save: "\uC800\uC7A5",
-    noPreview: "\uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C"
+    noPreview: "\uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C",
+    // 아이콘 예시
+    svgPlaceholder: "SVG \uCF54\uB4DC \uC785\uB825 (\uC120\uD0DD\uC0AC\uD56D)",
+    examples: "\uC608\uC2DC:",
+    folder: "\uD3F4\uB354",
+    star: "\uBCC4",
+    grid: "\uADF8\uB9AC\uB4DC"
   },
   de: {
     // Einstellungen
@@ -327,7 +369,13 @@ var translations = {
     assigned: "Zugewiesen",
     cancel: "Abbrechen",
     save: "Speichern",
-    noPreview: "Keine Vorschau"
+    noPreview: "Keine Vorschau",
+    // Symbol-Beispiele
+    svgPlaceholder: "SVG-Code eingeben (optional)",
+    examples: "Beispiele:",
+    folder: "Ordner",
+    star: "Stern",
+    grid: "Raster"
   },
   ru: {
     // Настройки
@@ -387,7 +435,13 @@ var translations = {
     assigned: "\u041D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u043E",
     cancel: "\u041E\u0442\u043C\u0435\u043D\u0430",
     save: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C",
-    noPreview: "\u041D\u0435\u0442 \u043F\u0440\u0435\u0434\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430"
+    noPreview: "\u041D\u0435\u0442 \u043F\u0440\u0435\u0434\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430",
+    // Примеры иконок
+    svgPlaceholder: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 SVG-\u043A\u043E\u0434 (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)",
+    examples: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B:",
+    folder: "\u041F\u0430\u043F\u043A\u0430",
+    star: "\u0417\u0432\u0435\u0437\u0434\u0430",
+    grid: "\u0421\u0435\u0442\u043A\u0430"
   },
   es: {
     // Configuración
@@ -447,7 +501,13 @@ var translations = {
     assigned: "Asignado",
     cancel: "Cancelar",
     save: "Guardar",
-    noPreview: "Sin vista previa"
+    noPreview: "Sin vista previa",
+    // Ejemplos de iconos
+    svgPlaceholder: "Introducir c\xF3digo SVG (opcional)",
+    examples: "Ejemplos:",
+    folder: "Carpeta",
+    star: "Estrella",
+    grid: "Cuadr\xEDcula"
   },
   fr: {
     // Paramètres
@@ -507,7 +567,13 @@ var translations = {
     assigned: "Attribu\xE9",
     cancel: "Annuler",
     save: "Enregistrer",
-    noPreview: "Aucun aper\xE7u"
+    noPreview: "Aucun aper\xE7u",
+    // Exemples d'icônes
+    svgPlaceholder: "Entrer le code SVG (optionnel)",
+    examples: "Exemples:",
+    folder: "Dossier",
+    star: "\xC9toile",
+    grid: "Grille"
   }
 };
 function getLanguageCode(lang) {
@@ -591,18 +657,18 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
     await this.loadSettings();
     this.addSettingTab(new SidebarOrganizerSettingTab(this.app, this));
     this.addCommand({
-      id: "toggle-sidebar-organizer",
-      name: "Toggle sidebar organizer",
+      id: "toggle",
+      name: "Toggle",
       callback: () => {
         this.settings.enabled = !this.settings.enabled;
-        this.saveSettings();
+        void this.saveSettings();
         this.applyOrganizerState();
         new import_obsidian.Notice(`Sidebar Organizer ${this.settings.enabled ? "enabled" : "disabled"}`);
       }
     });
     this.addCommand({
-      id: "refresh-sidebar",
-      name: "Refresh sidebar organization",
+      id: "refresh",
+      name: "Refresh",
       callback: () => {
         this.restoreOriginalIcons();
         this.loadInstalledPlugins();
@@ -720,66 +786,63 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
     element.appendChild(badge);
   }
   bindPopupMenu(mainElement, title, actions) {
-    const self = this;
     if (mainElement.hasAttribute("data-popup-bound"))
       return;
     mainElement.setAttribute("data-popup-bound", "true");
     const mouseEnterHandler = () => {
       if (!mainElement.hasAttribute("data-popup-bound"))
         return;
-      if (self.hideTimeout) {
-        clearTimeout(self.hideTimeout);
-        self.hideTimeout = null;
+      if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
       }
-      self.hoverTimeout = window.setTimeout(() => {
+      this.hoverTimeout = window.setTimeout(() => {
         if (!mainElement.hasAttribute("data-popup-bound"))
           return;
-        self.showMenu(mainElement, title, actions);
+        this.showMenu(mainElement, title, actions);
       }, 150);
     };
     const mouseLeaveHandler = () => {
       if (!mainElement.hasAttribute("data-popup-bound"))
         return;
-      if (self.hoverTimeout) {
-        clearTimeout(self.hoverTimeout);
-        self.hoverTimeout = null;
+      if (this.hoverTimeout) {
+        clearTimeout(this.hoverTimeout);
+        this.hoverTimeout = null;
       }
-      self.scheduleHide();
+      this.scheduleHide();
     };
     mainElement.addEventListener("mouseenter", mouseEnterHandler);
     mainElement.addEventListener("mouseleave", mouseLeaveHandler);
   }
   scheduleHide() {
-    const self = this;
-    self.hideTimeout = window.setTimeout(() => {
-      if (self.popupEl && self.popupEl.matches(":hover")) {
+    this.hideTimeout = window.setTimeout(() => {
+      if (this.popupEl && this.popupEl.matches(":hover")) {
         return;
       }
-      self.hideMenu();
+      this.hideMenu();
     }, 150);
   }
   showMenu(mainElement, title, actions) {
-    const self = this;
-    if (self.popupEl) {
-      self.popupEl.remove();
-      self.popupEl = null;
+    if (this.popupEl) {
+      this.popupEl.remove();
+      this.popupEl = null;
     }
-    if (self.hideTimeout) {
-      clearTimeout(self.hideTimeout);
-      self.hideTimeout = null;
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
     }
-    self.popupEl = document.createElement("div");
-    self.popupEl.className = "sidebar-organizer-popup";
-    document.body.appendChild(self.popupEl);
-    const popup = self.popupEl;
+    this.popupEl = document.createElement("div");
+    this.popupEl.className = "sidebar-organizer-popup";
+    document.body.appendChild(this.popupEl);
+    const popup = this.popupEl;
     popup.addEventListener("mouseenter", () => {
-      if (self.hideTimeout) {
-        clearTimeout(self.hideTimeout);
-        self.hideTimeout = null;
+      if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
       }
     });
     popup.addEventListener("mouseleave", () => {
-      self.scheduleHide();
+      this.scheduleHide();
     });
     const titleEl = popup.createDiv("sidebar-organizer-plugin-name");
     titleEl.textContent = title;
@@ -787,20 +850,20 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
     for (const action of actions) {
       const itemEl = listEl.createDiv("sidebar-organizer-action-item");
       const iconEl = itemEl.createDiv("sidebar-organizer-action-icon");
-      iconEl.innerHTML = action.icon;
+      setSvgContent(iconEl, action.icon);
       const labelEl = itemEl.createDiv("sidebar-organizer-action-label");
-      labelEl.textContent = self.extractActionLabel(action.actionName, title);
+      labelEl.textContent = this.extractActionLabel(action.actionName, title);
       itemEl.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        self.hideMenu();
+        this.hideMenu();
         action.element.click();
       });
     }
-    self.positionPopup(popup, mainElement);
-    if (self.settings.blurEffect) {
+    this.positionPopup(popup, mainElement);
+    if (this.settings.blurEffect) {
       popup.classList.add("blur-effect");
-      popup.style.setProperty("--blur-amount", `${self.settings.blurIntensity}px`);
+      popup.style.setProperty("--blur-amount", `${this.settings.blurIntensity}px`);
     }
     requestAnimationFrame(() => {
       popup.classList.add("visible");
@@ -921,15 +984,13 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
       if (!element.hasAttribute("data-original-svg")) {
         element.setAttribute("data-original-svg", svgEl.outerHTML);
       }
-      const temp = document.createElement("div");
-      temp.innerHTML = svgContent.trim();
-      const newSvg = temp.querySelector("svg");
+      const newSvg = parseSvg(svgContent);
       if (newSvg) {
         if (!newSvg.hasAttribute("viewBox")) {
           newSvg.setAttribute("viewBox", "0 0 24 24");
         }
         newSvg.classList.add("sidebar-organizer-custom-icon");
-        newSvg.style.stroke = "currentColor";
+        newSvg.classList.add("sidebar-organizer-inherit-color");
         svgEl.replaceWith(newSvg);
         return true;
       }
@@ -941,9 +1002,7 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
     if (originalSvg) {
       const currentSvg = element.querySelector("svg");
       if (currentSvg) {
-        const temp = document.createElement("div");
-        temp.innerHTML = originalSvg;
-        const originalSvgEl = temp.querySelector("svg");
+        const originalSvgEl = parseSvg(originalSvg);
         if (originalSvgEl) {
           currentSvg.replaceWith(originalSvgEl);
           element.removeAttribute("data-original-svg");
@@ -1009,7 +1068,7 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
     const { containerEl } = this;
     containerEl.empty();
     const t = (key, params) => this.plugin.t(key, params);
-    containerEl.createEl("h2", { text: t("pluginName") });
+    new import_obsidian.Setting(containerEl).setName(t("pluginName")).setHeading();
     containerEl.createEl("p", {
       text: t("pluginDesc"),
       cls: "sidebar-organizer-desc"
@@ -1039,7 +1098,7 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
       this.display();
       new import_obsidian.Notice(t("refreshNotice"));
     }));
-    containerEl.createEl("h3", { text: t("customGroups") });
+    new import_obsidian.Setting(containerEl).setName(t("customGroups")).setHeading();
     containerEl.createEl("p", {
       text: t("customGroupsDesc"),
       cls: "sidebar-organizer-hint"
@@ -1059,12 +1118,12 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
         const groupEl = groupsContainer.createDiv("sidebar-organizer-custom-group-item");
         const infoEl = groupEl.createDiv("group-header");
         const dragHandle = infoEl.createDiv("drag-handle");
-        dragHandle.innerHTML = "\u22EE\u22EE";
+        dragHandle.textContent = "\u22EE\u22EE";
         dragHandle.setAttribute("draggable", "true");
         dragHandle.setAttribute("data-group-id", group.id);
         const iconEl = infoEl.createDiv("group-icon");
         if (group.icon) {
-          iconEl.innerHTML = group.icon;
+          setSvgContent(iconEl, group.icon);
         } else {
           iconEl.createEl("span", { text: "\u{1F4CB}", cls: "default-group-icon" });
         }
@@ -1092,7 +1151,7 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
         this.setupDragAndDrop(dragHandle, groupsContainer);
       }
     }
-    containerEl.createEl("h3", { text: t("usageInstructions") });
+    new import_obsidian.Setting(containerEl).setName(t("usageInstructions")).setHeading();
     const usageList = containerEl.createEl("ul");
     usageList.createEl("li", { text: t("instruction1") });
     usageList.createEl("li", { text: t("instruction2") });
@@ -1167,7 +1226,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     const { contentEl } = this;
     contentEl.empty();
     const t = (key, params) => this.plugin.t(key, params);
-    contentEl.createEl("h2", { text: this.existingGroup ? `${t("editGroupTitle")} - ${t("selectFunctions")}` : `${t("createGroupTitle")} - ${t("selectFunctions")}` });
+    new import_obsidian.Setting(contentEl).setName(this.existingGroup ? `${t("editGroupTitle")} - ${t("selectFunctions")}` : `${t("createGroupTitle")} - ${t("selectFunctions")}`).setHeading();
     contentEl.createEl("p", {
       text: t("selectFunctionsDesc"),
       cls: "sidebar-organizer-hint"
@@ -1191,7 +1250,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     }
     const container = contentEl.createDiv("simple-group-container");
     const leftPanel = container.createDiv("panel-left");
-    leftPanel.createEl("h4", { text: t("availableFunctions") });
+    new import_obsidian.Setting(leftPanel).setName(t("availableFunctions")).setHeading();
     this.availableContainer = leftPanel.createDiv("actions-list");
     for (const [pluginName, actions] of pluginGroups) {
       const groupEl = this.availableContainer.createDiv("action-group");
@@ -1218,7 +1277,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
         if (isSelected)
           itemEl.classList.add("in-group");
         const iconSpan = itemEl.createSpan("item-icon");
-        iconSpan.innerHTML = action.icon;
+        setSvgContent(iconSpan, action.icon);
         const nameSpan = itemEl.createSpan("item-name");
         nameSpan.textContent = action.actionName;
         itemEl.addEventListener("click", (e) => {
@@ -1241,7 +1300,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
       }
     }
     const rightPanel = container.createDiv("panel-right");
-    rightPanel.createEl("h4", { text: t("groupFunctions") });
+    new import_obsidian.Setting(rightPanel).setName(t("groupFunctions")).setHeading();
     this.selectedContainer = rightPanel.createDiv("actions-list selected-list");
     this.updateSelectedList(assignedElsewhere);
     const buttonContainer = contentEl.createDiv("modal-button-container");
@@ -1267,7 +1326,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     for (const action of selectedActions) {
       const itemEl = this.selectedContainer.createDiv("selected-action-item");
       const iconSpan = itemEl.createSpan("item-icon");
-      iconSpan.innerHTML = action.icon;
+      setSvgContent(iconSpan, action.icon);
       const nameSpan = itemEl.createSpan("item-name");
       nameSpan.textContent = action.actionName;
       const removeBtn = itemEl.createSpan("remove-btn");
@@ -1290,7 +1349,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     const { contentEl } = this;
     contentEl.empty();
     const t = (key, params) => this.plugin.t(key, params);
-    contentEl.createEl("h2", { text: this.existingGroup ? `${t("editGroupTitle")} - ${t("setNameAndIcon")}` : `${t("createGroupTitle")} - ${t("setNameAndIcon")}` });
+    new import_obsidian.Setting(contentEl).setName(this.existingGroup ? `${t("editGroupTitle")} - ${t("setNameAndIcon")}` : `${t("createGroupTitle")} - ${t("setNameAndIcon")}`).setHeading();
     new import_obsidian.Setting(contentEl).setName(t("groupName")).setDesc(t("groupNameDesc")).addText((text) => {
       this.nameInput = text.inputEl;
       text.setPlaceholder(t("groupNamePlaceholder"));
@@ -1299,7 +1358,7 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
         this.groupName = value;
       });
     });
-    contentEl.createEl("h3", { text: t("customIcon") });
+    new import_obsidian.Setting(contentEl).setName(t("customIcon")).setHeading();
     const iconSection = contentEl.createDiv("icon-section");
     this.previewEl = iconSection.createDiv("icon-preview-small");
     this.updatePreview();
@@ -1367,10 +1426,8 @@ var SimpleGroupModal = class extends import_obsidian.Modal {
     });
   }
   updatePreview() {
-    this.previewEl.empty();
-    if (this.groupIcon && this.groupIcon.includes("<svg")) {
-      this.previewEl.innerHTML = this.groupIcon;
-    } else {
+    setSvgContent(this.previewEl, this.groupIcon);
+    if (!this.groupIcon || !this.groupIcon.includes("<svg")) {
       this.previewEl.createEl("span", {
         text: this.plugin.t("default"),
         cls: "default-icon-hint"

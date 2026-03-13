@@ -1,5 +1,42 @@
 import { App, Plugin, PluginSettingTab, Setting, Notice, Modal, PluginManifest } from 'obsidian';
 
+// ==================== 安全 SVG 插入 ====================
+
+/**
+ * 安全地将 SVG 内容插入到元素中
+ * 使用 DOMParser 解析 SVG，然后通过 DOM 方法插入
+ */
+function setSvgContent(element: HTMLElement, svgContent: string): void {
+	element.empty();
+	if (!svgContent || !svgContent.includes('<svg')) return;
+
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(svgContent.trim(), 'image/svg+xml');
+	const svg = doc.querySelector('svg');
+	if (svg) {
+		element.appendChild(svg);
+	}
+}
+
+/**
+ * 安全地获取元素的 SVG 外部 HTML
+ */
+function getSvgOuterHTML(element: HTMLElement): string {
+	const svg = element.querySelector('svg');
+	return svg ? svg.outerHTML : '';
+}
+
+/**
+ * 安全地解析 SVG 内容并返回 SVG 元素
+ */
+function parseSvg(svgContent: string): SVGSVGElement | null {
+	if (!svgContent || !svgContent.includes('<svg')) return null;
+
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(svgContent.trim(), 'image/svg+xml');
+	return doc.querySelector('svg');
+}
+
 // ==================== 国际化 ====================
 
 type Language = 'zh' | 'en' | 'ja' | 'ko' | 'de' | 'ru' | 'es' | 'fr';
@@ -75,6 +112,13 @@ const translations = {
 		cancel: '取消',
 		save: '保存',
 		noPreview: '暂无预览',
+
+		// 图标示例
+		svgPlaceholder: '输入 SVG 代码（可选）',
+		examples: '示例：',
+		folder: '文件夹',
+		star: '星标',
+		grid: '网格',
 	},
 	en: {
 		// Settings
@@ -146,6 +190,13 @@ const translations = {
 		cancel: 'Cancel',
 		save: 'Save',
 		noPreview: 'No preview',
+
+		// Icon examples
+		svgPlaceholder: 'Enter SVG code (optional)',
+		examples: 'Examples:',
+		folder: 'Folder',
+		star: 'Star',
+		grid: 'Grid',
 	},
 	ja: {
 		// 設定ページ
@@ -217,6 +268,13 @@ const translations = {
 		cancel: 'キャンセル',
 		save: '保存',
 		noPreview: 'プレビューなし',
+
+		// アイコン例
+		svgPlaceholder: 'SVGコードを入力（オプション）',
+		examples: '例：',
+		folder: 'フォルダ',
+		star: 'スター',
+		grid: 'グリッド',
 	},
 	ko: {
 		// 설정 페이지
@@ -288,6 +346,13 @@ const translations = {
 		cancel: '취소',
 		save: '저장',
 		noPreview: '미리보기 없음',
+
+		// 아이콘 예시
+		svgPlaceholder: 'SVG 코드 입력 (선택사항)',
+		examples: '예시:',
+		folder: '폴더',
+		star: '별',
+		grid: '그리드',
 	},
 	de: {
 		// Einstellungen
@@ -359,6 +424,13 @@ const translations = {
 		cancel: 'Abbrechen',
 		save: 'Speichern',
 		noPreview: 'Keine Vorschau',
+
+		// Symbol-Beispiele
+		svgPlaceholder: 'SVG-Code eingeben (optional)',
+		examples: 'Beispiele:',
+		folder: 'Ordner',
+		star: 'Stern',
+		grid: 'Raster',
 	},
 	ru: {
 		// Настройки
@@ -430,6 +502,13 @@ const translations = {
 		cancel: 'Отмена',
 		save: 'Сохранить',
 		noPreview: 'Нет предпросмотра',
+
+		// Примеры иконок
+		svgPlaceholder: 'Введите SVG-код (необязательно)',
+		examples: 'Примеры:',
+		folder: 'Папка',
+		star: 'Звезда',
+		grid: 'Сетка',
 	},
 	es: {
 		// Configuración
@@ -501,6 +580,13 @@ const translations = {
 		cancel: 'Cancelar',
 		save: 'Guardar',
 		noPreview: 'Sin vista previa',
+
+		// Ejemplos de iconos
+		svgPlaceholder: 'Introducir código SVG (opcional)',
+		examples: 'Ejemplos:',
+		folder: 'Carpeta',
+		star: 'Estrella',
+		grid: 'Cuadrícula',
 	},
 	fr: {
 		// Paramètres
@@ -572,6 +658,13 @@ const translations = {
 		cancel: 'Annuler',
 		save: 'Enregistrer',
 		noPreview: 'Aucun aperçu',
+
+		// Exemples d'icônes
+		svgPlaceholder: 'Entrer le code SVG (optionnel)',
+		examples: 'Exemples:',
+		folder: 'Dossier',
+		star: 'Étoile',
+		grid: 'Grille',
 	}
 };
 
@@ -668,19 +761,19 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		this.addSettingTab(new SidebarOrganizerSettingTab(this.app, this));
 
 		this.addCommand({
-			id: 'toggle-sidebar-organizer',
-			name: 'Toggle sidebar organizer',
+			id: 'toggle',
+			name: 'Toggle',
 			callback: () => {
 				this.settings.enabled = !this.settings.enabled;
-				this.saveSettings();
+				void this.saveSettings();
 				this.applyOrganizerState();
 				new Notice(`Sidebar Organizer ${this.settings.enabled ? 'enabled' : 'disabled'}`);
 			}
 		});
 
 		this.addCommand({
-			id: 'refresh-sidebar',
-			name: 'Refresh sidebar organization',
+			id: 'refresh',
+			name: 'Refresh',
 			callback: () => {
 				this.restoreOriginalIcons();
 				this.loadInstalledPlugins();
@@ -831,8 +924,6 @@ export default class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	private bindPopupMenu(mainElement: HTMLElement, title: string, actions: SidebarAction[]) {
-		const self = this;
-
 		// 标记已绑定，避免重复绑定
 		if (mainElement.hasAttribute('data-popup-bound')) return;
 		mainElement.setAttribute('data-popup-bound', 'true');
@@ -840,23 +931,23 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		// 悬停显示
 		const mouseEnterHandler = () => {
 			if (!mainElement.hasAttribute('data-popup-bound')) return;
-			if (self.hideTimeout) {
-				clearTimeout(self.hideTimeout);
-				self.hideTimeout = null;
+			if (this.hideTimeout) {
+				clearTimeout(this.hideTimeout);
+				this.hideTimeout = null;
 			}
-			self.hoverTimeout = window.setTimeout(() => {
+			this.hoverTimeout = window.setTimeout(() => {
 				if (!mainElement.hasAttribute('data-popup-bound')) return;
-				self.showMenu(mainElement, title, actions);
+				this.showMenu(mainElement, title, actions);
 			}, 150);
 		};
 
 		const mouseLeaveHandler = () => {
 			if (!mainElement.hasAttribute('data-popup-bound')) return;
-			if (self.hoverTimeout) {
-				clearTimeout(self.hoverTimeout);
-				self.hoverTimeout = null;
+			if (this.hoverTimeout) {
+				clearTimeout(this.hoverTimeout);
+				this.hoverTimeout = null;
 			}
-			self.scheduleHide();
+			this.scheduleHide();
 		};
 
 		mainElement.addEventListener('mouseenter', mouseEnterHandler);
@@ -864,48 +955,45 @@ export default class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	private scheduleHide() {
-		const self = this;
-		self.hideTimeout = window.setTimeout(() => {
+		this.hideTimeout = window.setTimeout(() => {
 			// 检查菜单是否正在被悬停
-			if (self.popupEl && self.popupEl.matches(':hover')) {
+			if (this.popupEl && this.popupEl.matches(':hover')) {
 				return; // 菜单正在被悬停，不隐藏
 			}
-			self.hideMenu();
+			this.hideMenu();
 		}, 150);
 	}
 
 	private showMenu(mainElement: HTMLElement, title: string, actions: SidebarAction[]) {
-		const self = this;
-
 		// 如果菜单已存在，先移除旧的再创建新的
-		if (self.popupEl) {
-			self.popupEl.remove();
-			self.popupEl = null;
+		if (this.popupEl) {
+			this.popupEl.remove();
+			this.popupEl = null;
 		}
 
 		// 清除任何待处理的隐藏
-		if (self.hideTimeout) {
-			clearTimeout(self.hideTimeout);
-			self.hideTimeout = null;
+		if (this.hideTimeout) {
+			clearTimeout(this.hideTimeout);
+			this.hideTimeout = null;
 		}
 
 		// 创建新的弹出菜单
-		self.popupEl = document.createElement('div');
-		self.popupEl.className = 'sidebar-organizer-popup';
-		document.body.appendChild(self.popupEl);
+		this.popupEl = document.createElement('div');
+		this.popupEl.className = 'sidebar-organizer-popup';
+		document.body.appendChild(this.popupEl);
 
-		const popup = self.popupEl;
+		const popup = this.popupEl;
 
 		// 绑定菜单事件
 		popup.addEventListener('mouseenter', () => {
-			if (self.hideTimeout) {
-				clearTimeout(self.hideTimeout);
-				self.hideTimeout = null;
+			if (this.hideTimeout) {
+				clearTimeout(this.hideTimeout);
+				this.hideTimeout = null;
 			}
 		});
 
 		popup.addEventListener('mouseleave', () => {
-			self.scheduleHide();
+			this.scheduleHide();
 		});
 
 		// 标题
@@ -919,26 +1007,26 @@ export default class SidebarOrganizerPlugin extends Plugin {
 			const itemEl = listEl.createDiv('sidebar-organizer-action-item');
 
 			const iconEl = itemEl.createDiv('sidebar-organizer-action-icon');
-			iconEl.innerHTML = action.icon;
+			setSvgContent(iconEl, action.icon);
 
 			const labelEl = itemEl.createDiv('sidebar-organizer-action-label');
-			labelEl.textContent = self.extractActionLabel(action.actionName, title);
+			labelEl.textContent = this.extractActionLabel(action.actionName, title);
 
 			itemEl.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				self.hideMenu();
+				this.hideMenu();
 				action.element.click();
 			});
 		}
 
 		// 定位
-		self.positionPopup(popup, mainElement);
+		this.positionPopup(popup, mainElement);
 
 		// 应用毛玻璃效果
-		if (self.settings.blurEffect) {
+		if (this.settings.blurEffect) {
 			popup.classList.add('blur-effect');
-			popup.style.setProperty('--blur-amount', `${self.settings.blurIntensity}px`);
+			popup.style.setProperty('--blur-amount', `${this.settings.blurIntensity}px`);
 		}
 
 		// 显示动画（需要延迟一帧让浏览器处理）
@@ -1083,10 +1171,8 @@ export default class SidebarOrganizerPlugin extends Plugin {
 				element.setAttribute('data-original-svg', svgEl.outerHTML);
 			}
 
-			// 创建临时容器解析 SVG
-			const temp = document.createElement('div');
-			temp.innerHTML = svgContent.trim();
-			const newSvg = temp.querySelector('svg');
+			// 使用 DOMParser 解析 SVG
+			const newSvg = parseSvg(svgContent);
 
 			if (newSvg) {
 				// 确保有 viewBox
@@ -1095,8 +1181,8 @@ export default class SidebarOrganizerPlugin extends Plugin {
 				}
 				// 添加自定义样式类
 				newSvg.classList.add('sidebar-organizer-custom-icon');
-				// 继承原生图标的颜色样式
-				newSvg.style.stroke = 'currentColor';
+				// 添加颜色继承类
+				newSvg.classList.add('sidebar-organizer-inherit-color');
 				// 替换原 SVG
 				svgEl.replaceWith(newSvg);
 				return true;
@@ -1110,9 +1196,7 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		if (originalSvg) {
 			const currentSvg = element.querySelector('svg');
 			if (currentSvg) {
-				const temp = document.createElement('div');
-				temp.innerHTML = originalSvg;
-				const originalSvgEl = temp.querySelector('svg');
+				const originalSvgEl = parseSvg(originalSvg);
 				if (originalSvgEl) {
 					currentSvg.replaceWith(originalSvgEl);
 					element.removeAttribute('data-original-svg');
@@ -1197,9 +1281,11 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		const t = (key: any, params?: any) => this.plugin.t(key, params);
+		const t = (key: keyof typeof translations['zh'], params?: Record<string, string | number>) => this.plugin.t(key, params);
 
-		containerEl.createEl('h2', { text: t('pluginName') });
+		new Setting(containerEl)
+			.setName(t('pluginName'))
+			.setHeading();
 		containerEl.createEl('p', {
 			text: t('pluginDesc'),
 			cls: 'sidebar-organizer-desc'
@@ -1273,7 +1359,9 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 				}));
 
 		// 自定义分组区域
-		containerEl.createEl('h3', { text: t('customGroups') });
+		new Setting(containerEl)
+			.setName(t('customGroups'))
+			.setHeading();
 		containerEl.createEl('p', {
 			text: t('customGroupsDesc'),
 			cls: 'sidebar-organizer-hint'
@@ -1305,13 +1393,13 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 				const infoEl = groupEl.createDiv('group-header');
 
 				const dragHandle = infoEl.createDiv('drag-handle');
-				dragHandle.innerHTML = '⋮⋮';
+				dragHandle.textContent = '⋮⋮';
 				dragHandle.setAttribute('draggable', 'true');
 				dragHandle.setAttribute('data-group-id', group.id);
 
 				const iconEl = infoEl.createDiv('group-icon');
 				if (group.icon) {
-					iconEl.innerHTML = group.icon;
+					setSvgContent(iconEl, group.icon);
 				} else {
 					iconEl.createEl('span', { text: '📋', cls: 'default-group-icon' });
 				}
@@ -1348,7 +1436,9 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 			}
 		}
 
-		containerEl.createEl('h3', { text: t('usageInstructions') });
+		new Setting(containerEl)
+			.setName(t('usageInstructions'))
+			.setHeading();
 		const usageList = containerEl.createEl('ul');
 		usageList.createEl('li', { text: t('instruction1') });
 		usageList.createEl('li', { text: t('instruction2') });
@@ -1431,7 +1521,9 @@ class CustomGroupModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 
-		contentEl.createEl('h2', { text: this.existingGroup ? '编辑自定义分组' : '创建自定义分组' });
+		new Setting(contentEl)
+			.setName(this.existingGroup ? '编辑自定义分组' : '创建自定义分组')
+			.setHeading();
 
 		new Setting(contentEl)
 			.setName('分组名称')
@@ -1445,7 +1537,9 @@ class CustomGroupModal extends Modal {
 			});
 
 		// 图标设置区域
-		contentEl.createEl('h3', { text: '分组图标' });
+		new Setting(contentEl)
+			.setName('分组图标')
+			.setHeading();
 
 		const iconContainer = contentEl.createDiv('custom-icon-container');
 
@@ -1469,7 +1563,9 @@ class CustomGroupModal extends Modal {
 			this.updateIconPreview(this.svgInput.value);
 		});
 
-		contentEl.createEl('h3', { text: '选择功能' });
+		new Setting(contentEl)
+			.setName('选择功能')
+			.setHeading();
 
 		const searchContainer = contentEl.createDiv('search-container');
 		const searchInput = searchContainer.createEl('input', {
@@ -1533,11 +1629,9 @@ class CustomGroupModal extends Modal {
 	}
 
 	private updateIconPreview(svgContent: string) {
-		this.iconPreviewEl.empty();
+		setSvgContent(this.iconPreviewEl, svgContent);
 
-		if (svgContent && svgContent.includes('<svg')) {
-			this.iconPreviewEl.innerHTML = svgContent;
-		} else {
+		if (!svgContent || !svgContent.includes('<svg')) {
 			this.iconPreviewEl.createEl('span', {
 				text: '默认',
 				cls: 'default-icon-hint'
@@ -1585,7 +1679,7 @@ class CustomGroupModal extends Modal {
 			checkbox.disabled = isAssignedElsewhere && !isSelected;
 
 			const iconEl = actionEl.createDiv('action-icon');
-			iconEl.innerHTML = action.icon;
+			setSvgContent(iconEl, action.icon);
 
 			const infoEl = actionEl.createDiv('action-info');
 			infoEl.createDiv('action-name').textContent = action.actionName;
@@ -1651,26 +1745,31 @@ class MergeActionsModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 
-		contentEl.createEl('h2', { text: '合并功能到分组' });
+		new Setting(contentEl)
+			.setName('合并功能到分组')
+			.setHeading();
 		contentEl.createEl('p', {
 			text: '选择要合并到当前分组的功能，保存后将覆盖自动分组',
 			cls: 'sidebar-organizer-hint'
 		});
 
 		// 显示当前分组
-		contentEl.createEl('h3', { text: '当前分组功能' });
+		new Setting(contentEl)
+			.setName('当前分组功能')
+			.setHeading();
 		const currentList = contentEl.createDiv('current-group-actions');
 		this.currentGroupActions.forEach(action => {
 			const el = currentList.createDiv('merged-action-item');
-			el.innerHTML = `
-				<span class="action-icon">${action.icon}</span>
-				<span class="action-name">${action.actionName}</span>
-				<span class="action-plugin">${action.pluginName}</span>
-			`;
+			const iconSpan = el.createSpan('action-icon');
+			setSvgContent(iconSpan, action.icon);
+			el.createSpan('action-name').textContent = action.actionName;
+			el.createSpan('action-plugin').textContent = action.pluginName;
 		});
 
 		// 选择其他功能
-		contentEl.createEl('h3', { text: '选择其他功能合并到此分组' });
+		new Setting(contentEl)
+			.setName('选择其他功能合并到此分组')
+			.setHeading();
 		this.actionsContainer = contentEl.createDiv('merge-actions-picker');
 		this.renderActions();
 
@@ -1727,7 +1826,7 @@ class MergeActionsModal extends Modal {
 			checkbox.disabled = isAssignedElsewhere && !isSelected;
 
 			const iconEl = actionEl.createDiv('action-icon');
-			iconEl.innerHTML = action.icon;
+			setSvgContent(iconEl, action.icon);
 
 			const infoEl = actionEl.createDiv('action-info');
 			infoEl.createDiv('action-name').textContent = action.actionName;
@@ -1805,9 +1904,11 @@ class SimpleGroupModal extends Modal {
 	private renderStep1() {
 		const { contentEl } = this;
 		contentEl.empty();
-		const t = (key: any, params?: any) => this.plugin.t(key, params);
+		const t = (key: keyof typeof translations['zh'], params?: Record<string, string | number>) => this.plugin.t(key, params);
 
-		contentEl.createEl('h2', { text: this.existingGroup ? `${t('editGroupTitle')} - ${t('selectFunctions')}` : `${t('createGroupTitle')} - ${t('selectFunctions')}` });
+		new Setting(contentEl)
+			.setName(this.existingGroup ? `${t('editGroupTitle')} - ${t('selectFunctions')}` : `${t('createGroupTitle')} - ${t('selectFunctions')}`)
+			.setHeading();
 		contentEl.createEl('p', {
 			text: t('selectFunctionsDesc'),
 			cls: 'sidebar-organizer-hint'
@@ -1838,7 +1939,9 @@ class SimpleGroupModal extends Modal {
 
 		// 左侧：所有可用功能（按分组显示）
 		const leftPanel = container.createDiv('panel-left');
-		leftPanel.createEl('h4', { text: t('availableFunctions') });
+		new Setting(leftPanel)
+			.setName(t('availableFunctions'))
+			.setHeading();
 
 		this.availableContainer = leftPanel.createDiv('actions-list');
 
@@ -1877,7 +1980,7 @@ class SimpleGroupModal extends Modal {
 				if (isSelected) itemEl.classList.add('in-group');
 
 				const iconSpan = itemEl.createSpan('item-icon');
-				iconSpan.innerHTML = action.icon;
+				setSvgContent(iconSpan, action.icon);
 
 				const nameSpan = itemEl.createSpan('item-name');
 				nameSpan.textContent = action.actionName;
@@ -1905,7 +2008,9 @@ class SimpleGroupModal extends Modal {
 
 		// 右侧：已选择的功能
 		const rightPanel = container.createDiv('panel-right');
-		rightPanel.createEl('h4', { text: t('groupFunctions') });
+		new Setting(rightPanel)
+			.setName(t('groupFunctions'))
+			.setHeading();
 
 		this.selectedContainer = rightPanel.createDiv('actions-list selected-list');
 		this.updateSelectedList(assignedElsewhere);
@@ -1943,7 +2048,7 @@ class SimpleGroupModal extends Modal {
 			const itemEl = this.selectedContainer.createDiv('selected-action-item');
 
 			const iconSpan = itemEl.createSpan('item-icon');
-			iconSpan.innerHTML = action.icon;
+			setSvgContent(iconSpan, action.icon);
 
 			const nameSpan = itemEl.createSpan('item-name');
 			nameSpan.textContent = action.actionName;
@@ -1967,9 +2072,11 @@ class SimpleGroupModal extends Modal {
 	private renderStep2() {
 		const { contentEl } = this;
 		contentEl.empty();
-		const t = (key: any, params?: any) => this.plugin.t(key, params);
+		const t = (key: keyof typeof translations['zh'], params?: Record<string, string | number>) => this.plugin.t(key, params);
 
-		contentEl.createEl('h2', { text: this.existingGroup ? `${t('editGroupTitle')} - ${t('setNameAndIcon')}` : `${t('createGroupTitle')} - ${t('setNameAndIcon')}` });
+		new Setting(contentEl)
+			.setName(this.existingGroup ? `${t('editGroupTitle')} - ${t('setNameAndIcon')}` : `${t('createGroupTitle')} - ${t('setNameAndIcon')}`)
+			.setHeading();
 
 		new Setting(contentEl)
 			.setName(t('groupName'))
@@ -1983,7 +2090,9 @@ class SimpleGroupModal extends Modal {
 				});
 			});
 
-		contentEl.createEl('h3', { text: t('customIcon') });
+		new Setting(contentEl)
+			.setName(t('customIcon'))
+			.setHeading();
 
 		const iconSection = contentEl.createDiv('icon-section');
 
@@ -2070,11 +2179,9 @@ class SimpleGroupModal extends Modal {
 	}
 
 	private updatePreview() {
-		this.previewEl.empty();
+		setSvgContent(this.previewEl, this.groupIcon);
 
-		if (this.groupIcon && this.groupIcon.includes('<svg')) {
-			this.previewEl.innerHTML = this.groupIcon;
-		} else {
+		if (!this.groupIcon || !this.groupIcon.includes('<svg')) {
 			this.previewEl.createEl('span', {
 				text: this.plugin.t('default'),
 				cls: 'default-icon-hint'
