@@ -816,7 +816,7 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		const plugins = pluginsContainer?.manifests;
 		if (plugins) {
 			for (const [id, manifest] of Object.entries(plugins)) {
-				this.installedPlugins.set(id, manifest as PluginManifest);
+				this.installedPlugins.set(id, manifest);
 			}
 		}
 	}
@@ -892,7 +892,7 @@ export default class SidebarOrganizerPlugin extends Plugin {
 		}
 
 		// 2. 处理手动分组绑定
-		for (const [_groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
+		for (const [_, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
 			const groupActions = actionIds
 				.map(id => actionMap.get(id))
 				.filter((a): a is SidebarAction => !!a && !assignedActionIds.has(a.actionId));
@@ -1477,7 +1477,7 @@ class SidebarOrganizerSettingTab extends PluginSettingTab {
 				return orderInfo ? { ...g, order: orderInfo.order } : g;
 			});
 
-			this.plugin.saveSettings();
+			void this.plugin.saveSettings();
 		});
 
 		container.addEventListener('dragover', (e: DragEvent) => {

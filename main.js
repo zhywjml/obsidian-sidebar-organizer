@@ -760,7 +760,7 @@ var SidebarOrganizerPlugin = class extends import_obsidian.Plugin {
       }
       this.bindPopupMenu(mainAction.element, customGroup.name, groupActions);
     }
-    for (const [_groupId, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
+    for (const [_, actionIds] of Object.entries(this.settings.manualGroupBindings)) {
       const groupActions = actionIds.map((id) => actionMap.get(id)).filter((a) => !!a && !assignedActionIds.has(a.actionId));
       if (groupActions.length === 0)
         continue;
@@ -1181,7 +1181,7 @@ var SidebarOrganizerSettingTab = class extends import_obsidian.PluginSettingTab 
         const orderInfo = newOrder.find((o) => o.id === g.id);
         return orderInfo ? { ...g, order: orderInfo.order } : g;
       });
-      this.plugin.saveSettings();
+      void this.plugin.saveSettings();
     });
     container.addEventListener("dragover", (e) => {
       e.preventDefault();
