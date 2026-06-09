@@ -1,7 +1,7 @@
 {
 	"id": "sidebar-organizer",
 	"name": "Sidebar Organizer",
-	"version": "1.4.1",
+	"version": "1.4.5",
 	"minAppVersion": "0.15.0",
 	"description": "Organize sidebar icons into grouped hover menus. Create custom groups to declutter your sidebar.",
 	"author": "zhywjml",
