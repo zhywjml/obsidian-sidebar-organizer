@@ -439,26 +439,6 @@ body .sidebar-organizer-hidden {
 	border-radius: 4px;
 }
 
-/* ==================== 自动分组徽章 ==================== */
-
-.auto-group-badge {
-	font-size: 10px;
-	font-weight: 600;
-	color: var(--text-on-accent);
-	background: var(--interactive-accent);
-	padding: 2px 6px;
-	border-radius: 4px;
-	margin-right: 4px;
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-}
-
-/* 自动分组项使用虚线边框以示区别 */
-.sidebar-organizer-custom-group-item:has(.auto-group-badge) {
-	border-style: dashed;
-	border-color: var(--interactive-accent);
-}
-
 /* ==================== 功能选择器样式 ==================== */
 
 .actions-picker-container {

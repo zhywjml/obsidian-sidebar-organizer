@@ -20,7 +20,6 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 ### Features
 
 - **Custom Groups** - Create custom groups and manually select which sidebar icons to merge
-- **Auto Grouping** - Plugins with multiple sidebar actions are automatically merged into one group
 - **Custom Icons** - Set custom SVG icons for each group with built-in icon presets
 - **Genie Animation** - macOS-style spring animation when opening and closing popup menus
 - **Blur Effect** - Beautiful blur background effect for popup menus
@@ -63,7 +62,6 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 ### 功能特点
 
 - **自定义分组** - 创建自定义分组，手动选择要合并的侧边栏图标
-- **自动合并** - 拥有多个侧边栏操作的插件自动合并为一个分组
 - **自定义图标** - 为每个分组设置自定义 SVG 图标，内置图标预设可选
 - **Genie 动画** - macOS 风格弹簧动画，弹出和关闭菜单流畅自然
 - **毛玻璃效果** - 弹出菜单的美观模糊背景效果
@@ -100,7 +98,6 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 ### 機能
 
 - **カスタムグループ** - カスタムグループを作成し、統合するサイドバーアイコンを手動で選択
-- **自動グループ化** - 複数のサイドバーアクションを持つプラグインを自動的にグループ化
 - **カスタムアイコン** - 各グループにカスタム SVG アイコンを設定、内蔵アイコンテンプレートも利用可能
 - **Genie アニメーション** - macOS スタイルのスプリングアニメーションでポップアップの開閉がスムーズ
 - **ブラー効果** - ポップアップメニューの美しい背景ブラー効果
@@ -123,7 +120,6 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 ### 기능
 
 - **사용자 정의 그룹** - 사용자 정의 그룹을 생성하고 통합할 사이드바 아이콘 직접 선택
-- **자동 그룹화** - 여러 사이드바 액션이 있는 플러그인 자동 병합
 - **사용자 정의 아이콘** - 각 그룹에 사용자 정의 SVG 아이콘 설정, 내장 아이콘 템플릿 제공
 - **지니 애니메이션** - macOS 스타일 스프링 애니메이션으로 팝업 부드럽게 열고 닫기
 - **블러 효과** - 팝업 메뉴의 아름다운 배경 블러 효과

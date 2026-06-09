@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
 import type { SidebarOrganizerPlugin } from './main';
-import type { CustomGroup, Language, SidebarAction } from './types';
+import type { CustomGroup, Language } from './types';
 import { translate, getPluginLanguage } from './i18n';
 import { setSvgContent } from './sidebar';
 import { SimpleGroupModal } from './modal';
@@ -167,73 +167,6 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 							this.display();
 							new Notice(this.t('groupDeleted'));
 						})();
-					});
-			}
-		}
-
-		// 自动检测分组显示
-		const allSidebarActions = this.plugin.getAllActions();
-		const assignedToCustom = new Set<string>();
-		this.plugin.settings.customGroups.forEach(g => {
-			g.actionIds.forEach(id => assignedToCustom.add(id));
-		});
-
-		const remainingActionsDisplay = allSidebarActions.filter(a => !assignedToCustom.has(a.actionId));
-		const autoPluginMap = new Map<string, SidebarAction[]>();
-		for (const action of remainingActionsDisplay) {
-			if (!autoPluginMap.has(action.pluginId)) {
-				autoPluginMap.set(action.pluginId, []);
-			}
-			autoPluginMap.get(action.pluginId)!.push(action);
-		}
-
-		const autoGroupsToShow = Array.from(autoPluginMap.entries()).filter(([_, actions]) => actions.length > 1);
-
-		if (autoGroupsToShow.length > 0) {
-			new Setting(containerEl)
-				.setName(this.t('autoGroups'))
-				.setHeading();
-			containerEl.createEl('p', {
-				text: this.t('autoGroupsDesc'),
-				cls: 'sidebar-organizer-hint'
-			});
-
-			const autoContainer = containerEl.createDiv('sidebar-organizer-custom-groups');
-
-			for (const [pluginId, actions] of autoGroupsToShow) {
-				const groupEl = autoContainer.createDiv('sidebar-organizer-custom-group-item');
-				const infoEl = groupEl.createDiv('group-header');
-
-				const autoBadge = infoEl.createDiv('auto-group-badge');
-				autoBadge.textContent = this.t('autoGroupBadge');
-
-				const iconEl = infoEl.createDiv('group-icon');
-				setSvgContent(iconEl, actions[0].icon);
-
-				const nameEl = infoEl.createDiv('group-title');
-				nameEl.textContent = actions[0].pluginName;
-
-				const countEl = infoEl.createDiv('group-count');
-				countEl.textContent = this.t('actionCount', { count: actions.length });
-
-				const actionsEl = infoEl.createDiv('group-actions');
-
-				actionsEl.createEl('button', { text: this.t('editGroup') })
-					.addEventListener('click', () => {
-						const tempGroup: CustomGroup = {
-							id: `auto-temp-${Date.now()}`,
-							name: actions[0].pluginName,
-							icon: '',
-							actionIds: actions.map(a => a.actionId),
-							order: this.plugin.settings.customGroups.length,
-							autoGroup: true
-						};
-						const modal = new SimpleGroupModal(this.app, this.plugin, () => {
-							this.plugin.restoreOriginalIcons();
-							this.plugin.organizeSidebars();
-							this.display();
-						}, tempGroup);
-						modal.open();
 					});
 			}
 		}

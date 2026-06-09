@@ -30,10 +30,6 @@ const translations: Record<string, Record<string, string>> = {
 		actionCount: '{count} 个功能',
 		default: '默认',
 
-		autoGroups: '自动检测分组',
-		autoGroupsDesc: '以下插件有多个侧边栏功能，已自动合并。点击编辑可自定义名称和图标。',
-		autoGroupBadge: '自动',
-
 		createGroupTitle: '创建分组',
 		editGroupTitle: '编辑分组',
 		selectFunctions: '选择功能',
@@ -104,10 +100,6 @@ const translations: Record<string, Record<string, string>> = {
 		groupDeleted: 'Group deleted',
 		actionCount: '{count} functions',
 		default: 'Default',
-
-		autoGroups: 'Auto-detected Groups',
-		autoGroupsDesc: 'Plugins with multiple sidebar actions are grouped automatically. Click edit to customize name and icon.',
-		autoGroupBadge: 'Auto',
 
 		createGroupTitle: 'Create Group',
 		editGroupTitle: 'Edit Group',
@@ -180,10 +172,6 @@ const translations: Record<string, Record<string, string>> = {
 		actionCount: '{count}個の機能',
 		default: 'デフォルト',
 
-		autoGroups: '自動検出グループ',
-		autoGroupsDesc: '以下のプラグインには複数のサイドバー機能があり、自動的にグループ化されています。編集してカスタマイズできます。',
-		autoGroupBadge: '自動',
-
 		createGroupTitle: 'グループ作成',
 		editGroupTitle: 'グループ編集',
 		selectFunctions: '機能を選択',
@@ -254,10 +242,6 @@ const translations: Record<string, Record<string, string>> = {
 		groupDeleted: '그룹이 삭제되었습니다',
 		actionCount: '{count}개 기능',
 		default: '기본값',
-
-		autoGroups: '자동 감지 그룹',
-		autoGroupsDesc: '다음 플러그인에는 여러 사이드바 기능이 있으며 자동으로 그룹화됩니다. 편집하여 사용자 정의할 수 있습니다.',
-		autoGroupBadge: '자동',
 
 		createGroupTitle: '그룹 생성',
 		editGroupTitle: '그룹 편집',
@@ -330,10 +314,6 @@ const translations: Record<string, Record<string, string>> = {
 		actionCount: '{count} Funktionen',
 		default: 'Standard',
 
-		autoGroups: 'Automatisch erkannte Gruppen',
-		autoGroupsDesc: 'Die folgenden Plugins haben mehrere Sidebar-Funktionen und werden automatisch gruppiert. Bearbeiten zum Anpassen.',
-		autoGroupBadge: 'Auto',
-
 		createGroupTitle: 'Gruppe erstellen',
 		editGroupTitle: 'Gruppe bearbeiten',
 		selectFunctions: 'Funktionen auswählen',
@@ -404,10 +384,6 @@ const translations: Record<string, Record<string, string>> = {
 		groupDeleted: 'Группа удалена',
 		actionCount: '{count} функций',
 		default: 'По умолчанию',
-
-		autoGroups: 'Автоматические группы',
-		autoGroupsDesc: 'Следующие плагины имеют несколько функций боковой панели и автоматически сгруппированы. Нажмите редактировать для настройки.',
-		autoGroupBadge: 'Авто',
 
 		createGroupTitle: 'Создать группу',
 		editGroupTitle: 'Редактировать группу',
@@ -480,10 +456,6 @@ const translations: Record<string, Record<string, string>> = {
 		actionCount: '{count} funciones',
 		default: 'Predeterminado',
 
-		autoGroups: 'Grupos auto-detectados',
-		autoGroupsDesc: 'Los siguientes plugins tienen múltiples funciones en la barra lateral y se agrupan automáticamente. Edite para personalizar.',
-		autoGroupBadge: 'Auto',
-
 		createGroupTitle: 'Crear grupo',
 		editGroupTitle: 'Editar grupo',
 		selectFunctions: 'Seleccionar funciones',
@@ -554,10 +526,6 @@ const translations: Record<string, Record<string, string>> = {
 		groupDeleted: 'Groupe supprimé',
 		actionCount: '{count} fonctions',
 		default: 'Par défaut',
-
-		autoGroups: 'Groupes auto-détectés',
-		autoGroupsDesc: 'Les plugins suivants ont plusieurs fonctions de barre latérale et sont regroupés automatiquement. Modifiez pour personnaliser.',
-		autoGroupBadge: 'Auto',
 
 		createGroupTitle: 'Créer un groupe',
 		editGroupTitle: 'Modifier le groupe',

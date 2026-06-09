@@ -27,7 +27,6 @@ export interface CustomGroup {
 	icon: string;
 	actionIds: string[];
 	order: number;
-	autoGroup?: boolean;
 }
 
 export interface SidebarOrganizerSettings {

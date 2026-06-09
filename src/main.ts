@@ -189,7 +189,6 @@ export class SidebarOrganizerPlugin extends Plugin {
 		if (!ribbon) return;
 
 		const allIcons = ribbon.querySelectorAll('.side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action');
-		const allActions: SidebarAction[] = [];
 		const actionMap = new Map<string, SidebarAction>();
 
 		allIcons.forEach((el) => {
@@ -198,14 +197,13 @@ export class SidebarOrganizerPlugin extends Plugin {
 				const action = this.identifyAction(element);
 				if (!action) return;
 
-				allActions.push(action);
 				actionMap.set(action.actionId, action);
 			} catch (e) {
 				console.warn('Sidebar Organizer: failed to process icon', e);
 			}
 		});
 
-		if (allActions.length === 0) return;
+		if (actionMap.size === 0) return;
 
 		const assignedActionIds = new Set<string>();
 
@@ -238,45 +236,6 @@ export class SidebarOrganizerPlugin extends Plugin {
 			}
 		}
 
-		// 2. 自动分组
-		const unassignedActions = allActions.filter(a => !assignedActionIds.has(a.actionId));
-		this.autoGroupRemaining(unassignedActions, assignedActionIds, actionMap);
-	}
-
-	private autoGroupRemaining(
-		unassignedActions: SidebarAction[],
-		assignedActionIds: Set<string>,
-		actionMap: Map<string, SidebarAction>
-	) {
-		const pluginGroups = new Map<string, SidebarAction[]>();
-		for (const action of unassignedActions) {
-			if (!pluginGroups.has(action.pluginId)) {
-				pluginGroups.set(action.pluginId, []);
-			}
-			pluginGroups.get(action.pluginId)!.push(action);
-		}
-
-		for (const [pluginId, actions] of pluginGroups) {
-			try {
-				if (actions.length <= 1) continue;
-
-				actions.forEach(a => assignedActionIds.add(a.actionId));
-
-				const mainAction = actions[0];
-				const otherActions = actions.slice(1);
-
-				otherActions.forEach(action => {
-					action.element.classList.add('sidebar-organizer-hidden');
-				});
-
-				this.addBadge(mainAction.element, actions.length);
-
-				const groupName = actions[0].pluginName;
-				this.bindPopupMenu(mainAction.element, groupName, actions);
-			} catch (e) {
-				console.warn(`Sidebar Organizer: failed to auto-group plugin "${pluginId}"`, e);
-			}
-		}
 	}
 
 	private addBadge(element: HTMLElement, count: number) {

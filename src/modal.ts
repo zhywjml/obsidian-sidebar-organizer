@@ -326,9 +326,6 @@ export class SimpleGroupModal extends Modal {
 							group.name = name;
 							group.icon = this.groupIcon.trim();
 							group.actionIds = Array.from(this.selectedActions);
-							if (group.autoGroup) {
-								delete group.autoGroup;
-							}
 						} else {
 							const newGroup: CustomGroup = {
 								id: `custom-${Date.now()}`,

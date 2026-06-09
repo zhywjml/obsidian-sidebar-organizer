@@ -70,9 +70,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "\u5206\u7EC4\u5DF2\u5220\u9664",
       actionCount: "{count} \u4E2A\u529F\u80FD",
       default: "\u9ED8\u8BA4",
-      autoGroups: "\u81EA\u52A8\u68C0\u6D4B\u5206\u7EC4",
-      autoGroupsDesc: "\u4EE5\u4E0B\u63D2\u4EF6\u6709\u591A\u4E2A\u4FA7\u8FB9\u680F\u529F\u80FD\uFF0C\u5DF2\u81EA\u52A8\u5408\u5E76\u3002\u70B9\u51FB\u7F16\u8F91\u53EF\u81EA\u5B9A\u4E49\u540D\u79F0\u548C\u56FE\u6807\u3002",
-      autoGroupBadge: "\u81EA\u52A8",
       createGroupTitle: "\u521B\u5EFA\u5206\u7EC4",
       editGroupTitle: "\u7F16\u8F91\u5206\u7EC4",
       selectFunctions: "\u9009\u62E9\u529F\u80FD",
@@ -132,9 +129,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "Group deleted",
       actionCount: "{count} functions",
       default: "Default",
-      autoGroups: "Auto-detected Groups",
-      autoGroupsDesc: "Plugins with multiple sidebar actions are grouped automatically. Click edit to customize name and icon.",
-      autoGroupBadge: "Auto",
       createGroupTitle: "Create Group",
       editGroupTitle: "Edit Group",
       selectFunctions: "Select Functions",
@@ -194,9 +188,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "\u30B0\u30EB\u30FC\u30D7\u3092\u524A\u9664\u3057\u307E\u3057\u305F",
       actionCount: "{count}\u500B\u306E\u6A5F\u80FD",
       default: "\u30C7\u30D5\u30A9\u30EB\u30C8",
-      autoGroups: "\u81EA\u52D5\u691C\u51FA\u30B0\u30EB\u30FC\u30D7",
-      autoGroupsDesc: "\u4EE5\u4E0B\u306E\u30D7\u30E9\u30B0\u30A4\u30F3\u306B\u306F\u8907\u6570\u306E\u30B5\u30A4\u30C9\u30D0\u30FC\u6A5F\u80FD\u304C\u3042\u308A\u3001\u81EA\u52D5\u7684\u306B\u30B0\u30EB\u30FC\u30D7\u5316\u3055\u308C\u3066\u3044\u307E\u3059\u3002\u7DE8\u96C6\u3057\u3066\u30AB\u30B9\u30BF\u30DE\u30A4\u30BA\u3067\u304D\u307E\u3059\u3002",
-      autoGroupBadge: "\u81EA\u52D5",
       createGroupTitle: "\u30B0\u30EB\u30FC\u30D7\u4F5C\u6210",
       editGroupTitle: "\u30B0\u30EB\u30FC\u30D7\u7DE8\u96C6",
       selectFunctions: "\u6A5F\u80FD\u3092\u9078\u629E",
@@ -256,9 +247,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "\uADF8\uB8F9\uC774 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4",
       actionCount: "{count}\uAC1C \uAE30\uB2A5",
       default: "\uAE30\uBCF8\uAC12",
-      autoGroups: "\uC790\uB3D9 \uAC10\uC9C0 \uADF8\uB8F9",
-      autoGroupsDesc: "\uB2E4\uC74C \uD50C\uB7EC\uADF8\uC778\uC5D0\uB294 \uC5EC\uB7EC \uC0AC\uC774\uB4DC\uBC14 \uAE30\uB2A5\uC774 \uC788\uC73C\uBA70 \uC790\uB3D9\uC73C\uB85C \uADF8\uB8F9\uD654\uB429\uB2C8\uB2E4. \uD3B8\uC9D1\uD558\uC5EC \uC0AC\uC6A9\uC790 \uC815\uC758\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.",
-      autoGroupBadge: "\uC790\uB3D9",
       createGroupTitle: "\uADF8\uB8F9 \uC0DD\uC131",
       editGroupTitle: "\uADF8\uB8F9 \uD3B8\uC9D1",
       selectFunctions: "\uAE30\uB2A5 \uC120\uD0DD",
@@ -318,9 +306,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "Gruppe gel\xF6scht",
       actionCount: "{count} Funktionen",
       default: "Standard",
-      autoGroups: "Automatisch erkannte Gruppen",
-      autoGroupsDesc: "Die folgenden Plugins haben mehrere Sidebar-Funktionen und werden automatisch gruppiert. Bearbeiten zum Anpassen.",
-      autoGroupBadge: "Auto",
       createGroupTitle: "Gruppe erstellen",
       editGroupTitle: "Gruppe bearbeiten",
       selectFunctions: "Funktionen ausw\xE4hlen",
@@ -380,9 +365,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "\u0413\u0440\u0443\u043F\u043F\u0430 \u0443\u0434\u0430\u043B\u0435\u043D\u0430",
       actionCount: "{count} \u0444\u0443\u043D\u043A\u0446\u0438\u0439",
       default: "\u041F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
-      autoGroups: "\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u0433\u0440\u0443\u043F\u043F\u044B",
-      autoGroupsDesc: "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0435 \u043F\u043B\u0430\u0433\u0438\u043D\u044B \u0438\u043C\u0435\u044E\u0442 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0443\u043D\u043A\u0446\u0438\u0439 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438 \u0438 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u0441\u0433\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u044B. \u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043B\u044F \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438.",
-      autoGroupBadge: "\u0410\u0432\u0442\u043E",
       createGroupTitle: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
       editGroupTitle: "\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443",
       selectFunctions: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u0438",
@@ -442,9 +424,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "Grupo eliminado",
       actionCount: "{count} funciones",
       default: "Predeterminado",
-      autoGroups: "Grupos auto-detectados",
-      autoGroupsDesc: "Los siguientes plugins tienen m\xFAltiples funciones en la barra lateral y se agrupan autom\xE1ticamente. Edite para personalizar.",
-      autoGroupBadge: "Auto",
       createGroupTitle: "Crear grupo",
       editGroupTitle: "Editar grupo",
       selectFunctions: "Seleccionar funciones",
@@ -504,9 +483,6 @@ var SidebarOrganizer = (() => {
       groupDeleted: "Groupe supprim\xE9",
       actionCount: "{count} fonctions",
       default: "Par d\xE9faut",
-      autoGroups: "Groupes auto-d\xE9tect\xE9s",
-      autoGroupsDesc: "Les plugins suivants ont plusieurs fonctions de barre lat\xE9rale et sont regroup\xE9s automatiquement. Modifiez pour personnaliser.",
-      autoGroupBadge: "Auto",
       createGroupTitle: "Cr\xE9er un groupe",
       editGroupTitle: "Modifier le groupe",
       selectFunctions: "S\xE9lectionner les fonctions",
@@ -864,9 +840,6 @@ var SidebarOrganizer = (() => {
               group.name = name;
               group.icon = this.groupIcon.trim();
               group.actionIds = Array.from(this.selectedActions);
-              if (group.autoGroup) {
-                delete group.autoGroup;
-              }
             } else {
               const newGroup = {
                 id: `custom-${Date.now()}`,
@@ -1001,57 +974,6 @@ var SidebarOrganizer = (() => {
               this.display();
               new import_obsidian2.Notice(this.t("groupDeleted"));
             })();
-          });
-        }
-      }
-      const allSidebarActions = this.plugin.getAllActions();
-      const assignedToCustom = /* @__PURE__ */ new Set();
-      this.plugin.settings.customGroups.forEach((g) => {
-        g.actionIds.forEach((id) => assignedToCustom.add(id));
-      });
-      const remainingActionsDisplay = allSidebarActions.filter((a) => !assignedToCustom.has(a.actionId));
-      const autoPluginMap = /* @__PURE__ */ new Map();
-      for (const action of remainingActionsDisplay) {
-        if (!autoPluginMap.has(action.pluginId)) {
-          autoPluginMap.set(action.pluginId, []);
-        }
-        autoPluginMap.get(action.pluginId).push(action);
-      }
-      const autoGroupsToShow = Array.from(autoPluginMap.entries()).filter(([_, actions]) => actions.length > 1);
-      if (autoGroupsToShow.length > 0) {
-        new import_obsidian2.Setting(containerEl).setName(this.t("autoGroups")).setHeading();
-        containerEl.createEl("p", {
-          text: this.t("autoGroupsDesc"),
-          cls: "sidebar-organizer-hint"
-        });
-        const autoContainer = containerEl.createDiv("sidebar-organizer-custom-groups");
-        for (const [pluginId, actions] of autoGroupsToShow) {
-          const groupEl = autoContainer.createDiv("sidebar-organizer-custom-group-item");
-          const infoEl = groupEl.createDiv("group-header");
-          const autoBadge = infoEl.createDiv("auto-group-badge");
-          autoBadge.textContent = this.t("autoGroupBadge");
-          const iconEl = infoEl.createDiv("group-icon");
-          setSvgContent(iconEl, actions[0].icon);
-          const nameEl = infoEl.createDiv("group-title");
-          nameEl.textContent = actions[0].pluginName;
-          const countEl = infoEl.createDiv("group-count");
-          countEl.textContent = this.t("actionCount", { count: actions.length });
-          const actionsEl = infoEl.createDiv("group-actions");
-          actionsEl.createEl("button", { text: this.t("editGroup") }).addEventListener("click", () => {
-            const tempGroup = {
-              id: `auto-temp-${Date.now()}`,
-              name: actions[0].pluginName,
-              icon: "",
-              actionIds: actions.map((a) => a.actionId),
-              order: this.plugin.settings.customGroups.length,
-              autoGroup: true
-            };
-            const modal = new SimpleGroupModal(this.app, this.plugin, () => {
-              this.plugin.restoreOriginalIcons();
-              this.plugin.organizeSidebars();
-              this.display();
-            }, tempGroup);
-            modal.open();
           });
         }
       }
@@ -1226,7 +1148,6 @@ var SidebarOrganizer = (() => {
       if (!ribbon)
         return;
       const allIcons = ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action");
-      const allActions = [];
       const actionMap = /* @__PURE__ */ new Map();
       allIcons.forEach((el) => {
         try {
@@ -1234,13 +1155,12 @@ var SidebarOrganizer = (() => {
           const action = this.identifyAction(element);
           if (!action)
             return;
-          allActions.push(action);
           actionMap.set(action.actionId, action);
         } catch (e) {
           console.warn("Sidebar Organizer: failed to process icon", e);
         }
       });
-      if (allActions.length === 0)
+      if (actionMap.size === 0)
         return;
       const assignedActionIds = /* @__PURE__ */ new Set();
       const sortedCustomGroups = [...this.settings.customGroups].sort((a, b) => a.order - b.order);
@@ -1261,34 +1181,6 @@ var SidebarOrganizer = (() => {
           this.bindPopupMenu(mainAction.element, customGroup.name, groupActions);
         } catch (e) {
           console.warn(`Sidebar Organizer: failed to process group "${customGroup.name}"`, e);
-        }
-      }
-      const unassignedActions = allActions.filter((a) => !assignedActionIds.has(a.actionId));
-      this.autoGroupRemaining(unassignedActions, assignedActionIds, actionMap);
-    }
-    autoGroupRemaining(unassignedActions, assignedActionIds, actionMap) {
-      const pluginGroups = /* @__PURE__ */ new Map();
-      for (const action of unassignedActions) {
-        if (!pluginGroups.has(action.pluginId)) {
-          pluginGroups.set(action.pluginId, []);
-        }
-        pluginGroups.get(action.pluginId).push(action);
-      }
-      for (const [pluginId, actions] of pluginGroups) {
-        try {
-          if (actions.length <= 1)
-            continue;
-          actions.forEach((a) => assignedActionIds.add(a.actionId));
-          const mainAction = actions[0];
-          const otherActions = actions.slice(1);
-          otherActions.forEach((action) => {
-            action.element.classList.add("sidebar-organizer-hidden");
-          });
-          this.addBadge(mainAction.element, actions.length);
-          const groupName = actions[0].pluginName;
-          this.bindPopupMenu(mainAction.element, groupName, actions);
-        } catch (e) {
-          console.warn(`Sidebar Organizer: failed to auto-group plugin "${pluginId}"`, e);
         }
       }
     }
