@@ -1,12 +1,16 @@
 # Sidebar Organizer
 
 [中文](#中文) | [English](#english) | [日本語](#日本語) | [한국어](#한국어)
-
 ---
 
-<img width="349" height="409" alt="图片" src="https://github.com/user-attachments/assets/b7666c0e-6e0e-4f2a-8ce5-b92967e40775" />
+| **内容以及预览** | |
+| :---: | :---: |
+| **设置页** | **实际使用** |
+| ![](https://github.com/user-attachments/assets/f1f5e27f-61f1-465e-a4e1-728306512d71) | ![](https://github.com/user-attachments/assets/b7666c0e-6e0e-4f2a-8ce5-b92967e40775) |
+| ![](https://github.com/user-attachments/assets/353af33d-eba6-48d7-aed9-40864d04d04b) | ![](https://github.com/user-attachments/assets/afccbe35-de98-4e0c-aae6-ddd4a32061a5) |
 
-<img width="377" height="601" alt="图片" src="https://github.com/user-attachments/assets/afccbe35-de98-4e0c-aae6-ddd4a32061a5" />
+
+
 
 
 ## English
@@ -133,12 +137,6 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 4. 그룹 이름과 선택적 사용자 정의 아이콘 설정
 5. 통합된 아이콘에 마우스를 올리면 기능 메뉴가 표시됩니다
 
-
-## 插件设置截图：
-
-<img width="615" height="575" alt="图片" src="https://github.com/user-attachments/assets/f1f5e27f-61f1-465e-a4e1-728306512d71" />
-
-<img width="615" height="575" alt="图片" src="https://github.com/user-attachments/assets/353af33d-eba6-48d7-aed9-40864d04d04b" />
 
 ---
 
