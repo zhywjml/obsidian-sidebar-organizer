@@ -6,8 +6,8 @@
 | **内容以及预览** | |
 | :---: | :---: |
 | **设置页** | **实际使用** |
-|<img width="1148" height="798" alt="image-20260609161516871" src="https://github.com/user-attachments/assets/c34c0980-a7f1-4ea1-a0b7-a3218be1c717" />|<img width="357" height="496" alt="image-20260609161638780" src="https://github.com/user-attachments/assets/3beb9b91-a26b-448d-8a35-494ad6cd47ce" />|
-|<img width="1143" height="571" alt="image-20260609161549318" src="https://github.com/user-attachments/assets/c1abb748-b062-4b5c-85e8-73be6a00282f" />|<img width="348" height="287" alt="image-20260609161709326" src="https://github.com/user-attachments/assets/8f1c1ed4-f166-4fb3-8747-cc99bb8f1773" />|
+| <img style="max-width:100%;height:auto" alt="image-20260609161516871" src="https://github.com/user-attachments/assets/c34c0980-a7f1-4ea1-a0b7-a3218be1c717" /> | <img style="max-width:100%;height:auto" alt="image-20260609161638780" src="https://github.com/user-attachments/assets/3beb9b91-a26b-448d-8a35-494ad6cd47ce" /> |
+| <img style="max-width:100%;height:auto" alt="image-20260609161549318" src="https://github.com/user-attachments/assets/c1abb748-b062-4b5c-85e8-73be6a00282f" /> | <img style="max-width:100%;height:auto" alt="image-20260609161709326" src="https://github.com/user-attachments/assets/8f1c1ed4-f166-4fb3-8747-cc99bb8f1773" /> |
 
 
 
