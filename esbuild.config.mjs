@@ -15,7 +15,7 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ['main.ts'],
+	entryPoints: ['src/main.ts'],
 	bundle: true,
 	external: [
 		'obsidian',
@@ -32,12 +32,16 @@ const context = await esbuild.context({
 		'@lezer/highlight',
 		'@lezer/lr',
 		...builtins],
-	format: 'cjs',
+	format: 'iife',
+	globalName: 'SidebarOrganizer',
 	target: 'es2018',
 	logLevel: "info",
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
 	outfile: 'main.js',
+	footer: {
+		js: 'module.exports = SidebarOrganizer;'
+	},
 });
 
 if (prod) {

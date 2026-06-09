@@ -2,8 +2,31 @@
 
 /* ==================== 隐藏原始图标 ==================== */
 
-.sidebar-organizer-hidden {
-	display: none !important;
+body .sidebar-organizer-hidden {
+	display: none;
+}
+
+/* ==================== 自定义图标颜色继承 ==================== */
+
+/* 确保自定义 SVG 图标继承主题的图标颜色，适配深色/浅色模式 */
+.sidebar-organizer-custom-icon {
+	color: var(--icon-color);
+}
+
+.sidebar-organizer-custom-icon path,
+.sidebar-organizer-custom-icon rect,
+.sidebar-organizer-custom-icon circle,
+.sidebar-organizer-custom-icon polygon,
+.sidebar-organizer-custom-icon polyline,
+.sidebar-organizer-custom-icon line {
+	stroke: currentColor;
+}
+
+.sidebar-organizer-custom-icon path[fill]:not([fill="none"]):not([fill="currentColor"]),
+.sidebar-organizer-custom-icon rect[fill]:not([fill="none"]):not([fill="currentColor"]),
+.sidebar-organizer-custom-icon circle[fill]:not([fill="none"]):not([fill="currentColor"]),
+.sidebar-organizer-custom-icon polygon[fill]:not([fill="none"]):not([fill="currentColor"]) {
+	fill: currentColor;
 }
 
 /* ==================== 数量徽章 ==================== */
@@ -26,26 +49,43 @@
 	z-index: 1;
 }
 
-/* ==================== 弹出菜单样式 ==================== */
+/* ==================== 弹出菜单 — macOS Genie 效果 ==================== */
 
 .sidebar-organizer-popup {
 	position: fixed;
 	background-color: var(--background-secondary);
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	padding: 4px;
-	min-width: 180px;
-	max-width: 260px;
+	border-radius: 8px;
+	padding: 0;
+	min-width: 190px;
+	max-width: 280px;
 	max-height: 400px;
-	overflow-y: auto;
+	overflow: hidden;
 	box-shadow: 0 0 0 1px var(--background-modifier-border),
-	            0 2px 8px rgba(0, 0, 0, 0.1);
-	opacity: 0;
-	visibility: hidden;
+	            0 2px 8px rgba(0, 0, 0, 0.08),
+	            0 8px 32px rgba(0, 0, 0, 0.12);
 	z-index: 99999;
+	will-change: transform, opacity;
+
+	/* 吸入态 — 压缩在原点 */
 	transform-origin: left center;
-	transform: scale(0.85) translateX(-8px);
-	transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+	transform: scale(0.35);
+	opacity: 0;
+	pointer-events: none;
+
+	/* 吸入过渡（.hiding → 隐藏） */
+	transition: transform 0.22s cubic-bezier(0.55, 0.06, 0.68, 0.19),
+	            opacity 0.15s ease-in;
+}
+
+/* 顶部视觉分割色条 */
+.sidebar-organizer-popup::before {
+	content: '';
+	display: block;
+	height: 3px;
+	background: var(--interactive-accent);
+	border-radius: 8px 8px 0 0;
+	pointer-events: none;
 }
 
 /* 毛玻璃效果 */
@@ -59,43 +99,76 @@
 	background-color: rgba(var(--background-secondary-rgb, 246, 246, 246), 0.7);
 }
 
-/* 显示弹出 - 吐出效果 */
+/* 弹出展开 — 从原点弹射而出，带弹簧 overshoot */
 .sidebar-organizer-popup.visible {
+	transform: scale(1);
 	opacity: 1;
-	visibility: visible;
-	transform: scale(1) translateX(0);
+	pointer-events: auto;
+
+	transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+	            opacity 0.18s ease-out;
 }
 
-/* 隐藏动画 - 吸收效果 */
+/* 吸入关闭 — 快速起步、慢速收尾，吸入原点 */
 .sidebar-organizer-popup.hiding {
+	transform: scale(0.25);
 	opacity: 0;
-	transform: scale(0.85) translateX(-8px);
-	transition: all 0.15s ease-in;
+	pointer-events: none;
+
+	transition: transform 0.22s cubic-bezier(0.55, 0.06, 0.68, 0.19),
+	            opacity 0.12s ease-in;
 }
 
-/* 右侧边栏弹出动画方向 */
+/* 右侧边栏 — 从右边缘展开/吸入 */
 .sidebar-organizer-popup.popup-right {
 	transform-origin: right center;
-	transform: scale(0.85) translateX(8px);
+	transform: scale(0.35);
 }
 
 .sidebar-organizer-popup.popup-right.visible {
-	transform: scale(1) translateX(0);
+	transform: scale(1);
 }
 
 .sidebar-organizer-popup.popup-right.hiding {
-	transform: scale(0.85) translateX(8px);
+	transform: scale(0.25);
 }
 
-/* ==================== 插件名称样式 ==================== */
+/* ==================== 弹出菜单内部容器 ==================== */
+
+.sidebar-organizer-popup-body {
+	padding: 0 0 4px 0;
+	max-height: calc(400px - 3px);
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.sidebar-organizer-popup-body::-webkit-scrollbar {
+	width: 4px;
+}
+
+.sidebar-organizer-popup-body::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.sidebar-organizer-popup-body::-webkit-scrollbar-thumb {
+	background: var(--background-modifier-border);
+	border-radius: 2px;
+}
+
+/* ==================== 插件名称/分组标题样式 ==================== */
 
 .sidebar-organizer-plugin-name {
 	font-size: 11px;
-	font-weight: 500;
+	font-weight: 600;
 	color: var(--text-muted);
-	padding: 6px 8px 4px 8px;
+	padding: 10px 10px 8px 10px;
 	cursor: pointer;
-	letter-spacing: 0.02em;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	user-select: none;
+	border-bottom: 1px solid var(--background-modifier-border);
+	margin-bottom: 4px;
+	transition: color 0.15s ease;
 }
 
 .sidebar-organizer-plugin-name:hover {
@@ -108,31 +181,62 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1px;
-	padding-bottom: 4px;
+	padding: 0 4px 4px 4px;
 }
 
 .sidebar-organizer-action-item {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 8px;
-	border-radius: 4px;
+	gap: 10px;
+	padding: 7px 10px;
+	margin: 0 0 0 0;
+	border-radius: 6px;
 	cursor: pointer;
-	transition: background-color 0.1s ease;
+	transition: background-color 0.12s ease;
 	color: var(--text-normal);
 	font-size: 13px;
+	line-height: 1.4;
+	position: relative;
 }
 
 .sidebar-organizer-action-item:hover {
 	background-color: var(--background-modifier-hover);
 }
 
+/* 悬停时左侧强调条 */
+.sidebar-organizer-action-item::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%) scaleY(0);
+	width: 3px;
+	height: 60%;
+	background: var(--interactive-accent);
+	border-radius: 0 3px 3px 0;
+	transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar-organizer-action-item:hover::before {
+	transform: translateY(-50%) scaleY(1);
+}
+
+/* 激活的功能项有完整的强调条 */
+.sidebar-organizer-action-item:active {
+	background-color: var(--background-modifier-active-hover);
+}
+
+.sidebar-organizer-action-item:active::before {
+	transform: translateY(-50%) scaleY(0.85);
+}
+
 .sidebar-organizer-action-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 18px;
-	height: 18px;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
 	color: var(--icon-color);
 }
 
@@ -152,7 +256,8 @@
 
 .theme-dark .sidebar-organizer-popup {
 	box-shadow: 0 0 0 1px var(--background-modifier-border-hover),
-	            0 2px 10px rgba(0, 0, 0, 0.3);
+	            0 4px 12px rgba(0, 0, 0, 0.25),
+	            0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* ==================== 设置面板样式 ==================== */
@@ -265,24 +370,7 @@
 	border-radius: 6px;
 }
 
-/* ==================== 滚动条样式 ==================== */
-
-.sidebar-organizer-popup::-webkit-scrollbar {
-	width: 6px;
-}
-
-.sidebar-organizer-popup::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-.sidebar-organizer-popup::-webkit-scrollbar-thumb {
-	background: var(--background-modifier-border);
-	border-radius: 3px;
-}
-
-.sidebar-organizer-popup::-webkit-scrollbar-thumb:hover {
-	background: var(--background-modifier-border-hover);
-}
+/* 滚动条样式由 .sidebar-organizer-popup-body 内部处理 */
 
 /* ==================== 自定义分组设置样式 ==================== */
 
@@ -311,21 +399,6 @@
 	flex: 1;
 }
 
-.sidebar-organizer-custom-group-item .drag-handle {
-	cursor: grab;
-	color: var(--text-muted);
-	font-size: 14px;
-	padding: 4px;
-	user-select: none;
-}
-
-.sidebar-organizer-custom-group-item .drag-handle:active {
-	cursor: grabbing;
-}
-
-.sidebar-organizer-custom-group-item .drag-handle.dragging {
-	opacity: 0.5;
-}
 
 .sidebar-organizer-custom-group-item .group-icon {
 	display: flex;
@@ -364,6 +437,26 @@
 	padding: 4px 12px;
 	font-size: 12px;
 	border-radius: 4px;
+}
+
+/* ==================== 自动分组徽章 ==================== */
+
+.auto-group-badge {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--text-on-accent);
+	background: var(--interactive-accent);
+	padding: 2px 6px;
+	border-radius: 4px;
+	margin-right: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+/* 自动分组项使用虚线边框以示区别 */
+.sidebar-organizer-custom-group-item:has(.auto-group-badge) {
+	border-style: dashed;
+	border-color: var(--interactive-accent);
 }
 
 /* ==================== 功能选择器样式 ==================== */
@@ -778,54 +871,6 @@
 }
 
 /* ==================== 分组标题样式 ==================== */
-
-.action-group {
-	margin-bottom: 8px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	overflow: hidden;
-}
-
-.action-group-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 8px 10px;
-	background: var(--background-secondary);
-	cursor: pointer;
-	transition: background-color 0.15s ease;
-}
-
-.action-group-header:hover {
-	background: var(--background-modifier-hover);
-}
-
-.action-group-header.all-selected {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
-.action-group-header .group-title {
-	font-size: 12px;
-	font-weight: 500;
-}
-
-.action-group-header .select-all-hint {
-	font-size: 10px;
-	color: var(--text-muted);
-}
-
-.action-group-header.all-selected .select-all-hint {
-	color: var(--text-on-accent);
-}
-
-.group-actions {
-	padding: 4px;
-}
-
-.group-actions .action-item-draggable {
-	padding: 6px 8px;
-}
 
 /* ==================== 分组标题样式 ==================== */
 
