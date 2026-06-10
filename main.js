@@ -591,8 +591,8 @@ var SidebarOrganizer = (() => {
           }
         });
       });
-      const hasFill = svg.querySelector("[fill]");
-      const hasStroke = svg.querySelector("[stroke]");
+      const hasFill = svg.hasAttribute("fill") || svg.querySelector("[fill]");
+      const hasStroke = svg.hasAttribute("stroke") || svg.querySelector("[stroke]");
       if (!hasFill && !hasStroke) {
         svg.setAttribute("fill", "currentColor");
       }

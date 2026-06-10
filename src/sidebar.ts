@@ -46,8 +46,9 @@ export function sanitizeSvgColors(svg: SVGSVGElement): void {
 			});
 		});
 
-		const hasFill = svg.querySelector('[fill]');
-		const hasStroke = svg.querySelector('[stroke]');
+		// Also check the root <svg> element itself, not just descendants
+		const hasFill = svg.hasAttribute('fill') || svg.querySelector('[fill]');
+		const hasStroke = svg.hasAttribute('stroke') || svg.querySelector('[stroke]');
 		if (!hasFill && !hasStroke) {
 			svg.setAttribute('fill', 'currentColor');
 		}
