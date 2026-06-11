@@ -901,3 +901,74 @@ body .sidebar-organizer-hidden {
 .group-actions .action-item-draggable {
 	padding: 6px 8px;
 }
+
+/* ==================== 移动端适配 ==================== */
+
+/* 弹出菜单移动端基础适配 */
+.is-mobile .sidebar-organizer-popup {
+	max-width: calc(100vw - 16px);
+	max-height: calc(100vh - 100px);
+}
+
+
+/* 移动端弹出动画：从底部滑入 */
+.is-mobile .sidebar-organizer-popup {
+	transform: translateY(20px) scale(0.95);
+}
+
+.is-mobile .sidebar-organizer-popup.visible {
+	transform: translateY(0) scale(1);
+}
+
+.is-mobile .sidebar-organizer-popup.hiding {
+	transform: translateY(10px) scale(0.97);
+	opacity: 0;
+}
+
+/* 模态框双列布局在小屏幕改为单列 */
+.is-mobile .simple-group-container {
+	flex-direction: column;
+	gap: 12px;
+}
+
+.is-mobile .simple-group-container .panel-left,
+.is-mobile .simple-group-container .panel-right {
+	min-width: unset;
+	width: 100%;
+}
+
+.is-mobile .simple-group-container .actions-list {
+	max-height: 200px;
+}
+
+/* 移动端按钮更大的点击区域 */
+.is-mobile .sidebar-organizer-action-item {
+	padding: 10px 12px;
+	min-height: 44px;
+}
+
+/* 移动端图标编辑区域调整 */
+.is-mobile .icon-section {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.is-mobile .icon-preview-small {
+	width: 100%;
+	height: 48px;
+}
+
+/* 移动端设置面板分组项自适应 */
+.is-mobile .sidebar-organizer-custom-group-item {
+	flex-wrap: wrap;
+}
+
+.is-mobile .sidebar-organizer-custom-group-item .group-header {
+	flex-wrap: wrap;
+}
+
+.is-mobile .sidebar-organizer-custom-group-item .group-actions {
+	width: 100%;
+	justify-content: flex-end;
+	margin-top: 4px;
+}
