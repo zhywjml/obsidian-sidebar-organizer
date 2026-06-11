@@ -3,11 +3,13 @@
 [中文](#中文) | [English](#english) | [日本語](#日本語) | [한국어](#한국어)
 ---
 
-| **内容以及预览** | |
+| **内容以及预览** | 包含桌面端布局以及移动端（平板）布局 |
 | :---: | :---: |
 | **设置页** | **实际使用** |
 | <img style="max-width:100%;height:auto" alt="image-20260609161516871" src="https://github.com/user-attachments/assets/c34c0980-a7f1-4ea1-a0b7-a3218be1c717" /> | <img style="max-width:100%;height:auto" alt="image-20260609161638780" src="https://github.com/user-attachments/assets/3beb9b91-a26b-448d-8a35-494ad6cd47ce" /> |
 | <img style="max-width:100%;height:auto" alt="image-20260609161549318" src="https://github.com/user-attachments/assets/c1abb748-b062-4b5c-85e8-73be6a00282f" /> | <img style="max-width:100%;height:auto" alt="image-20260609161709326" src="https://github.com/user-attachments/assets/8f1c1ed4-f166-4fb3-8747-cc99bb8f1773" /> |
+| <img style="max-width:100%;height:auto" alt="图片" src="https://github.com/user-attachments/assets/0089ac96-d9d5-43f8-890c-09d2f374efc2" /> |<img style="max-width:100%;height:auto" alt="图片" src="https://github.com/user-attachments/assets/8d5d0ade-0bdf-4227-8ea8-0ec4b0ace6ff" /> | 
+
 
 
 
