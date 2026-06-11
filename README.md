@@ -25,6 +25,8 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 - **Blur Effect** - Beautiful blur background effect for popup menus
 - **Multi-language** - Supports 8 languages: English, 中文, 日本語, 한국어, Deutsch, Русский, Español, Français
 
+> Supported on both desktop and mobile (tablet layout).
+
 ### Usage
 
 1. Open Settings → Sidebar Organizer
@@ -68,6 +70,8 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 - **毛玻璃效果** - 弹出菜单的美观模糊背景效果
 - **多语言** - 支持 8 种语言：English, 中文, 日本語, 한국어, Deutsch, Русский, Español, Français
 
+> 经测试已支持移动端（平板布局）以及桌面端布局。
+
 ### 使用方法
 
 1. 打开设置 → Sidebar Organizer
@@ -105,6 +109,8 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 - **ブラー効果** - ポップアップメニューの美しい背景ブラー効果
 - **多言語対応** - 8言語をサポート: English, 中文, 日本語, 한국어, Deutsch, Русский, Español, Français
 
+> モバイル（タブレットレイアウト）およびデスクトップの両方でサポートされています。
+
 ### 使い方
 
 1. 設定 → Sidebar Organizer を開く
@@ -127,6 +133,8 @@ An Obsidian plugin that organizes sidebar icons into grouped hover menus - declu
 - **지니 애니메이션** - macOS 스타일 스프링 애니메이션으로 팝업 부드럽게 열고 닫기
 - **블러 효과** - 팝업 메뉴의 아름다운 배경 블러 효과
 - **다국어 지원** - 8개 언어 지원: English, 中文, 日本語, 한국어, Deutsch, Русский, Español, Français
+
+> 모바일(태블릿 레이아웃) 및 데스크톱에서 모두 지원됩니다.
 
 ### 사용 방법
 

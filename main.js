@@ -987,7 +987,7 @@ var SidebarOrganizer = (() => {
   };
 
   // src/main.ts
-  var SidebarOrganizerPlugin = class extends import_obsidian3.Plugin {
+  var _SidebarOrganizerPlugin = class extends import_obsidian3.Plugin {
     constructor() {
       super(...arguments);
       this.installedPlugins = /* @__PURE__ */ new Map();
@@ -1004,6 +1004,22 @@ var SidebarOrganizer = (() => {
       this.popupHovered = false;
       this.isHiding = false;
       this.currentPopupAnchor = null;
+      this.documentClickHandler = null;
+    }
+    /**
+     * 检测当前 DOM 是否包含桌面端 ribbon 结构。
+     * 平板设备通常使用桌面布局，因此不依赖 Platform.isMobile，
+     * 而是根据实际 DOM 结构决定走哪条路径。
+     */
+    hasDesktopRibbon() {
+      return !!document.querySelector(".workspace-ribbon.mod-left") || !!document.querySelector(".workspace-ribbon.mod-right");
+    }
+    /**
+     * 判断当前是否应使用移动端交互方式（点击而非悬停）。
+     * 使用 Platform.isMobile 因为即使平板有桌面布局，交互仍偏触控。
+     */
+    useMobileInteraction() {
+      return import_obsidian3.Platform.isMobile;
     }
     t(key, params) {
       const vaultConfig = this.app.vault.config;
@@ -1070,12 +1086,32 @@ var SidebarOrganizer = (() => {
           }
         }, 500);
       });
-      ["left", "right"].forEach((side) => {
-        const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
-        if (ribbon) {
-          this.mutationObserver.observe(ribbon, { childList: true, subtree: true });
+      if (this.hasDesktopRibbon()) {
+        ["left", "right"].forEach((side) => {
+          const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
+          if (ribbon) {
+            this.mutationObserver.observe(ribbon, { childList: true, subtree: true });
+          }
+        });
+      } else {
+        const mobileTargets = [
+          ".workspace-drawer-ribbon",
+          ".workspace-drawer",
+          ".side-dock-actions"
+        ];
+        let observed = false;
+        for (const selector of mobileTargets) {
+          const el = document.querySelector(selector);
+          if (el) {
+            this.mutationObserver.observe(el, { childList: true, subtree: true });
+            observed = true;
+            break;
+          }
         }
-      });
+        if (!observed) {
+          this.mutationObserver.observe(document.body, { childList: true, subtree: false });
+        }
+      }
     }
     stopMutationObserver() {
       if (this.observerDebounceTimer) {
@@ -1096,11 +1132,19 @@ var SidebarOrganizer = (() => {
       }
       this.popupMouseEnterHandler = null;
       this.popupMouseLeaveHandler = null;
+      if (this.documentClickHandler) {
+        document.removeEventListener("click", this.documentClickHandler);
+        this.documentClickHandler = null;
+      }
     }
     cleanupAllListeners() {
       for (const [el, handlers] of this.boundElements) {
         el.removeEventListener("mouseenter", handlers.mouseEnter);
         el.removeEventListener("mouseleave", handlers.mouseLeave);
+        if (handlers.click) {
+          el.removeEventListener("click", handlers.click);
+          el.removeEventListener("click", handlers.click, { capture: true });
+        }
         el.removeAttribute("data-popup-bound");
       }
       this.boundElements.clear();
@@ -1136,8 +1180,12 @@ var SidebarOrganizer = (() => {
       try {
         this.stopMutationObserver();
         this.restoreOriginalIcons();
-        this.processRibbon("left");
-        this.processRibbon("right");
+        if (this.hasDesktopRibbon()) {
+          this.processRibbon("left");
+          this.processRibbon("right");
+        } else {
+          this.processRibbonMobile();
+        }
       } finally {
         this.isOrganizing = false;
         this.startMutationObserver();
@@ -1147,9 +1195,41 @@ var SidebarOrganizer = (() => {
       const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
       if (!ribbon)
         return;
-      const allIcons = ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action");
+      this.processIconList(
+        Array.from(ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action"))
+      );
+    }
+    processRibbonMobile() {
+      for (const selector of _SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
+        const container = document.querySelector(selector);
+        if (container) {
+          const icons = container.querySelectorAll(
+            _SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
+          );
+          if (icons.length > 0) {
+            this.processIconList(Array.from(icons));
+            return;
+          }
+        }
+      }
+      const ribbonActions = document.querySelectorAll(".side-dock-ribbon-action");
+      if (ribbonActions.length > 0) {
+        this.processIconList(Array.from(ribbonActions));
+        return;
+      }
+      const allClickable = document.querySelectorAll(".clickable-icon");
+      const filtered = Array.from(allClickable).filter(
+        (el) => !_SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
+          (ancestor) => el.closest(ancestor) !== null
+        )
+      );
+      if (filtered.length > 0) {
+        this.processIconList(filtered);
+      }
+    }
+    processIconList(icons) {
       const actionMap = /* @__PURE__ */ new Map();
-      allIcons.forEach((el) => {
+      icons.forEach((el) => {
         try {
           const element = el;
           const action = this.identifyAction(element);
@@ -1196,6 +1276,36 @@ var SidebarOrganizer = (() => {
       if (mainElement.hasAttribute("data-popup-bound"))
         return;
       mainElement.setAttribute("data-popup-bound", "true");
+      if (this.useMobileInteraction()) {
+        const clickHandler = (e) => {
+          if (!e.isTrusted)
+            return;
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          if (!mainElement.hasAttribute("data-popup-bound"))
+            return;
+          if (this.popupEl && this.currentPopupAnchor === mainElement) {
+            this.hideMenu();
+          } else {
+            if (this.popupEl) {
+              this.cleanupPopupHandlers();
+              this.popupEl.remove();
+              this.popupEl = null;
+            }
+            this.showMenu(mainElement, title, actions);
+          }
+        };
+        mainElement.addEventListener("click", clickHandler, { capture: true });
+        this.boundElements.set(mainElement, {
+          mouseEnter: () => {
+          },
+          mouseLeave: () => {
+          },
+          click: clickHandler
+        });
+        return;
+      }
       const mouseEnterHandler = () => {
         if (!mainElement.hasAttribute("data-popup-bound"))
           return;
@@ -1267,19 +1377,33 @@ var SidebarOrganizer = (() => {
       document.body.appendChild(this.popupEl);
       this.currentPopupAnchor = mainElement;
       const popup = this.popupEl;
-      this.popupMouseEnterHandler = () => {
-        this.popupHovered = true;
-        if (this.hideTimeout) {
-          clearTimeout(this.hideTimeout);
-          this.hideTimeout = null;
-        }
-      };
-      this.popupMouseLeaveHandler = () => {
-        this.popupHovered = false;
-        this.scheduleHide();
-      };
-      popup.addEventListener("mouseenter", this.popupMouseEnterHandler);
-      popup.addEventListener("mouseleave", this.popupMouseLeaveHandler);
+      if (this.useMobileInteraction()) {
+        this.documentClickHandler = (e) => {
+          const target = e.target;
+          if (!this.popupEl)
+            return;
+          if (!this.popupEl.contains(target) && target !== mainElement && !mainElement.contains(target)) {
+            this.hideMenu();
+          }
+        };
+        setTimeout(() => {
+          document.addEventListener("click", this.documentClickHandler);
+        }, 0);
+      } else {
+        this.popupMouseEnterHandler = () => {
+          this.popupHovered = true;
+          if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+            this.hideTimeout = null;
+          }
+        };
+        this.popupMouseLeaveHandler = () => {
+          this.popupHovered = false;
+          this.scheduleHide();
+        };
+        popup.addEventListener("mouseenter", this.popupMouseEnterHandler);
+        popup.addEventListener("mouseleave", this.popupMouseLeaveHandler);
+      }
       const bodyEl = popup.createDiv("sidebar-organizer-popup-body");
       const titleEl = bodyEl.createDiv("sidebar-organizer-plugin-name");
       titleEl.textContent = title;
@@ -1328,16 +1452,25 @@ var SidebarOrganizer = (() => {
     }
     positionPopup(popup, anchor) {
       const rect = anchor.getBoundingClientRect();
-      const isLeftSide = rect.left < window.innerWidth / 2;
       const popupWidth = Math.max(popup.offsetWidth, 190);
+      const isLeftSide = rect.left < window.innerWidth / 2;
       if (isLeftSide) {
         popup.style.left = `${rect.right + 8}px`;
         popup.classList.remove("popup-right");
       } else {
-        popup.style.left = `${rect.left - popupWidth - 8}px`;
+        const leftPos = Math.max(8, rect.left - popupWidth - 8);
+        popup.style.left = `${leftPos}px`;
         popup.classList.add("popup-right");
       }
-      popup.style.top = `${rect.top}px`;
+      const popupHeight = Math.max(popup.offsetHeight, 100);
+      let top = rect.top;
+      if (top + popupHeight > window.innerHeight - 8) {
+        top = Math.max(8, window.innerHeight - popupHeight - 8);
+      }
+      popup.style.top = `${top}px`;
+      if (this.useMobileInteraction()) {
+        popup.style.maxWidth = `${window.innerWidth - 16}px`;
+      }
     }
     identifyAction(element) {
       var _a, _b;
@@ -1493,24 +1626,71 @@ var SidebarOrganizer = (() => {
     getAllActions() {
       const actions = [];
       const seen = /* @__PURE__ */ new Set();
-      ["left", "right"].forEach((side) => {
-        const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
-        if (!ribbon)
+      const addAction = (el) => {
+        const action = this.identifyAction(el);
+        if (!action)
           return;
-        ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action").forEach((el) => {
-          const element = el;
-          const action = this.identifyAction(element);
-          if (!action)
+        if (!seen.has(action.actionId)) {
+          seen.add(action.actionId);
+          actions.push(action);
+        }
+      };
+      if (this.hasDesktopRibbon()) {
+        ["left", "right"].forEach((side) => {
+          const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
+          if (!ribbon)
             return;
-          if (!seen.has(action.actionId)) {
-            seen.add(action.actionId);
-            actions.push(action);
-          }
+          ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action").forEach(addAction);
         });
-      });
+      } else {
+        this.collectMobileActions(addAction);
+      }
       return actions;
     }
+    collectMobileActions(addAction) {
+      for (const selector of _SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
+        const container = document.querySelector(selector);
+        if (container) {
+          const icons = container.querySelectorAll(
+            _SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
+          );
+          if (icons.length > 0) {
+            icons.forEach(addAction);
+            return;
+          }
+        }
+      }
+      const ribbonActions = document.querySelectorAll(".side-dock-ribbon-action");
+      if (ribbonActions.length > 0) {
+        ribbonActions.forEach(addAction);
+        return;
+      }
+      const allClickable = document.querySelectorAll(".clickable-icon");
+      Array.from(allClickable).filter((el) => !_SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
+        (ancestor) => el.closest(ancestor) !== null
+      )).forEach(addAction);
+    }
   };
+  var SidebarOrganizerPlugin = _SidebarOrganizerPlugin;
+  // 移动端侧边栏图标容器选择器（按优先级）
+  SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS = [
+    ".workspace-drawer-ribbon .side-dock-actions",
+    ".workspace-drawer-ribbon",
+    ".workspace-drawer .side-dock-actions"
+  ];
+  // 移动端图标元素选择器
+  SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS = ".side-dock-ribbon-action, .clickable-icon";
+  // 需要排除的容器（避免匹配非侧边栏元素）
+  SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS = [
+    ".workspace-leaf",
+    ".view-header",
+    ".status-bar",
+    ".mobile-navbar",
+    ".modal-container",
+    ".menu",
+    ".workspace-tab-header-container",
+    ".setting-item"
+  ];
   var main_default = SidebarOrganizerPlugin;
   return __toCommonJS(main_exports);
 })();
