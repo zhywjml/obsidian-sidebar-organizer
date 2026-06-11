@@ -1,5 +1,5 @@
-import { App, Plugin, Notice, PluginManifest, Platform } from 'obsidian';
-import { SidebarOrganizerSettings, DEFAULT_SETTINGS, SidebarAction, CustomGroup, VaultConfig, PluginsContainer, Language } from './types';
+import { Plugin, Notice, PluginManifest, Platform } from 'obsidian';
+import { SidebarOrganizerSettings, DEFAULT_SETTINGS, SidebarAction, VaultConfig, PluginsContainer, Language } from './types';
 import { getPluginLanguage, translate } from './i18n';
 import { parseSvg, sanitizeSvgColors, setSvgContent } from './sidebar';
 import { SidebarOrganizerSettingTab } from './settings';
@@ -58,8 +58,8 @@ export class SidebarOrganizerPlugin extends Plugin {
 	 * 而是根据实际 DOM 结构决定走哪条路径。
 	 */
 	private hasDesktopRibbon(): boolean {
-		return !!document.querySelector('.workspace-ribbon.mod-left') ||
-			!!document.querySelector('.workspace-ribbon.mod-right');
+		return !!activeDocument.querySelector('.workspace-ribbon.mod-left') ||
+			!!activeDocument.querySelector('.workspace-ribbon.mod-right');
 	}
 
 	/**
@@ -105,7 +105,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 
 		this.app.workspace.onLayoutReady(() => {
 			this.loadInstalledPlugins();
-			setTimeout(() => {
+			window.setTimeout(() => {
 				if (this.settings.enabled) {
 					this.organizeSidebars();
 				}
@@ -119,7 +119,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		this.cleanupPopupHandlers();
 		this.cleanupAllListeners();
 		if (this.showTimeout) {
-			clearTimeout(this.showTimeout);
+			window.clearTimeout(this.showTimeout);
 			this.showTimeout = null;
 		}
 		this.restoreOriginalIcons();
@@ -129,7 +129,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		this.stopMutationObserver();
 		this.mutationObserver = new MutationObserver(() => {
 			if (this.observerDebounceTimer) {
-				clearTimeout(this.observerDebounceTimer);
+				window.clearTimeout(this.observerDebounceTimer);
 			}
 			this.observerDebounceTimer = window.setTimeout(() => {
 				if (this.settings.enabled) {
@@ -146,7 +146,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		if (this.hasDesktopRibbon()) {
 			// 桌面端布局：观察左右 ribbon
 			['left', 'right'].forEach(side => {
-				const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
+				const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
 				if (ribbon) {
 					this.mutationObserver!.observe(ribbon, { childList: true, subtree: true });
 				}
@@ -160,7 +160,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			];
 			let observed = false;
 			for (const selector of mobileTargets) {
-				const el = document.querySelector(selector);
+				const el = activeDocument.querySelector(selector);
 				if (el) {
 					this.mutationObserver!.observe(el, { childList: true, subtree: true });
 					observed = true;
@@ -169,14 +169,14 @@ export class SidebarOrganizerPlugin extends Plugin {
 			}
 			// 回退：观察 body 顶层，当抽屉出现时触发重新扫描
 			if (!observed) {
-				this.mutationObserver!.observe(document.body, { childList: true, subtree: false });
+				this.mutationObserver!.observe(activeDocument.body, { childList: true, subtree: false });
 			}
 		}
 	}
 
 	private stopMutationObserver(): void {
 		if (this.observerDebounceTimer) {
-			clearTimeout(this.observerDebounceTimer);
+			window.clearTimeout(this.observerDebounceTimer);
 			this.observerDebounceTimer = null;
 		}
 		if (this.mutationObserver) {
@@ -196,7 +196,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		this.popupMouseLeaveHandler = null;
 		// Clean up document-level click handler (mobile)
 		if (this.documentClickHandler) {
-			document.removeEventListener('click', this.documentClickHandler);
+			activeDocument.removeEventListener('click', this.documentClickHandler);
 			this.documentClickHandler = null;
 		}
 	}
@@ -216,7 +216,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<SidebarOrganizerSettings>);
 	}
 
 	async saveSettings() {
@@ -263,7 +263,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	private processRibbon(side: 'left' | 'right') {
-		const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
+		const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
 		if (!ribbon) return;
 		this.processIconList(
 			Array.from(ribbon.querySelectorAll('.side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action'))
@@ -273,7 +273,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	private processRibbonMobile() {
 		// 策略1：尝试在已知的移动端 ribbon 容器中查找图标
 		for (const selector of SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
-			const container = document.querySelector(selector);
+			const container = activeDocument.querySelector(selector);
 			if (container) {
 				const icons = container.querySelectorAll(
 					SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
@@ -286,14 +286,14 @@ export class SidebarOrganizerPlugin extends Plugin {
 		}
 
 		// 策略2：回退 — 查找所有 .side-dock-ribbon-action（不限容器但类名精确）
-		const ribbonActions = document.querySelectorAll('.side-dock-ribbon-action');
+		const ribbonActions = activeDocument.querySelectorAll('.side-dock-ribbon-action');
 		if (ribbonActions.length > 0) {
 			this.processIconList(Array.from(ribbonActions));
 			return;
 		}
 
 		// 策略3：最终回退 — 使用 .clickable-icon 但排除已知非侧边栏容器
-		const allClickable = document.querySelectorAll('.clickable-icon');
+		const allClickable = activeDocument.querySelectorAll('.clickable-icon');
 		const filtered = Array.from(allClickable).filter(el =>
 			!SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
 				ancestor => el.closest(ancestor) !== null
@@ -354,7 +354,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	private addBadge(element: HTMLElement, count: number) {
 		if (element.querySelector('.sidebar-organizer-badge')) return;
 
-		const badge = document.createElement('span');
+		const badge = activeDocument.createElement('span');
 		badge.className = 'sidebar-organizer-badge';
 		badge.textContent = String(count);
 		element.appendChild(badge);
@@ -401,7 +401,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			this.hoveredIconEl = mainElement;
 
 			if (this.hideTimeout) {
-				clearTimeout(this.hideTimeout);
+				window.clearTimeout(this.hideTimeout);
 				this.hideTimeout = null;
 			}
 
@@ -412,7 +412,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			if (this.isHiding) return;
 
 			if (this.showTimeout) {
-				clearTimeout(this.showTimeout);
+				window.clearTimeout(this.showTimeout);
 			}
 			this.showTimeout = window.setTimeout(() => {
 				if (!mainElement.hasAttribute('data-popup-bound')) return;
@@ -425,7 +425,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			if (!mainElement.hasAttribute('data-popup-bound')) return;
 			this.hoveredIconEl = null;
 			if (this.showTimeout) {
-				clearTimeout(this.showTimeout);
+				window.clearTimeout(this.showTimeout);
 				this.showTimeout = null;
 			}
 			this.scheduleHide();
@@ -438,7 +438,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	private scheduleHide() {
-		if (this.hideTimeout) clearTimeout(this.hideTimeout);
+		if (this.hideTimeout) window.clearTimeout(this.hideTimeout);
 		this.hideTimeout = window.setTimeout(() => {
 			// Don't hide if mouse is over the popup
 			if (this.popupHovered) return;
@@ -461,17 +461,17 @@ export class SidebarOrganizerPlugin extends Plugin {
 		}
 
 		if (this.hideTimeout) {
-			clearTimeout(this.hideTimeout);
+			window.clearTimeout(this.hideTimeout);
 			this.hideTimeout = null;
 		}
 		if (this.showTimeout) {
-			clearTimeout(this.showTimeout);
+			window.clearTimeout(this.showTimeout);
 			this.showTimeout = null;
 		}
 
-		this.popupEl = document.createElement('div');
+		this.popupEl = activeDocument.createElement('div');
 		this.popupEl.className = 'sidebar-organizer-popup';
-		document.body.appendChild(this.popupEl);
+		activeDocument.body.appendChild(this.popupEl);
 		this.currentPopupAnchor = mainElement;
 
 		const popup = this.popupEl;
@@ -486,14 +486,14 @@ export class SidebarOrganizerPlugin extends Plugin {
 				}
 			};
 			// Defer to avoid the same click that opened the popup from closing it
-			setTimeout(() => {
-				document.addEventListener('click', this.documentClickHandler!);
+			window.setTimeout(() => {
+				activeDocument.addEventListener('click', this.documentClickHandler!);
 			}, 0);
 		} else {
 			this.popupMouseEnterHandler = () => {
 				this.popupHovered = true;
 				if (this.hideTimeout) {
-					clearTimeout(this.hideTimeout);
+					window.clearTimeout(this.hideTimeout);
 					this.hideTimeout = null;
 				}
 			};
@@ -537,7 +537,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			popup.style.setProperty('--blur-amount', `${this.settings.blurIntensity}px`);
 		}
 
-		requestAnimationFrame(() => {
+		window.requestAnimationFrame(() => {
 			popup.classList.add('visible');
 		});
 	}
@@ -552,7 +552,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		popup.classList.remove('visible');
 		popup.classList.add('hiding');
 
-		setTimeout(() => {
+		window.setTimeout(() => {
 			this.popupHovered = false;
 			if (popup && popup.parentElement) {
 				popup.remove();
@@ -722,11 +722,11 @@ export class SidebarOrganizerPlugin extends Plugin {
 
 	restoreOriginalIcons() {
 		if (this.hideTimeout) {
-			clearTimeout(this.hideTimeout);
+			window.clearTimeout(this.hideTimeout);
 			this.hideTimeout = null;
 		}
 		if (this.showTimeout) {
-			clearTimeout(this.showTimeout);
+			window.clearTimeout(this.showTimeout);
 			this.showTimeout = null;
 		}
 
@@ -745,7 +745,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		this.hoveredIconEl = null;
 		this.currentPopupAnchor = null;
 
-		document.querySelectorAll('[data-original-svg]').forEach(el => {
+		activeDocument.querySelectorAll('[data-original-svg]').forEach(el => {
 			try {
 				this.restoreOriginalIcon(el as HTMLElement);
 			} catch (e) {
@@ -753,15 +753,15 @@ export class SidebarOrganizerPlugin extends Plugin {
 			}
 		});
 
-		document.querySelectorAll('.sidebar-organizer-hidden').forEach(el => {
+		activeDocument.querySelectorAll('.sidebar-organizer-hidden').forEach(el => {
 			el.classList.remove('sidebar-organizer-hidden');
 		});
 
-		document.querySelectorAll('.sidebar-organizer-badge').forEach(el => {
+		activeDocument.querySelectorAll('.sidebar-organizer-badge').forEach(el => {
 			try { el.remove(); } catch (e) { /* element may already be detached */ }
 		});
 
-		document.querySelectorAll('[data-popup-bound]').forEach(el => {
+		activeDocument.querySelectorAll('[data-popup-bound]').forEach(el => {
 			el.removeAttribute('data-popup-bound');
 		});
 	}
@@ -782,7 +782,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		if (this.hasDesktopRibbon()) {
 			// 桌面端布局：从左右 ribbon 中获取
 			['left', 'right'].forEach(side => {
-				const ribbon = document.querySelector(`.workspace-ribbon.mod-${side}`);
+				const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
 				if (!ribbon) return;
 				ribbon.querySelectorAll('.side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action').forEach(addAction);
 			});
@@ -797,7 +797,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 	private collectMobileActions(addAction: (el: Element) => void) {
 		// 策略1：尝试精确容器
 		for (const selector of SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
-			const container = document.querySelector(selector);
+			const container = activeDocument.querySelector(selector);
 			if (container) {
 				const icons = container.querySelectorAll(
 					SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
@@ -810,14 +810,14 @@ export class SidebarOrganizerPlugin extends Plugin {
 		}
 
 		// 策略2：回退到 .side-dock-ribbon-action
-		const ribbonActions = document.querySelectorAll('.side-dock-ribbon-action');
+		const ribbonActions = activeDocument.querySelectorAll('.side-dock-ribbon-action');
 		if (ribbonActions.length > 0) {
 			ribbonActions.forEach(addAction);
 			return;
 		}
 
 		// 策略3：过滤后的 .clickable-icon
-		const allClickable = document.querySelectorAll('.clickable-icon');
+		const allClickable = activeDocument.querySelectorAll('.clickable-icon');
 		Array.from(allClickable)
 			.filter(el => !SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
 				ancestor => el.closest(ancestor) !== null
