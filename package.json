@@ -1,6 +1,6 @@
 {
   "name": "obsidian-sidebar-organizer",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Organize sidebar icons into grouped hover menus",
   "main": "main.js",
   "scripts": {
