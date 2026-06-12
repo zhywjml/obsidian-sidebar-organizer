@@ -697,6 +697,9 @@ export class SidebarOrganizerPlugin extends Plugin {
 				sanitizeSvgColors(newSvg);
 				newSvg.classList.add('sidebar-organizer-custom-icon');
 				newSvg.classList.add('sidebar-organizer-inherit-color');
+				newSvg.classList.add('svg-icon');
+				newSvg.removeAttribute('width');
+				newSvg.removeAttribute('height');
 				svgEl.replaceWith(newSvg);
 				return true;
 			}

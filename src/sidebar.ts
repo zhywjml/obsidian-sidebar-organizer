@@ -11,6 +11,9 @@ export function setSvgContent(element: HTMLElement, svgContent: string): void {
 	const doc = parser.parseFromString(svgContent.trim(), 'image/svg+xml');
 	const svg = doc.querySelector('svg');
 	if (svg) {
+		svg.classList.add('svg-icon');
+		svg.removeAttribute('width');
+		svg.removeAttribute('height');
 		element.appendChild(svg);
 	}
 }

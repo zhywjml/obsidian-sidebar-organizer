@@ -234,15 +234,15 @@ body .sidebar-organizer-hidden {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 20px;
-	height: 20px;
+	width: calc(var(--icon-size, 20px) + 4px);
+	height: calc(var(--icon-size, 20px) + 4px);
 	flex-shrink: 0;
 	color: var(--icon-color);
 }
 
 .sidebar-organizer-action-icon svg {
-	width: 16px;
-	height: 16px;
+	width: var(--icon-size, 18px);
+	height: var(--icon-size, 18px);
 }
 
 .sidebar-organizer-action-label {
@@ -636,15 +636,6 @@ body .sidebar-organizer-hidden {
 	stroke: currentColor;
 }
 
-/* 侧边栏图标尺寸 */
-.workspace-ribbon-action .sidebar-organizer-custom-icon,
-.side-dock-ribbon-action .sidebar-organizer-custom-icon,
-.clickable-icon .sidebar-organizer-custom-icon {
-	width: 18px;
-	height: 18px;
-	min-width: 18px;
-	min-height: 18px;
-}
 
 /* ==================== 检测分组操作按钮 ==================== */
 
