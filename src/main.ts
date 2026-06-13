@@ -9,6 +9,7 @@ interface BoundEventHandlers {
 	mouseEnter: () => void;
 	mouseLeave: () => void;
 	click?: (e: MouseEvent) => void;
+	touchBlocker?: (e: Event) => void;
 }
 
 export class SidebarOrganizerPlugin extends Plugin {
@@ -209,6 +210,12 @@ export class SidebarOrganizerPlugin extends Plugin {
 				el.removeEventListener('click', handlers.click);
 				el.removeEventListener('click', handlers.click, { capture: true });
 			}
+			if (handlers.touchBlocker) {
+				el.removeEventListener('touchstart', handlers.touchBlocker, { capture: true });
+				el.removeEventListener('touchend', handlers.touchBlocker, { capture: true });
+				el.removeEventListener('pointerdown', handlers.touchBlocker, { capture: true });
+				el.removeEventListener('pointerup', handlers.touchBlocker, { capture: true });
+			}
 			el.removeAttribute('data-popup-bound');
 		}
 		this.boundElements.clear();
@@ -386,11 +393,26 @@ export class SidebarOrganizerPlugin extends Plugin {
 					this.showMenu(mainElement, title, actions);
 				}
 			};
+			
+			// 拦截原生触摸事件，防止 Obsidian 提前触发底层逻辑
+			const touchBlocker = (e: Event) => {
+				if (!e.isTrusted) return;
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+				// 不调用 e.preventDefault()，以允许浏览器后续触发 click 事件
+			};
+
 			mainElement.addEventListener('click', clickHandler, { capture: true });
+			mainElement.addEventListener('touchstart', touchBlocker, { capture: true });
+			mainElement.addEventListener('touchend', touchBlocker, { capture: true });
+			mainElement.addEventListener('pointerdown', touchBlocker, { capture: true });
+			mainElement.addEventListener('pointerup', touchBlocker, { capture: true });
+
 			this.boundElements.set(mainElement, {
 				mouseEnter: () => {},
 				mouseLeave: () => {},
-				click: clickHandler
+				click: clickHandler,
+				touchBlocker: touchBlocker
 			});
 			return;
 		}

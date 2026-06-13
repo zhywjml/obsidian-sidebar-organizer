@@ -1148,6 +1148,12 @@ var SidebarOrganizer = (() => {
           el.removeEventListener("click", handlers.click);
           el.removeEventListener("click", handlers.click, { capture: true });
         }
+        if (handlers.touchBlocker) {
+          el.removeEventListener("touchstart", handlers.touchBlocker, { capture: true });
+          el.removeEventListener("touchend", handlers.touchBlocker, { capture: true });
+          el.removeEventListener("pointerdown", handlers.touchBlocker, { capture: true });
+          el.removeEventListener("pointerup", handlers.touchBlocker, { capture: true });
+        }
         el.removeAttribute("data-popup-bound");
       }
       this.boundElements.clear();
@@ -1299,13 +1305,24 @@ var SidebarOrganizer = (() => {
             this.showMenu(mainElement, title, actions);
           }
         };
+        const touchBlocker = (e) => {
+          if (!e.isTrusted)
+            return;
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+        };
         mainElement.addEventListener("click", clickHandler, { capture: true });
+        mainElement.addEventListener("touchstart", touchBlocker, { capture: true });
+        mainElement.addEventListener("touchend", touchBlocker, { capture: true });
+        mainElement.addEventListener("pointerdown", touchBlocker, { capture: true });
+        mainElement.addEventListener("pointerup", touchBlocker, { capture: true });
         this.boundElements.set(mainElement, {
           mouseEnter: () => {
           },
           mouseLeave: () => {
           },
-          click: clickHandler
+          click: clickHandler,
+          touchBlocker
         });
         return;
       }
