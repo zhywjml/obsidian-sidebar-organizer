@@ -12,9 +12,8 @@ var SidebarOrganizer = (() => {
   var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
     get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
   }) : x)(function(x) {
-    if (typeof require !== "undefined")
-      return require.apply(this, arguments);
-    throw new Error('Dynamic require of "' + x + '" is not supported');
+    if (typeof require !== "undefined") return require.apply(this, arguments);
+    throw Error('Dynamic require of "' + x + '" is not supported');
   });
   var __export = (target, all) => {
     for (var name in all)
@@ -43,6 +42,11 @@ var SidebarOrganizer = (() => {
     enabled: true,
     blurEffect: true,
     blurIntensity: 16,
+    popupRounded: true,
+    popupRadius: 12,
+    liquidGlass: false,
+    liquidGlassBlur: 1.5,
+    waterDrop: false,
     customGroups: [],
     language: "auto"
   };
@@ -54,10 +58,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "\u5C06\u540C\u4E00\u63D2\u4EF6\u7684\u591A\u4E2A\u4FA7\u8FB9\u680F\u56FE\u6807\u5408\u5E76\u4E3A\u4E00\u4E2A\uFF0C\u60AC\u505C\u663E\u793A\u529F\u80FD\u83DC\u5355",
       enableOrganizer: "\u542F\u7528\u4FA7\u8FB9\u680F\u6574\u7406",
       enableOrganizerDesc: "\u5F00\u542F/\u5173\u95ED\u4FA7\u8FB9\u680F\u56FE\u6807\u5408\u5E76\u529F\u80FD",
+      popupAppearance: "\u5F39\u51FA\u83DC\u5355\u5916\u89C2",
       blurEffect: "\u6BDB\u73BB\u7483\u6548\u679C",
       blurEffectDesc: "\u4E3A\u5F39\u51FA\u83DC\u5355\u6DFB\u52A0\u6A21\u7CCA\u80CC\u666F\u6548\u679C",
       blurIntensity: "\u6A21\u7CCA\u5F3A\u5EA6",
       blurIntensityDesc: "\u8C03\u6574\u80CC\u666F\u6A21\u7CCA\u7A0B\u5EA6 (\u5F53\u524D: {value}px)",
+      popupRounded: "\u5706\u89D2\u5F39\u7A97",
+      popupRoundedDesc: "\u5F39\u51FA\u83DC\u5355\u4F7F\u7528\u5706\u89D2\u8FD8\u662F\u65B9\u5F62\u8FB9\u89D2",
+      popupRadius: "\u5706\u89D2\u5927\u5C0F",
+      popupRadiusDesc: "\u5F39\u7A97\u5706\u89D2\u534A\u5F84\uFF08\u5F53\u524D: {value}px\uFF09",
+      liquidGlass: "\u6DB2\u6001\u73BB\u7483\u6548\u679C",
+      liquidGlassDesc: "\u5B9E\u9A8C\u6027\uFF1A\u6A21\u62DF iOS 26 \u6DB2\u6001\u73BB\u7483\u8D28\u611F\uFF08\u78E8\u7802 + \u8FB9\u7F18\u9AD8\u5149 + \u5149\u6CFD\uFF09\uFF0C\u6E32\u67D3\u5F00\u9500\u8F83\u9AD8",
+      liquidGlassBlur: "\u6A21\u7CCA\u7A0B\u5EA6",
+      liquidGlassBlurDesc: "\u6DB2\u6001\u73BB\u7483\u80CC\u666F\u6A21\u7CCA\u5F3A\u5EA6\uFF08\u5F53\u524D: {value}px\uFF09",
+      waterDrop: "\u6C34\u6EF4\u52A8\u6548",
+      waterDropDesc: "\u5F39\u7A97\u4EE5\u6C34\u6EF4\u5F62\u6001\u51DD\u805A\u5C55\u5F00/\u6536\u7F29\u6D88\u5931\uFF08\u5B9E\u9A8C\u6027\uFF09",
       refreshSidebar: "\u5237\u65B0\u4FA7\u8FB9\u680F",
       refreshSidebarDesc: "\u91CD\u65B0\u68C0\u6D4B\u5E76\u6574\u7406\u4FA7\u8FB9\u680F\u56FE\u6807",
       refreshBtn: "\u5237\u65B0",
@@ -85,7 +100,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "\u5982: \u5E38\u7528\u5DE5\u5177",
       customIcon: "\u81EA\u5B9A\u4E49\u56FE\u6807\uFF08\u53EF\u9009\uFF09",
       clickSelectAll: "\u70B9\u51FB\u5168\u9009",
-      selectAll: "\u5168\u9009",
       pleaseEnterName: "\u8BF7\u8F93\u5165\u5206\u7EC4\u540D\u79F0",
       pleaseSelectOne: "\u8BF7\u81F3\u5C11\u9009\u62E9\u4E00\u4E2A\u529F\u80FD",
       groupCreated: "\u5206\u7EC4\u5DF2\u521B\u5EFA",
@@ -94,14 +108,17 @@ var SidebarOrganizer = (() => {
       instruction1: '\u70B9\u51FB"\u521B\u5EFA\u5206\u7EC4"\u53EF\u4EE5\u5C06\u591A\u4E2A\u4FA7\u8FB9\u680F\u56FE\u6807\u5408\u5E76\u4E3A\u4E00\u4E2A',
       instruction2: "\u60AC\u505C\u5728\u5408\u5E76\u540E\u7684\u56FE\u6807\u4E0A\u4F1A\u663E\u793A\u529F\u80FD\u83DC\u5355",
       instruction3: "\u70B9\u51FB\u529F\u80FD\u9879\u5373\u53EF\u6FC0\u6D3B\u5BF9\u5E94\u529F\u80FD",
-      instruction4: "\u70B9\u51FB\u5408\u5E76\u56FE\u6807\u53EF\u4EE5\u76F4\u63A5\u6253\u5F00\u7B2C\u4E00\u4E2A\u529F\u80FD",
+      instruction4: "\u70B9\u51FB\u5408\u5E76\u56FE\u6807\u53EF\u4EE5\u6253\u5F00\u529F\u80FD\u83DC\u5355",
       language: "\u8BED\u8A00",
       languageDesc: "\u9009\u62E9\u63D2\u4EF6\u754C\u9762\u8BED\u8A00\uFF08\u9ED8\u8BA4\u8DDF\u968F Obsidian \u8BBE\u7F6E\uFF09",
       auto: "\u81EA\u52A8",
-      assigned: "\u5DF2\u5206\u914D",
+      commandToggle: "\u5207\u6362\u542F\u7528\u72B6\u6001",
+      commandRefresh: "\u5237\u65B0\u4FA7\u8FB9\u680F",
+      toggleEnabled: "Sidebar Organizer \u5DF2\u542F\u7528",
+      toggleDisabled: "Sidebar Organizer \u5DF2\u7981\u7528",
+      confirmDeleteGroup: "\u786E\u8BA4\u5220\u9664\uFF1F",
       cancel: "\u53D6\u6D88",
       save: "\u4FDD\u5B58",
-      noPreview: "\u6682\u65E0\u9884\u89C8",
       svgPlaceholder: "\u8F93\u5165 SVG \u4EE3\u7801\uFF08\u53EF\u9009\uFF09",
       examples: "\u793A\u4F8B\uFF1A",
       folder: "\u6587\u4EF6\u5939",
@@ -113,10 +130,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "Merge multiple sidebar icons from the same plugin into one, hover to show function menu",
       enableOrganizer: "Enable Sidebar Organizer",
       enableOrganizerDesc: "Turn on/off sidebar icon merging function",
+      popupAppearance: "Popup Appearance",
       blurEffect: "Blur Effect",
       blurEffectDesc: "Add blur background effect to popup menu",
       blurIntensity: "Blur Intensity",
       blurIntensityDesc: "Adjust background blur level (current: {value}px)",
+      popupRounded: "Rounded popup",
+      popupRoundedDesc: "Use rounded or square corners for popup menus",
+      popupRadius: "Corner radius",
+      popupRadiusDesc: "Popup corner radius (current: {value}px)",
+      liquidGlass: "Liquid glass effect",
+      liquidGlassDesc: "Experimental: iOS 26-style liquid glass (frost, rim highlight, sheen); higher rendering cost",
+      liquidGlassBlur: "Blur amount",
+      liquidGlassBlurDesc: "Liquid glass background blur strength (current: {value}px)",
+      waterDrop: "Water Drop Effect",
+      waterDropDesc: "Popup expands/shrinks like a water drop (experimental)",
       refreshSidebar: "Refresh Sidebar",
       refreshSidebarDesc: "Re-detect and organize sidebar icons",
       refreshBtn: "Refresh",
@@ -144,7 +172,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "e.g.: Common Tools",
       customIcon: "Custom Icon (Optional)",
       clickSelectAll: "Click to select all",
-      selectAll: "Select All",
       pleaseEnterName: "Please enter group name",
       pleaseSelectOne: "Please select at least one function",
       groupCreated: "Group created",
@@ -153,14 +180,17 @@ var SidebarOrganizer = (() => {
       instruction1: 'Click "Create Group" to merge multiple sidebar icons into one',
       instruction2: "Hover over merged icon to show function menu",
       instruction3: "Click function item to activate corresponding function",
-      instruction4: "Click merged icon to directly open the first function",
+      instruction4: "Click the merged icon to open the function menu",
       language: "Language",
       languageDesc: "Select plugin interface language (default follows Obsidian settings)",
       auto: "Auto",
-      assigned: "Assigned",
+      commandToggle: "Toggle",
+      commandRefresh: "Refresh Sidebar",
+      toggleEnabled: "Sidebar Organizer enabled",
+      toggleDisabled: "Sidebar Organizer disabled",
+      confirmDeleteGroup: "Confirm delete?",
       cancel: "Cancel",
       save: "Save",
-      noPreview: "No preview",
       svgPlaceholder: "Enter SVG code (optional)",
       examples: "Examples:",
       folder: "Folder",
@@ -172,10 +202,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "\u540C\u3058\u30D7\u30E9\u30B0\u30A4\u30F3\u306E\u8907\u6570\u306E\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u30921\u3064\u306B\u307E\u3068\u3081\u3001\u30DB\u30D0\u30FC\u3067\u6A5F\u80FD\u30E1\u30CB\u30E5\u30FC\u3092\u8868\u793A",
       enableOrganizer: "\u30B5\u30A4\u30C9\u30D0\u30FC\u6574\u7406\u3092\u6709\u52B9\u5316",
       enableOrganizerDesc: "\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u306E\u7D71\u5408\u6A5F\u80FD\u3092\u30AA\u30F3/\u30AA\u30D5",
+      popupAppearance: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u5916\u89B3",
       blurEffect: "\u30D6\u30E9\u30FC\u52B9\u679C",
       blurEffectDesc: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u30E1\u30CB\u30E5\u30FC\u306B\u80CC\u666F\u30D6\u30E9\u30FC\u52B9\u679C\u3092\u8FFD\u52A0",
       blurIntensity: "\u30D6\u30E9\u30FC\u5F37\u5EA6",
       blurIntensityDesc: "\u80CC\u666F\u306E\u30D6\u30E9\u30FC\u30EC\u30D9\u30EB\u3092\u8ABF\u6574\uFF08\u73FE\u5728: {value}px\uFF09",
+      popupRounded: "\u89D2\u4E38\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7",
+      popupRoundedDesc: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u30E1\u30CB\u30E5\u30FC\u306E\u89D2\u3092\u4E38\u304F\u3059\u308B\u304B\u76F4\u89D2\u306B\u3059\u308B\u304B",
+      popupRadius: "\u89D2\u4E38\u306E\u5927\u304D\u3055",
+      popupRadiusDesc: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u306E\u89D2\u4E38\u534A\u5F84\uFF08\u73FE\u5728: {value}px\uFF09",
+      liquidGlass: "\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u52B9\u679C",
+      liquidGlassDesc: "\u5B9F\u9A13\u7684: iOS 26 \u98A8\u306E\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u8868\u73FE\uFF08\u3059\u308A\u30AC\u30E9\u30B9+\u7E01\u306E\u30CF\u30A4\u30E9\u30A4\u30C8+\u5149\u6CA2\uFF09\u3002\u63CF\u753B\u8CA0\u8377\u304C\u9AD8\u3081",
+      liquidGlassBlur: "\u307C\u304B\u3057\u91CF",
+      liquidGlassBlurDesc: "\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u306E\u80CC\u666F\u307C\u304B\u3057\u5F37\u5EA6\uFF08\u73FE\u5728: {value}px\uFF09",
+      waterDrop: "\u6C34\u6EF4\u30A8\u30D5\u30A7\u30AF\u30C8",
+      waterDropDesc: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u304C\u6C34\u6EF4\u306E\u3088\u3046\u306B\u51DD\u7E2E\u30FB\u53CE\u7E2E\u3057\u307E\u3059\uFF08\u5B9F\u9A13\u7684\uFF09",
       refreshSidebar: "\u30B5\u30A4\u30C9\u30D0\u30FC\u3092\u66F4\u65B0",
       refreshSidebarDesc: "\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u3092\u518D\u691C\u51FA\u3057\u3066\u6574\u7406",
       refreshBtn: "\u66F4\u65B0",
@@ -203,7 +244,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "\u4F8B: \u3088\u304F\u4F7F\u3046\u30C4\u30FC\u30EB",
       customIcon: "\u30AB\u30B9\u30BF\u30E0\u30A2\u30A4\u30B3\u30F3\uFF08\u4EFB\u610F\uFF09",
       clickSelectAll: "\u30AF\u30EA\u30C3\u30AF\u3067\u5168\u9078\u629E",
-      selectAll: "\u5168\u9078\u629E",
       pleaseEnterName: "\u30B0\u30EB\u30FC\u30D7\u540D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044",
       pleaseSelectOne: "\u5C11\u306A\u304F\u3068\u30821\u3064\u306E\u6A5F\u80FD\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044",
       groupCreated: "\u30B0\u30EB\u30FC\u30D7\u3092\u4F5C\u6210\u3057\u307E\u3057\u305F",
@@ -212,14 +252,17 @@ var SidebarOrganizer = (() => {
       instruction1: "\u300C\u30B0\u30EB\u30FC\u30D7\u4F5C\u6210\u300D\u3092\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u8907\u6570\u306E\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u30921\u3064\u306B\u307E\u3068\u3081\u308B",
       instruction2: "\u7D71\u5408\u3055\u308C\u305F\u30A2\u30A4\u30B3\u30F3\u306B\u30DB\u30D0\u30FC\u3059\u308B\u3068\u6A5F\u80FD\u30E1\u30CB\u30E5\u30FC\u304C\u8868\u793A\u3055\u308C\u307E\u3059",
       instruction3: "\u6A5F\u80FD\u9805\u76EE\u3092\u30AF\u30EA\u30C3\u30AF\u3059\u308B\u3068\u5BFE\u5FDC\u3059\u308B\u6A5F\u80FD\u304C\u8D77\u52D5\u3057\u307E\u3059",
-      instruction4: "\u7D71\u5408\u30A2\u30A4\u30B3\u30F3\u3092\u30AF\u30EA\u30C3\u30AF\u3059\u308B\u3068\u6700\u521D\u306E\u6A5F\u80FD\u304C\u76F4\u63A5\u958B\u304D\u307E\u3059",
+      instruction4: "\u7D71\u5408\u30A2\u30A4\u30B3\u30F3\u3092\u30AF\u30EA\u30C3\u30AF\u3059\u308B\u3068\u6A5F\u80FD\u30E1\u30CB\u30E5\u30FC\u304C\u958B\u304D\u307E\u3059",
       language: "\u8A00\u8A9E",
       languageDesc: "\u30D7\u30E9\u30B0\u30A4\u30F3\u306E\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u8A00\u8A9E\u3092\u9078\u629E\uFF08\u30C7\u30D5\u30A9\u30EB\u30C8\u306FObsidian\u306E\u8A2D\u5B9A\u306B\u5F93\u3046\uFF09",
       auto: "\u81EA\u52D5",
-      assigned: "\u5272\u308A\u5F53\u3066\u6E08\u307F",
+      commandToggle: "\u6709\u52B9\u5316\u3092\u5207\u308A\u66FF\u3048",
+      commandRefresh: "\u30B5\u30A4\u30C9\u30D0\u30FC\u3092\u66F4\u65B0",
+      toggleEnabled: "Sidebar Organizer \u304C\u6709\u52B9\u306B\u306A\u308A\u307E\u3057\u305F",
+      toggleDisabled: "Sidebar Organizer \u304C\u7121\u52B9\u306B\u306A\u308A\u307E\u3057\u305F",
+      confirmDeleteGroup: "\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
       cancel: "\u30AD\u30E3\u30F3\u30BB\u30EB",
       save: "\u4FDD\u5B58",
-      noPreview: "\u30D7\u30EC\u30D3\u30E5\u30FC\u306A\u3057",
       svgPlaceholder: "SVG\u30B3\u30FC\u30C9\u3092\u5165\u529B\uFF08\u30AA\u30D7\u30B7\u30E7\u30F3\uFF09",
       examples: "\u4F8B\uFF1A",
       folder: "\u30D5\u30A9\u30EB\u30C0",
@@ -231,10 +274,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "\uB3D9\uC77C\uD55C \uD50C\uB7EC\uADF8\uC778\uC758 \uC5EC\uB7EC \uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58\uC744 \uD558\uB098\uB85C \uD1B5\uD569\uD558\uACE0, \uB9C8\uC6B0\uC2A4 \uC624\uBC84\uB85C \uAE30\uB2A5 \uBA54\uB274 \uD45C\uC2DC",
       enableOrganizer: "\uC0AC\uC774\uB4DC\uBC14 \uC815\uB9AC \uD65C\uC131\uD654",
       enableOrganizerDesc: "\uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58 \uD1B5\uD569 \uAE30\uB2A5 \uCF1C\uAE30/\uB044\uAE30",
+      popupAppearance: "\uD31D\uC5C5 \uBAA8\uC591",
       blurEffect: "\uBE14\uB7EC \uD6A8\uACFC",
       blurEffectDesc: "\uD31D\uC5C5 \uBA54\uB274\uC5D0 \uBC30\uACBD \uBE14\uB7EC \uD6A8\uACFC \uCD94\uAC00",
       blurIntensity: "\uBE14\uB7EC \uAC15\uB3C4",
       blurIntensityDesc: "\uBC30\uACBD \uBE14\uB7EC \uC218\uC900 \uC870\uC815 (\uD604\uC7AC: {value}px)",
+      popupRounded: "\uBAA8\uC11C\uB9AC \uB465\uADFC \uD31D\uC5C5",
+      popupRoundedDesc: "\uD31D\uC5C5 \uBA54\uB274 \uBAA8\uC11C\uB9AC\uB97C \uB465\uAE00\uAC8C \uB610\uB294 \uC9C1\uAC01\uC73C\uB85C \uD45C\uC2DC",
+      popupRadius: "\uBAA8\uC11C\uB9AC \uB465\uADFC \uC815\uB3C4",
+      popupRadiusDesc: "\uD31D\uC5C5 \uBAA8\uC11C\uB9AC \uBC18\uACBD (\uD604\uC7AC: {value}px)",
+      liquidGlass: "\uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4 \uD6A8\uACFC",
+      liquidGlassDesc: "\uC2E4\uD5D8\uC801: iOS 26 \uC2A4\uD0C0\uC77C \uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4(\uD504\uB85C\uC2A4\uD2B8+\uD14C\uB450\uB9AC \uD558\uC774\uB77C\uC774\uD2B8+\uAD11\uD0DD). \uB80C\uB354\uB9C1 \uBD80\uD558\uAC00 \uB192\uC74C",
+      liquidGlassBlur: "\uD750\uB9BC \uC815\uB3C4",
+      liquidGlassBlurDesc: "\uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4 \uBC30\uACBD \uD750\uB9BC \uAC15\uB3C4 (\uD604\uC7AC: {value}px)",
+      waterDrop: "\uBB3C\uBC29\uC6B8 \uD6A8\uACFC",
+      waterDropDesc: "\uD31D\uC5C5\uC774 \uBB3C\uBC29\uC6B8\uCC98\uB7FC \uC751\uC9D1\uB418\uC5B4 \uC5F4\uB9AC\uACE0 \uB2EB\uD799\uB2C8\uB2E4 (\uC2E4\uD5D8\uC801)",
       refreshSidebar: "\uC0AC\uC774\uB4DC\uBC14 \uC0C8\uB85C\uACE0\uCE68",
       refreshSidebarDesc: "\uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58 \uC7AC\uAC10\uC9C0 \uBC0F \uC815\uB9AC",
       refreshBtn: "\uC0C8\uB85C\uACE0\uCE68",
@@ -262,7 +316,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "\uC608: \uC790\uC8FC \uC0AC\uC6A9\uD558\uB294 \uB3C4\uAD6C",
       customIcon: "\uC0AC\uC6A9\uC790 \uC815\uC758 \uC544\uC774\uCF58 (\uC120\uD0DD\uC0AC\uD56D)",
       clickSelectAll: "\uD074\uB9AD\uD558\uC5EC \uC804\uCCB4 \uC120\uD0DD",
-      selectAll: "\uC804\uCCB4 \uC120\uD0DD",
       pleaseEnterName: "\uADF8\uB8F9 \uC774\uB984\uC744 \uC785\uB825\uD558\uC138\uC694",
       pleaseSelectOne: "\uCD5C\uC18C \uD558\uB098\uC758 \uAE30\uB2A5\uC744 \uC120\uD0DD\uD558\uC138\uC694",
       groupCreated: "\uADF8\uB8F9\uC774 \uC0DD\uC131\uB418\uC5C8\uC2B5\uB2C8\uB2E4",
@@ -271,14 +324,17 @@ var SidebarOrganizer = (() => {
       instruction1: '"\uADF8\uB8F9 \uC0DD\uC131"\uC744 \uD074\uB9AD\uD558\uC5EC \uC5EC\uB7EC \uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58\uC744 \uD558\uB098\uB85C \uD1B5\uD569',
       instruction2: "\uD1B5\uD569\uB41C \uC544\uC774\uCF58\uC5D0 \uB9C8\uC6B0\uC2A4\uB97C \uC62C\uB9AC\uBA74 \uAE30\uB2A5 \uBA54\uB274\uAC00 \uD45C\uC2DC\uB429\uB2C8\uB2E4",
       instruction3: "\uAE30\uB2A5 \uD56D\uBAA9\uC744 \uD074\uB9AD\uD558\uBA74 \uD574\uB2F9 \uAE30\uB2A5\uC774 \uD65C\uC131\uD654\uB429\uB2C8\uB2E4",
-      instruction4: "\uD1B5\uD569 \uC544\uC774\uCF58\uC744 \uD074\uB9AD\uD558\uBA74 \uCCAB \uBC88\uC9F8 \uAE30\uB2A5\uC774 \uBC14\uB85C \uC5F4\uB9BD\uB2C8\uB2E4",
+      instruction4: "\uD1B5\uD569 \uC544\uC774\uCF58\uC744 \uD074\uB9AD\uD558\uBA74 \uAE30\uB2A5 \uBA54\uB274\uAC00 \uC5F4\uB9BD\uB2C8\uB2E4",
       language: "\uC5B8\uC5B4",
       languageDesc: "\uD50C\uB7EC\uADF8\uC778 \uC778\uD130\uD398\uC774\uC2A4 \uC5B8\uC5B4 \uC120\uD0DD (\uAE30\uBCF8\uAC12\uC740 Obsidian \uC124\uC815 \uB530\uB984)",
       auto: "\uC790\uB3D9",
-      assigned: "\uD560\uB2F9\uB428",
+      commandToggle: "\uD65C\uC131\uD654 \uC804\uD658",
+      commandRefresh: "\uC0AC\uC774\uB4DC\uBC14 \uC0C8\uB85C\uACE0\uCE68",
+      toggleEnabled: "\uC0AC\uC774\uB4DC\uBC14 \uC815\uB9AC\uAC00 \uD65C\uC131\uD654\uB418\uC5C8\uC2B5\uB2C8\uB2E4",
+      toggleDisabled: "\uC0AC\uC774\uB4DC\uBC14 \uC815\uB9AC\uAC00 \uBE44\uD65C\uC131\uD654\uB418\uC5C8\uC2B5\uB2C8\uB2E4",
+      confirmDeleteGroup: "\uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
       cancel: "\uCDE8\uC18C",
       save: "\uC800\uC7A5",
-      noPreview: "\uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C",
       svgPlaceholder: "SVG \uCF54\uB4DC \uC785\uB825 (\uC120\uD0DD\uC0AC\uD56D)",
       examples: "\uC608\uC2DC:",
       folder: "\uD3F4\uB354",
@@ -290,10 +346,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "Mehrere Sidebar-Symbole desselben Plugins zu einem zusammenfassen, Hover zeigt Funktionsmen\xFC",
       enableOrganizer: "Sidebar-Organisation aktivieren",
       enableOrganizerDesc: "Funktion zum Zusammenfassen von Sidebar-Symbolen ein-/ausschalten",
+      popupAppearance: "Popup-Optik",
       blurEffect: "Unsch\xE4rfe-Effekt",
       blurEffectDesc: "Unsch\xE4rfe-Effekt f\xFCr Hintergrund des Popup-Men\xFCs hinzuf\xFCgen",
       blurIntensity: "Unsch\xE4rfe-Intensit\xE4t",
       blurIntensityDesc: "Hintergrundunsch\xE4rfe anpassen (aktuell: {value}px)",
+      popupRounded: "Abgerundetes Popup",
+      popupRoundedDesc: "Abgerundete oder eckige Ecken f\xFCr Popup-Men\xFCs",
+      popupRadius: "Eckenradius",
+      popupRadiusDesc: "Popup-Eckenradius (aktuell: {value}px)",
+      liquidGlass: "Liquid-Glass-Effekt",
+      liquidGlassDesc: "Experimentell: iOS-26-Look (Mattglas, Kanten-Highlight, Glanz); h\xF6here Rendering-Kosten",
+      liquidGlassBlur: "Unsch\xE4rfe",
+      liquidGlassBlurDesc: "Hintergrundunsch\xE4rfe des Liquid Glass (aktuell: {value}px)",
+      waterDrop: "Wassertropfen-Effekt",
+      waterDropDesc: "Popup \xF6ffnet/schlie\xDFt sich wie ein Wassertropfen (experimentell)",
       refreshSidebar: "Sidebar aktualisieren",
       refreshSidebarDesc: "Sidebar-Symbole erneut erkennen und organisieren",
       refreshBtn: "Aktualisieren",
@@ -321,7 +388,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "z.B.: H\xE4ufig verwendete Tools",
       customIcon: "Benutzerdefiniertes Symbol (Optional)",
       clickSelectAll: "Klicken um alle auszuw\xE4hlen",
-      selectAll: "Alle ausw\xE4hlen",
       pleaseEnterName: "Bitte Gruppennamen eingeben",
       pleaseSelectOne: "Bitte mindestens eine Funktion ausw\xE4hlen",
       groupCreated: "Gruppe erstellt",
@@ -330,14 +396,17 @@ var SidebarOrganizer = (() => {
       instruction1: '"Gruppe erstellen" anklicken um mehrere Sidebar-Symbole zu einem zusammenzufassen',
       instruction2: "\xDCber zusammengefasstes Symbol hovern um Funktionsmen\xFC anzuzeigen",
       instruction3: "Funktion anklicken um entsprechende Funktion zu aktivieren",
-      instruction4: "Zusammengefasstes Symbol anklicken um erste Funktion direkt zu \xF6ffnen",
+      instruction4: "Klicken Sie auf das zusammengefasste Symbol, um das Funktionsmen\xFC zu \xF6ffnen",
       language: "Sprache",
       languageDesc: "Plugin-Oberfl\xE4chensprache ausw\xE4hlen (Standard folgt Obsidian-Einstellungen)",
       auto: "Automatisch",
-      assigned: "Zugewiesen",
+      commandToggle: "Aktivierung umschalten",
+      commandRefresh: "Sidebar aktualisieren",
+      toggleEnabled: "Sidebar Organizer aktiviert",
+      toggleDisabled: "Sidebar Organizer deaktiviert",
+      confirmDeleteGroup: "L\xF6schen best\xE4tigen?",
       cancel: "Abbrechen",
       save: "Speichern",
-      noPreview: "Keine Vorschau",
       svgPlaceholder: "SVG-Code eingeben (optional)",
       examples: "Beispiele:",
       folder: "Ordner",
@@ -349,10 +418,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "\u041E\u0431\u044A\u0435\u0434\u0438\u043D\u0438\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u043D\u0430\u0447\u043A\u043E\u0432 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u043F\u043B\u0430\u0433\u0438\u043D\u0430 \u0432 \u043E\u0434\u0438\u043D, \u043F\u0440\u0438 \u043D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0438 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043C\u0435\u043D\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u0439",
       enableOrganizer: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0446\u0438\u044E \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438",
       enableOrganizerDesc: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C/\u0432\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F \u0437\u043D\u0430\u0447\u043A\u043E\u0432 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438",
+      popupAppearance: "\u0412\u043D\u0435\u0448\u043D\u0438\u0439 \u0432\u0438\u0434 \u043C\u0435\u043D\u044E",
       blurEffect: "\u042D\u0444\u0444\u0435\u043A\u0442 \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F",
       blurEffectDesc: "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u044D\u0444\u0444\u0435\u043A\u0442 \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F \u0444\u043E\u043D\u0430 \u0434\u043B\u044F \u0432\u0441\u043F\u043B\u044B\u0432\u0430\u044E\u0449\u0435\u0433\u043E \u043C\u0435\u043D\u044E",
       blurIntensity: "\u0418\u043D\u0442\u0435\u043D\u0441\u0438\u0432\u043D\u043E\u0441\u0442\u044C \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F",
       blurIntensityDesc: "\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F \u0444\u043E\u043D\u0430 (\u0442\u0435\u043A\u0443\u0449\u0435\u0435: {value}px)",
+      popupRounded: "\u0421\u043A\u0440\u0443\u0433\u043B\u0451\u043D\u043D\u044B\u0435 \u0443\u0433\u043B\u044B",
+      popupRoundedDesc: "\u0421\u043A\u0440\u0443\u0433\u043B\u0451\u043D\u043D\u044B\u0435 \u0438\u043B\u0438 \u043F\u0440\u044F\u043C\u044B\u0435 \u0443\u0433\u043B\u044B \u0432\u0441\u043F\u043B\u044B\u0432\u0430\u044E\u0449\u0438\u0445 \u043C\u0435\u043D\u044E",
+      popupRadius: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u043A\u0440\u0443\u0433\u043B\u0435\u043D\u0438\u044F",
+      popupRadiusDesc: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u043A\u0440\u0443\u0433\u043B\u0435\u043D\u0438\u044F \u0443\u0433\u043B\u043E\u0432 (\u0441\u0435\u0439\u0447\u0430\u0441: {value}px)",
+      liquidGlass: "\u042D\u0444\u0444\u0435\u043A\u0442 \u0436\u0438\u0434\u043A\u043E\u0433\u043E \u0441\u0442\u0435\u043A\u043B\u0430",
+      liquidGlassDesc: "\u042D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E: \u0441\u0442\u0438\u043B\u044C Liquid Glass (iOS 26) \u2014 \u043C\u0430\u0442\u043E\u0432\u043E\u0435 \u0441\u0442\u0435\u043A\u043B\u043E, \u0431\u043B\u0438\u043A\u0438 \u0438 \u0433\u043B\u044F\u043D\u0435\u0446; \u0432\u044B\u0448\u0435 \u043D\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043D\u0430 \u0440\u0435\u043D\u0434\u0435\u0440\u0438\u043D\u0433",
+      liquidGlassBlur: "\u0420\u0430\u0437\u043C\u044B\u0442\u0438\u0435",
+      liquidGlassBlurDesc: "\u0421\u0438\u043B\u0430 \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F \u0444\u043E\u043D\u0430 \u0436\u0438\u0434\u043A\u043E\u0433\u043E \u0441\u0442\u0435\u043A\u043B\u0430 (\u0441\u0435\u0439\u0447\u0430\u0441: {value}px)",
+      waterDrop: "\u042D\u0444\u0444\u0435\u043A\u0442 \u043A\u0430\u043F\u043B\u0438",
+      waterDropDesc: "\u0412\u0441\u043F\u043B\u044B\u0432\u0430\u044E\u0449\u0435\u0435 \u043E\u043A\u043D\u043E \u0440\u0430\u0437\u0432\u043E\u0440\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F/\u0441\u0432\u043E\u0440\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u043A\u0430\u043F\u043B\u044F (\u044D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E)",
       refreshSidebar: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0431\u043E\u043A\u043E\u0432\u0443\u044E \u043F\u0430\u043D\u0435\u043B\u044C",
       refreshSidebarDesc: "\u041F\u043E\u0432\u0442\u043E\u0440\u043D\u043E \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u0438 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u043E\u0432\u0430\u0442\u044C \u0437\u043D\u0430\u0447\u043A\u0438 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438",
       refreshBtn: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C",
@@ -380,7 +460,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "\u043D\u0430\u043F\u0440.: \u0427\u0430\u0441\u0442\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B",
       customIcon: "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \u0437\u043D\u0430\u0447\u043E\u043A (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)",
       clickSelectAll: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435",
-      selectAll: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435",
       pleaseEnterName: "\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430 \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u043C\u044F \u0433\u0440\u0443\u043F\u043F\u044B",
       pleaseSelectOne: "\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u043D\u0443 \u0444\u0443\u043D\u043A\u0446\u0438\u044E",
       groupCreated: "\u0413\u0440\u0443\u043F\u043F\u0430 \u0441\u043E\u0437\u0434\u0430\u043D\u0430",
@@ -389,14 +468,17 @@ var SidebarOrganizer = (() => {
       instruction1: '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0443" \u0447\u0442\u043E\u0431\u044B \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0438\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u043D\u0430\u0447\u043A\u043E\u0432 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438 \u0432 \u043E\u0434\u0438\u043D',
       instruction2: "\u041D\u0430\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u0430 \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u043D\u0430\u0447\u043E\u043A \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043C\u0435\u043D\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u0439",
       instruction3: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u044D\u043B\u0435\u043C\u0435\u043D\u0442 \u0444\u0443\u043D\u043A\u0446\u0438\u0438 \u0447\u0442\u043E\u0431\u044B \u0430\u043A\u0442\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u043E\u043E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0443\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u044E",
-      instruction4: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u043D\u0430\u0447\u043E\u043A \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u043F\u0435\u0440\u0432\u0443\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u044E",
+      instruction4: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u043D\u0430\u0447\u043E\u043A \u0447\u0442\u043E\u0431\u044B \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u043C\u0435\u043D\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u0439",
       language: "\u042F\u0437\u044B\u043A",
       languageDesc: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u044F\u0437\u044B\u043A \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430 \u043F\u043B\u0430\u0433\u0438\u043D\u0430 (\u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E \u0441\u043B\u0435\u0434\u0443\u0435\u0442 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430\u043C Obsidian)",
       auto: "\u0410\u0432\u0442\u043E",
-      assigned: "\u041D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u043E",
+      commandToggle: "\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435",
+      commandRefresh: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0431\u043E\u043A\u043E\u0432\u0443\u044E \u043F\u0430\u043D\u0435\u043B\u044C",
+      toggleEnabled: "Sidebar Organizer \u0432\u043A\u043B\u044E\u0447\u0435\u043D",
+      toggleDisabled: "Sidebar Organizer \u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D",
+      confirmDeleteGroup: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C \u0443\u0434\u0430\u043B\u0435\u043D\u0438\u0435?",
       cancel: "\u041E\u0442\u043C\u0435\u043D\u0430",
       save: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C",
-      noPreview: "\u041D\u0435\u0442 \u043F\u0440\u0435\u0434\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430",
       svgPlaceholder: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 SVG-\u043A\u043E\u0434 (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)",
       examples: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B:",
       folder: "\u041F\u0430\u043F\u043A\u0430",
@@ -408,10 +490,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "Fusionar m\xFAltiples iconos de la barra lateral del mismo plugin en uno, al pasar el mouse mostrar men\xFA de funciones",
       enableOrganizer: "Activar organizaci\xF3n de barra lateral",
       enableOrganizerDesc: "Activar/desactivar funci\xF3n de fusi\xF3n de iconos de barra lateral",
+      popupAppearance: "Apariencia del men\xFA",
       blurEffect: "Efecto de desenfoque",
       blurEffectDesc: "A\xF1adir efecto de desenfoque de fondo al men\xFA emergente",
       blurIntensity: "Intensidad del desenfoque",
       blurIntensityDesc: "Ajustar nivel de desenfoque de fondo (actual: {value}px)",
+      popupRounded: "Esquinas redondeadas",
+      popupRoundedDesc: "Usar esquinas redondeadas o rectas en los men\xFAs emergentes",
+      popupRadius: "Radio de esquinas",
+      popupRadiusDesc: "Radio de esquinas del men\xFA (actual: {value}px)",
+      liquidGlass: "Efecto de vidrio l\xEDquido",
+      liquidGlassDesc: "Experimental: estilo Liquid Glass (iOS 26) \u2014 vidrio esmerilado, brillos y lustre; mayor coste de renderizado",
+      liquidGlassBlur: "Desenfoque",
+      liquidGlassBlurDesc: "Intensidad de desenfoque del fondo (actual: {value}px)",
+      waterDrop: "Efecto gota",
+      waterDropDesc: "El men\xFA se expande/contrae como una gota de agua (experimental)",
       refreshSidebar: "Actualizar barra lateral",
       refreshSidebarDesc: "Redetectar y organizar iconos de barra lateral",
       refreshBtn: "Actualizar",
@@ -439,7 +532,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "ej: Herramientas comunes",
       customIcon: "Icono personalizado (Opcional)",
       clickSelectAll: "Clic para seleccionar todo",
-      selectAll: "Seleccionar todo",
       pleaseEnterName: "Por favor ingrese nombre del grupo",
       pleaseSelectOne: "Por favor seleccione al menos una funci\xF3n",
       groupCreated: "Grupo creado",
@@ -448,14 +540,17 @@ var SidebarOrganizer = (() => {
       instruction1: 'Clic en "Crear grupo" para fusionar m\xFAltiples iconos de barra lateral en uno',
       instruction2: "Pasar mouse sobre icono fusionado para mostrar men\xFA de funciones",
       instruction3: "Clic en elemento de funci\xF3n para activar funci\xF3n correspondiente",
-      instruction4: "Clic en icono fusionado para abrir directamente la primera funci\xF3n",
+      instruction4: "Clic en el icono fusionado para abrir el men\xFA de funciones",
       language: "Idioma",
       languageDesc: "Seleccionar idioma de interfaz del plugin (por defecto sigue configuraci\xF3n de Obsidian)",
       auto: "Auto",
-      assigned: "Asignado",
+      commandToggle: "Alternar activaci\xF3n",
+      commandRefresh: "Actualizar barra lateral",
+      toggleEnabled: "Sidebar Organizer activado",
+      toggleDisabled: "Sidebar Organizer desactivado",
+      confirmDeleteGroup: "\xBFConfirmar borrado?",
       cancel: "Cancelar",
       save: "Guardar",
-      noPreview: "Sin vista previa",
       svgPlaceholder: "Introducir c\xF3digo SVG (opcional)",
       examples: "Ejemplos:",
       folder: "Carpeta",
@@ -467,10 +562,21 @@ var SidebarOrganizer = (() => {
       pluginDesc: "Fusionner plusieurs ic\xF4nes de barre lat\xE9rale du m\xEAme plugin en une seule, survol pour afficher le menu des fonctions",
       enableOrganizer: "Activer l'organisation de la barre lat\xE9rale",
       enableOrganizerDesc: "Activer/d\xE9sactiver la fonction de fusion des ic\xF4nes de barre lat\xE9rale",
+      popupAppearance: "Apparence du menu",
       blurEffect: "Effet de flou",
       blurEffectDesc: "Ajouter un effet de flou en arri\xE8re-plan au menu contextuel",
       blurIntensity: "Intensit\xE9 du flou",
       blurIntensityDesc: "Ajuster le niveau de flou de l'arri\xE8re-plan (actuel: {value}px)",
+      popupRounded: "Coins arrondis",
+      popupRoundedDesc: "Utiliser des coins arrondis ou droits pour les menus contextuels",
+      popupRadius: "Rayon des coins",
+      popupRadiusDesc: "Rayon des coins du menu (actuel : {value}px)",
+      liquidGlass: "Effet verre liquide",
+      liquidGlassDesc: "Exp\xE9rimental: style Liquid Glass (iOS 26) \u2014 verre d\xE9poli, reflets et lustre; co\xFBt de rendu plus \xE9lev\xE9",
+      liquidGlassBlur: "Flou",
+      liquidGlassBlurDesc: "Intensit\xE9 du flou d\u2019arri\xE8re-plan du verre liquide (actuel : {value}px)",
+      waterDrop: "Effet goutte",
+      waterDropDesc: "Le menu s\u2019ouvre/se referme comme une goutte d\u2019eau (exp\xE9rimental)",
       refreshSidebar: "Actualiser la barre lat\xE9rale",
       refreshSidebarDesc: "Red\xE9tecter et organiser les ic\xF4nes de barre lat\xE9rale",
       refreshBtn: "Actualiser",
@@ -498,7 +604,6 @@ var SidebarOrganizer = (() => {
       groupNamePlaceholder: "ex: Outils courants",
       customIcon: "Ic\xF4ne personnalis\xE9e (Optionnel)",
       clickSelectAll: "Cliquer pour tout s\xE9lectionner",
-      selectAll: "Tout s\xE9lectionner",
       pleaseEnterName: "Veuillez entrer un nom de groupe",
       pleaseSelectOne: "Veuillez s\xE9lectionner au moins une fonction",
       groupCreated: "Groupe cr\xE9\xE9",
@@ -507,14 +612,17 @@ var SidebarOrganizer = (() => {
       instruction1: 'Cliquer sur "Cr\xE9er un groupe" pour fusionner plusieurs ic\xF4nes de barre lat\xE9rale en une seule',
       instruction2: "Survoler l'ic\xF4ne fusionn\xE9e pour afficher le menu des fonctions",
       instruction3: "Cliquer sur un \xE9l\xE9ment de fonction pour activer la fonction correspondante",
-      instruction4: "Cliquer sur l'ic\xF4ne fusionn\xE9e pour ouvrir directement la premi\xE8re fonction",
+      instruction4: "Cliquer sur l'ic\xF4ne fusionn\xE9e pour ouvrir le menu des fonctions",
       language: "Langue",
       languageDesc: "S\xE9lectionner la langue de l'interface du plugin (par d\xE9faut suit les param\xE8tres d'Obsidian)",
       auto: "Auto",
-      assigned: "Attribu\xE9",
+      commandToggle: "Basculer l'activation",
+      commandRefresh: "Actualiser la barre lat\xE9rale",
+      toggleEnabled: "Sidebar Organizer activ\xE9",
+      toggleDisabled: "Sidebar Organizer d\xE9sactiv\xE9",
+      confirmDeleteGroup: "Confirmer la suppression ?",
       cancel: "Annuler",
       save: "Enregistrer",
-      noPreview: "Aucun aper\xE7u",
       svgPlaceholder: "Entrer le code SVG (optionnel)",
       examples: "Exemples:",
       folder: "Dossier",
@@ -523,22 +631,14 @@ var SidebarOrganizer = (() => {
     }
   };
   function getLanguageCode(lang) {
-    if (lang.startsWith("zh"))
-      return "zh";
-    if (lang.startsWith("en"))
-      return "en";
-    if (lang.startsWith("ja"))
-      return "ja";
-    if (lang.startsWith("ko"))
-      return "ko";
-    if (lang.startsWith("de"))
-      return "de";
-    if (lang.startsWith("ru"))
-      return "ru";
-    if (lang.startsWith("es"))
-      return "es";
-    if (lang.startsWith("fr"))
-      return "fr";
+    if (lang.startsWith("zh")) return "zh";
+    if (lang.startsWith("en")) return "en";
+    if (lang.startsWith("ja")) return "ja";
+    if (lang.startsWith("ko")) return "ko";
+    if (lang.startsWith("de")) return "de";
+    if (lang.startsWith("ru")) return "ru";
+    if (lang.startsWith("es")) return "es";
+    if (lang.startsWith("fr")) return "fr";
     return "en";
   }
   function getPluginLanguage(settings, locale) {
@@ -557,16 +657,19 @@ var SidebarOrganizer = (() => {
     }
     return text;
   }
+  function createTranslator(getSettings, getLocale) {
+    return (key, params) => translate(getPluginLanguage(getSettings(), getLocale()), key, params);
+  }
 
   // src/sidebar.ts
   function setSvgContent(element, svgContent) {
     element.empty();
-    if (!svgContent || !svgContent.includes("<svg"))
-      return;
+    if (!svgContent || !svgContent.includes("<svg")) return;
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgContent.trim(), "image/svg+xml");
     const svg = doc.querySelector("svg");
     if (svg) {
+      hardenSvg(svg);
       svg.classList.add("svg-icon");
       svg.removeAttribute("width");
       svg.removeAttribute("height");
@@ -574,11 +677,49 @@ var SidebarOrganizer = (() => {
     }
   }
   function parseSvg(svgContent) {
-    if (!svgContent || !svgContent.includes("<svg"))
-      return null;
+    if (!svgContent || !svgContent.includes("<svg")) return null;
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgContent.trim(), "image/svg+xml");
-    return doc.querySelector("svg");
+    const svg = doc.querySelector("svg");
+    if (svg) hardenSvg(svg);
+    return svg;
+  }
+  function hardenSvg(svg) {
+    const scrub = (el) => {
+      Array.from(el.attributes).forEach((attr) => {
+        if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
+      });
+      if (el.tagName === "script" || el.tagName === "foreignObject") {
+        el.remove();
+        return;
+      }
+      if (el.tagName === "a") {
+        const href = el.getAttribute("href") || "";
+        if (href.toLowerCase().startsWith("javascript:")) el.removeAttribute("href");
+      }
+      if (el.tagName === "use" || el.tagName === "image") {
+        ["href", "xlink:href"].forEach((attr) => {
+          const v = el.getAttribute(attr);
+          if (v && !v.startsWith("#")) el.removeAttribute(attr);
+        });
+      }
+    };
+    scrub(svg);
+    svg.querySelectorAll("*").forEach(scrub);
+  }
+  function extractActionLabel(fullName) {
+    let label = fullName;
+    const separators = [":", "\uFF1A", "-", "\u2013", "\u2014", "|"];
+    for (const sep of separators) {
+      if (fullName.includes(sep)) {
+        const parts = fullName.split(sep);
+        if (parts.length > 1) {
+          label = parts.slice(1).join(sep).trim();
+          break;
+        }
+      }
+    }
+    return label || fullName;
   }
   function sanitizeSvgColors(svg) {
     try {
@@ -612,11 +753,17 @@ var SidebarOrganizer = (() => {
   var SimpleGroupModal = class extends import_obsidian.Modal {
     constructor(app, plugin, onSave, existingGroup = null) {
       super(app);
-      this.step = 1;
       this.selectedActions = /* @__PURE__ */ new Set();
       this.groupName = "";
       this.groupIcon = "";
       this.allActions = [];
+      this.t = createTranslator(
+        () => this.plugin.settings,
+        () => {
+          var _a;
+          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
+        }
+      );
       this.plugin = plugin;
       this.onSave = onSave;
       this.existingGroup = existingGroup;
@@ -625,12 +772,6 @@ var SidebarOrganizer = (() => {
         this.groupName = existingGroup.name;
         this.groupIcon = existingGroup.icon || "";
       }
-    }
-    t(key, params) {
-      var _a;
-      const vault = this.app.vault;
-      const lang = getPluginLanguage(this.plugin.settings, (_a = vault == null ? void 0 : vault.config) == null ? void 0 : _a.locale);
-      return translate(lang, key, params);
     }
     onOpen() {
       const { contentEl } = this;
@@ -648,16 +789,14 @@ var SidebarOrganizer = (() => {
       });
       const assignedElsewhere = /* @__PURE__ */ new Set();
       this.plugin.settings.customGroups.forEach((g) => {
-        if (this.existingGroup && g.id === this.existingGroup.id)
-          return;
+        if (this.existingGroup && g.id === this.existingGroup.id) return;
         g.actionIds.forEach((id) => assignedElsewhere.add(id));
       });
       const pluginGroups = /* @__PURE__ */ new Map();
       for (const action of this.allActions) {
         const isAssignedElsewhere = assignedElsewhere.has(action.actionId);
         const isSelected = this.selectedActions.has(action.actionId);
-        if (isAssignedElsewhere && !isSelected)
-          continue;
+        if (isAssignedElsewhere && !isSelected) continue;
         if (!pluginGroups.has(action.pluginName)) {
           pluginGroups.set(action.pluginName, []);
         }
@@ -669,6 +808,7 @@ var SidebarOrganizer = (() => {
       this.availableContainer = leftPanel.createDiv("actions-list");
       for (const [pluginName, actions] of pluginGroups) {
         const groupEl = this.availableContainer.createDiv("action-group");
+        const groupActions = groupEl.createDiv("group-actions");
         const groupHeader = groupEl.createDiv("action-group-header");
         const allSelected = actions.every((a) => this.selectedActions.has(a.actionId));
         if (allSelected && actions.length > 0) {
@@ -693,15 +833,13 @@ var SidebarOrganizer = (() => {
             }
           });
           groupHeader.classList.toggle("all-selected", !allInGroup);
-          this.updateSelectedList(assignedElsewhere);
+          this.updateSelectedList();
         });
-        const groupActions = groupEl.createDiv("group-actions");
         for (const action of actions) {
           const isSelected = this.selectedActions.has(action.actionId);
           const itemEl = groupActions.createDiv("action-item-draggable");
           itemEl.setAttribute("data-action-id", action.actionId);
-          if (isSelected)
-            itemEl.classList.add("in-group");
+          if (isSelected) itemEl.classList.add("in-group");
           const iconSpan = itemEl.createSpan("item-icon");
           setSvgContent(iconSpan, action.icon);
           const nameSpan = itemEl.createSpan("item-name");
@@ -715,7 +853,7 @@ var SidebarOrganizer = (() => {
               this.selectedActions.add(action.actionId);
               itemEl.classList.add("in-group");
             }
-            this.updateSelectedList(assignedElsewhere);
+            this.updateSelectedList();
             const allNowSelected = actions.every((a) => this.selectedActions.has(a.actionId));
             if (allNowSelected) {
               groupHeader.classList.add("all-selected");
@@ -728,7 +866,7 @@ var SidebarOrganizer = (() => {
       const rightPanel = container.createDiv("panel-right");
       new import_obsidian.Setting(rightPanel).setName(this.t("groupFunctions")).setHeading();
       this.selectedContainer = rightPanel.createDiv("actions-list selected-list");
-      this.updateSelectedList(assignedElsewhere);
+      this.updateSelectedList();
       const buttonContainer = contentEl.createDiv("modal-button-container");
       buttonContainer.createEl("button", { text: this.t("cancel") }).addEventListener("click", () => this.close());
       buttonContainer.createEl("button", { text: this.t("nextStep"), cls: "mod-cta" }).addEventListener("click", () => {
@@ -739,7 +877,7 @@ var SidebarOrganizer = (() => {
         this.renderStep2();
       });
     }
-    updateSelectedList(assignedElsewhere) {
+    updateSelectedList() {
       this.selectedContainer.empty();
       const selectedActions = this.allActions.filter((a) => this.selectedActions.has(a.actionId));
       if (selectedActions.length === 0) {
@@ -761,7 +899,7 @@ var SidebarOrganizer = (() => {
         removeBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           this.selectedActions.delete(action.actionId);
-          this.updateSelectedList(assignedElsewhere);
+          this.updateSelectedList();
           this.availableContainer.querySelectorAll(".action-item-draggable").forEach((el) => {
             if (el.getAttribute("data-action-id") === action.actionId) {
               el.classList.remove("in-group");
@@ -769,8 +907,7 @@ var SidebarOrganizer = (() => {
           });
           this.availableContainer.querySelectorAll(".action-group-header").forEach((header) => {
             const parent = header.closest(".action-group");
-            if (!parent)
-              return;
+            if (!parent) return;
             const items = parent.querySelectorAll(".action-item-draggable");
             const allSelected = Array.from(items).every(
               (el) => this.selectedActions.has(el.getAttribute("data-action-id") || "")
@@ -889,13 +1026,14 @@ var SidebarOrganizer = (() => {
   var SidebarOrganizerSettingTab = class extends import_obsidian2.PluginSettingTab {
     constructor(app, plugin) {
       super(app, plugin);
+      this.t = createTranslator(
+        () => this.plugin.settings,
+        () => {
+          var _a;
+          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
+        }
+      );
       this.plugin = plugin;
-    }
-    t(key, params) {
-      var _a;
-      const vault = this.app.vault;
-      const lang = getPluginLanguage(this.plugin.settings, (_a = vault == null ? void 0 : vault.config) == null ? void 0 : _a.locale);
-      return translate(lang, key, params);
     }
     display() {
       const { containerEl } = this;
@@ -910,25 +1048,58 @@ var SidebarOrganizer = (() => {
         await this.plugin.saveSettings();
         this.display();
       }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("enableOrganizer")).setDesc(this.t("enableOrganizerDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.enabled).onChange(async (value) => {
-        this.plugin.settings.enabled = value;
-        await this.plugin.saveSettings();
-        this.plugin.applyOrganizerState();
-      }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("blurEffect")).setDesc(this.t("blurEffectDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.blurEffect).onChange(async (value) => {
-        this.plugin.settings.blurEffect = value;
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("blurIntensity")).setDesc(this.t("blurIntensityDesc", { value: this.plugin.settings.blurIntensity })).addSlider((slider) => slider.setValue(this.plugin.settings.blurIntensity).setLimits(0, 30, 1).onChange(async (value) => {
-        this.plugin.settings.blurIntensity = value;
-        await this.plugin.saveSettings();
-      }));
       new import_obsidian2.Setting(containerEl).setName(this.t("refreshSidebar")).setDesc(this.t("refreshSidebarDesc")).addButton((btn) => btn.setButtonText(this.t("refreshBtn")).onClick(() => {
         this.plugin.restoreOriginalIcons();
         this.plugin.loadInstalledPlugins();
         this.plugin.organizeSidebars();
         this.display();
         new import_obsidian2.Notice(this.t("refreshNotice"));
+      }));
+      new import_obsidian2.Setting(containerEl).setName(this.t("enableOrganizer")).setDesc(this.t("enableOrganizerDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.enabled).onChange(async (value) => {
+        this.plugin.settings.enabled = value;
+        await this.plugin.saveSettings();
+        this.plugin.applyOrganizerState();
+      }));
+      new import_obsidian2.Setting(containerEl).setName(this.t("popupAppearance")).setHeading();
+      new import_obsidian2.Setting(containerEl).setName(this.t("blurEffect")).setDesc(this.t("blurEffectDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.blurEffect).onChange(async (value) => {
+        this.plugin.settings.blurEffect = value;
+        await this.plugin.saveSettings();
+      }));
+      const liquidBlurSetting = new import_obsidian2.Setting(containerEl).setName(this.t("blurIntensity")).setDesc(this.t("blurIntensityDesc", { value: this.plugin.settings.blurIntensity }));
+      liquidBlurSetting.addSlider((slider) => slider.setValue(this.plugin.settings.blurIntensity).setLimits(0, 30, 1).onChange(async (value) => {
+        this.plugin.settings.blurIntensity = value;
+        await this.plugin.saveSettings();
+        liquidBlurSetting.descEl.textContent = this.t("blurIntensityDesc", { value });
+      }));
+      new import_obsidian2.Setting(containerEl).setName(this.t("popupRounded")).setDesc(this.t("popupRoundedDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.popupRounded).onChange(async (value) => {
+        this.plugin.settings.popupRounded = value;
+        await this.plugin.saveSettings();
+        radiusSetting.settingEl.style.display = value ? "" : "none";
+      }));
+      let radiusSetting;
+      radiusSetting = new import_obsidian2.Setting(containerEl).setName(this.t("popupRadius")).setDesc(this.t("popupRadiusDesc").replace("{value}", String(this.plugin.settings.popupRadius))).addSlider((slider) => slider.setValue(this.plugin.settings.popupRadius).setLimits(0, 24, 1).onChange(async (value) => {
+        this.plugin.settings.popupRadius = value;
+        await this.plugin.saveSettings();
+        const desc = radiusSetting.settingEl.querySelector(".setting-item-description");
+        if (desc) desc.textContent = this.t("popupRadiusDesc").replace("{value}", String(value));
+      }));
+      radiusSetting.settingEl.style.display = this.plugin.settings.popupRounded ? "" : "none";
+      new import_obsidian2.Setting(containerEl).setName(this.t("liquidGlass")).setDesc(this.t("liquidGlassDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.liquidGlass).onChange(async (value) => {
+        this.plugin.settings.liquidGlass = value;
+        await this.plugin.saveSettings();
+        glassBlurSetting.settingEl.style.display = value ? "" : "none";
+      }));
+      let glassBlurSetting;
+      glassBlurSetting = new import_obsidian2.Setting(containerEl).setName(this.t("liquidGlassBlur")).setDesc(this.t("liquidGlassBlurDesc").replace("{value}", String(this.plugin.settings.liquidGlassBlur))).addSlider((slider) => slider.setValue(this.plugin.settings.liquidGlassBlur).setLimits(0, 10, 0.5).onChange(async (value) => {
+        this.plugin.settings.liquidGlassBlur = value;
+        await this.plugin.saveSettings();
+        const desc = glassBlurSetting.settingEl.querySelector(".setting-item-description");
+        if (desc) desc.textContent = this.t("liquidGlassBlurDesc").replace("{value}", String(value));
+      }));
+      glassBlurSetting.settingEl.style.display = this.plugin.settings.liquidGlass ? "" : "none";
+      new import_obsidian2.Setting(containerEl).setName(this.t("waterDrop")).setDesc(this.t("waterDropDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.waterDrop).onChange(async (value) => {
+        this.plugin.settings.waterDrop = value;
+        await this.plugin.saveSettings();
       }));
       new import_obsidian2.Setting(containerEl).setName(this.t("customGroups")).setHeading();
       containerEl.createEl("p", {
@@ -968,7 +1139,17 @@ var SidebarOrganizer = (() => {
             }, group);
             modal.open();
           });
-          actionsEl.createEl("button", { text: this.t("deleteGroup"), cls: "mod-warning" }).addEventListener("click", () => {
+          const deleteBtn = actionsEl.createEl("button", { text: this.t("deleteGroup"), cls: "mod-warning" });
+          deleteBtn.addEventListener("click", () => {
+            if (!deleteBtn.classList.contains("sidebar-organizer-delete-confirm")) {
+              deleteBtn.classList.add("sidebar-organizer-delete-confirm");
+              deleteBtn.setText(this.t("confirmDeleteGroup"));
+              window.setTimeout(() => {
+                deleteBtn.classList.remove("sidebar-organizer-delete-confirm");
+                deleteBtn.setText(this.t("deleteGroup"));
+              }, 3e3);
+              return;
+            }
             void (async () => {
               this.plugin.settings.customGroups = this.plugin.settings.customGroups.filter((g) => g.id !== group.id);
               await this.plugin.saveSettings();
@@ -990,7 +1171,7 @@ var SidebarOrganizer = (() => {
   };
 
   // src/main.ts
-  var _SidebarOrganizerPlugin = class extends import_obsidian3.Plugin {
+  var _SidebarOrganizerPlugin = class _SidebarOrganizerPlugin extends import_obsidian3.Plugin {
     constructor() {
       super(...arguments);
       this.installedPlugins = /* @__PURE__ */ new Map();
@@ -998,9 +1179,12 @@ var SidebarOrganizer = (() => {
       this.popupEl = null;
       this.hideTimeout = null;
       this.showTimeout = null;
+      this.hideTimer = null;
+      this.pendingShow = null;
       this.boundElements = /* @__PURE__ */ new Map();
       this.popupMouseEnterHandler = null;
       this.popupMouseLeaveHandler = null;
+      this.escKeyHandler = null;
       this.mutationObserver = null;
       this.observerDebounceTimer = null;
       this.hoveredIconEl = null;
@@ -1008,14 +1192,36 @@ var SidebarOrganizer = (() => {
       this.isHiding = false;
       this.currentPopupAnchor = null;
       this.documentClickHandler = null;
+      this.clickDeferTimer = null;
+      this.mobileClickBound = false;
+      this.unloaded = false;
+      this.layoutReadyTimer = null;
+      this.observedTargets = [];
+      this.t = createTranslator(
+        () => this.settings,
+        () => {
+          var _a;
+          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
+        }
+      );
+      // ---- 液态玻璃（实验性）：SVG feDisplacementMap 边缘折射 ----
+      this.liquidGlassFilterId = null;
+      this.liquidGlassSvg = null;
+      this.liquidGlassFeImage = null;
+      this.liquidGlassMapSize = 0;
     }
     /**
      * 检测当前 DOM 是否包含桌面端 ribbon 结构。
      * 平板设备通常使用桌面布局，因此不依赖 Platform.isMobile，
      * 而是根据实际 DOM 结构决定走哪条路径。
      */
+    // 1.13+ 设置窗口是独立窗口，activeDocument 会指向设置窗口；
+    // ribbon/popup 都在主工作区窗口，统一用 workspace 所在窗口的 document
+    get rootDoc() {
+      return this.app.workspace.containerEl.ownerDocument;
+    }
     hasDesktopRibbon() {
-      return !!activeDocument.querySelector(".workspace-ribbon.mod-left") || !!activeDocument.querySelector(".workspace-ribbon.mod-right");
+      return !!this.rootDoc.querySelector(".workspace-ribbon.mod-left") || !!this.rootDoc.querySelector(".workspace-ribbon.mod-right");
     }
     /**
      * 判断当前是否应使用移动端交互方式（点击而非悬停）。
@@ -1024,37 +1230,33 @@ var SidebarOrganizer = (() => {
     useMobileInteraction() {
       return import_obsidian3.Platform.isMobile;
     }
-    t(key, params) {
-      const vaultConfig = this.app.vault.config;
-      const lang = getPluginLanguage(this.settings, vaultConfig == null ? void 0 : vaultConfig.locale);
-      return translate(lang, key, params);
-    }
     async onload() {
       await this.loadSettings();
       this.addSettingTab(new SidebarOrganizerSettingTab(this.app, this));
       this.addCommand({
         id: "toggle",
-        name: "Toggle",
+        name: this.t("commandToggle"),
         callback: () => {
           this.settings.enabled = !this.settings.enabled;
           void this.saveSettings();
           this.applyOrganizerState();
-          new import_obsidian3.Notice(`Sidebar Organizer ${this.settings.enabled ? "enabled" : "disabled"}`);
+          new import_obsidian3.Notice(this.t(this.settings.enabled ? "toggleEnabled" : "toggleDisabled"));
         }
       });
       this.addCommand({
         id: "refresh",
-        name: "Refresh",
+        name: this.t("commandRefresh"),
         callback: () => {
           this.restoreOriginalIcons();
           this.loadInstalledPlugins();
           this.organizeSidebars();
-          new import_obsidian3.Notice("Sidebar refreshed");
+          new import_obsidian3.Notice(this.t("refreshNotice"));
         }
       });
       this.app.workspace.onLayoutReady(() => {
         this.loadInstalledPlugins();
-        window.setTimeout(() => {
+        this.layoutReadyTimer = window.setTimeout(() => {
+          if (this.unloaded) return;
           if (this.settings.enabled) {
             this.organizeSidebars();
           }
@@ -1062,10 +1264,134 @@ var SidebarOrganizer = (() => {
         }, 1e3);
       });
     }
+    /**
+     * 确保 SVG 折射滤镜存在（挂到主窗口 body，全局复用）
+     */
+    ensureLiquidGlassFilter(doc) {
+      if (this.liquidGlassFilterId) return this.liquidGlassFilterId;
+      const NS = "http://www.w3.org/2000/svg";
+      const svg = doc.createElementNS(NS, "svg");
+      svg.setAttribute("width", "0");
+      svg.setAttribute("height", "0");
+      svg.setAttribute("style", "position:fixed;top:0;left:0;pointer-events:none;z-index:99998");
+      const defs = doc.createElementNS(NS, "defs");
+      const filter = doc.createElementNS(NS, "filter");
+      this.liquidGlassFilterId = "sidebar-organizer-lg-" + Math.random().toString(36).slice(2, 9);
+      filter.setAttribute("id", this.liquidGlassFilterId);
+      filter.setAttribute("filterUnits", "userSpaceOnUse");
+      filter.setAttribute("colorInterpolationFilters", "sRGB");
+      filter.setAttribute("x", "0");
+      filter.setAttribute("y", "0");
+      filter.setAttribute("width", "1");
+      filter.setAttribute("height", "1");
+      const feImage = doc.createElementNS(NS, "feImage");
+      feImage.setAttribute("width", "1");
+      feImage.setAttribute("height", "1");
+      const feDisplacementMap = doc.createElementNS(NS, "feDisplacementMap");
+      feDisplacementMap.setAttribute("in", "SourceGraphic");
+      feDisplacementMap.setAttribute("in2", "lg-map");
+      feDisplacementMap.setAttribute("xChannelSelector", "R");
+      feDisplacementMap.setAttribute("yChannelSelector", "G");
+      filter.appendChild(feImage);
+      filter.appendChild(feDisplacementMap);
+      defs.appendChild(filter);
+      svg.appendChild(defs);
+      doc.body.appendChild(svg);
+      this.liquidGlassSvg = svg;
+      this.liquidGlassFeImage = feImage;
+      return this.liquidGlassFilterId;
+    }
+    /**
+     * 生成 SDF 边缘折射贴图（仅边缘带位移，中间不变形），
+     * 尺寸相同则复用缓存。
+     */
+    updateLiquidGlassMap(w, h) {
+      if (!this.liquidGlassFeImage || this.liquidGlassMapSize === w * h) return;
+      this.liquidGlassMapSize = w * h;
+      const canvas = this.rootDoc.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const smoothStep = (a, b, t) => {
+        t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+        return t * t * (3 - 2 * t);
+      };
+      const roundedRectSDF = (x, y, hw, hh, r) => {
+        const qx = Math.abs(x) - hw + r;
+        const qy = Math.abs(y) - hh + r;
+        return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - r;
+      };
+      const data = new Uint8ClampedArray(w * h * 4);
+      let maxScale = 0;
+      const raw = [];
+      for (let i = 0; i < data.length; i += 4) {
+        const x = i / 4 % w;
+        const y = Math.floor(i / 4 / w);
+        const ux = x / w - 0.5;
+        const uy = y / h - 0.5;
+        const d = roundedRectSDF(ux, uy, 0.3, 0.3, 0.6);
+        const disp = smoothStep(0.8, 0, d - 0.15);
+        const scaled = smoothStep(0, 1, disp);
+        const dx = (ux * scaled + 0.5) * w - x;
+        const dy = (uy * scaled + 0.5) * h - y;
+        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+        raw.push(dx, dy);
+      }
+      maxScale *= 0.5;
+      let idx = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = raw[idx++] / maxScale + 0.5;
+        const g = raw[idx++] / maxScale + 0.5;
+        data[i] = r * 255;
+        data[i + 1] = g * 255;
+        data[i + 2] = 0;
+        data[i + 3] = 255;
+      }
+      ctx.putImageData(new ImageData(data, w, h), 0, 0);
+      this.liquidGlassFeImage.setAttributeNS(
+        "http://www.w3.org/1999/xlink",
+        "href",
+        canvas.toDataURL()
+      );
+      const feDisplacementMap = this.liquidGlassFeImage.nextElementSibling;
+      feDisplacementMap == null ? void 0 : feDisplacementMap.setAttribute("scale", String(Math.max(1, Math.round(maxScale))));
+      const filter = this.liquidGlassFeImage.parentElement;
+      filter == null ? void 0 : filter.setAttribute("width", String(w));
+      filter == null ? void 0 : filter.setAttribute("height", String(h));
+    }
+    applyLiquidGlass(popup) {
+      const id = this.ensureLiquidGlassFilter(this.rootDoc);
+      popup.classList.add("liquid-glass");
+      window.requestAnimationFrame(() => {
+        const w = popup.offsetWidth;
+        const h = popup.offsetHeight;
+        if (w > 0 && h > 0) {
+          this.updateLiquidGlassMap(w, h);
+        }
+        popup.style.backdropFilter = `url(#${id}) blur(${this.settings.liquidGlassBlur}px) contrast(1.2) brightness(1.05) saturate(1.2)`;
+        popup.style.webkitBackdropFilter = popup.style.backdropFilter;
+      });
+    }
+    destroyLiquidGlass() {
+      if (this.liquidGlassSvg) {
+        this.liquidGlassSvg.remove();
+        this.liquidGlassSvg = null;
+      }
+      this.liquidGlassFilterId = null;
+      this.liquidGlassFeImage = null;
+      this.liquidGlassMapSize = 0;
+    }
     onunload() {
+      this.unloaded = true;
       this.stopMutationObserver();
       this.cleanupPopupHandlers();
       this.cleanupAllListeners();
+      this.destroyLiquidGlass();
+      if (this.layoutReadyTimer) {
+        window.clearTimeout(this.layoutReadyTimer);
+        this.layoutReadyTimer = null;
+      }
       if (this.showTimeout) {
         window.clearTimeout(this.showTimeout);
         this.showTimeout = null;
@@ -1079,8 +1405,13 @@ var SidebarOrganizer = (() => {
           window.clearTimeout(this.observerDebounceTimer);
         }
         this.observerDebounceTimer = window.setTimeout(() => {
+          if (this.unloaded) return;
           if (this.settings.enabled) {
             try {
+              if (!this.observedTargets.some((el) => el.isConnected)) {
+                this.startMutationObserver();
+                return;
+              }
               this.loadInstalledPlugins();
               this.organizeSidebars();
             } catch (e) {
@@ -1089,11 +1420,13 @@ var SidebarOrganizer = (() => {
           }
         }, 500);
       });
+      this.observedTargets = [];
       if (this.hasDesktopRibbon()) {
         ["left", "right"].forEach((side) => {
-          const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
+          const ribbon = this.rootDoc.querySelector(`.workspace-ribbon.mod-${side}`);
           if (ribbon) {
             this.mutationObserver.observe(ribbon, { childList: true, subtree: true });
+            this.observedTargets.push(ribbon);
           }
         });
       } else {
@@ -1104,15 +1437,17 @@ var SidebarOrganizer = (() => {
         ];
         let observed = false;
         for (const selector of mobileTargets) {
-          const el = activeDocument.querySelector(selector);
+          const el = this.rootDoc.querySelector(selector);
           if (el) {
             this.mutationObserver.observe(el, { childList: true, subtree: true });
+            this.observedTargets.push(el);
             observed = true;
             break;
           }
         }
         if (!observed) {
-          this.mutationObserver.observe(activeDocument.body, { childList: true, subtree: false });
+          this.mutationObserver.observe(this.rootDoc.body, { childList: true, subtree: false });
+          this.observedTargets.push(this.rootDoc.body);
         }
       }
     }
@@ -1125,6 +1460,7 @@ var SidebarOrganizer = (() => {
         this.mutationObserver.disconnect();
         this.mutationObserver = null;
       }
+      this.observedTargets = [];
     }
     cleanupPopupHandlers() {
       if (this.popupMouseEnterHandler && this.popupEl) {
@@ -1135,9 +1471,18 @@ var SidebarOrganizer = (() => {
       }
       this.popupMouseEnterHandler = null;
       this.popupMouseLeaveHandler = null;
-      if (this.documentClickHandler) {
-        activeDocument.removeEventListener("click", this.documentClickHandler);
-        this.documentClickHandler = null;
+      if (this.clickDeferTimer) {
+        window.clearTimeout(this.clickDeferTimer);
+        this.clickDeferTimer = null;
+      }
+      if (this.documentClickHandler && this.mobileClickBound) {
+        this.rootDoc.removeEventListener("click", this.documentClickHandler);
+      }
+      this.documentClickHandler = null;
+      this.mobileClickBound = false;
+      if (this.escKeyHandler) {
+        this.rootDoc.removeEventListener("keydown", this.escKeyHandler, true);
+        this.escKeyHandler = null;
       }
     }
     cleanupAllListeners() {
@@ -1160,7 +1505,12 @@ var SidebarOrganizer = (() => {
       this.cleanupPopupHandlers();
     }
     async loadSettings() {
-      this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+      try {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+      } catch (e) {
+        console.warn("Sidebar Organizer: failed to load settings, using defaults", e);
+        this.settings = Object.assign({}, DEFAULT_SETTINGS);
+      }
     }
     async saveSettings() {
       await this.saveData(this.settings);
@@ -1183,58 +1533,60 @@ var SidebarOrganizer = (() => {
       }
     }
     organizeSidebars() {
-      if (this.isOrganizing || !this.settings.enabled)
-        return;
+      if (this.isOrganizing || !this.settings.enabled || this.unloaded) return;
       this.isOrganizing = true;
       try {
         this.stopMutationObserver();
         this.restoreOriginalIcons();
         if (this.hasDesktopRibbon()) {
-          this.processRibbon("left");
-          this.processRibbon("right");
+          this.processRibbon();
         } else {
           this.processRibbonMobile();
         }
       } finally {
         this.isOrganizing = false;
-        this.startMutationObserver();
+        if (!this.unloaded) {
+          this.startMutationObserver();
+        }
       }
     }
-    processRibbon(side) {
-      const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
-      if (!ribbon)
-        return;
-      this.processIconList(
-        Array.from(ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action"))
-      );
+    processRibbon() {
+      const icons = [];
+      ["left", "right"].forEach((side) => {
+        const ribbon = this.rootDoc.querySelector(`.workspace-ribbon.mod-${side}`);
+        if (!ribbon) return;
+        ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action").forEach((el) => icons.push(el));
+      });
+      this.processIconList(icons);
     }
     processRibbonMobile() {
+      const icons = this.collectMobileIcons();
+      if (icons.length > 0) {
+        this.processIconList(icons);
+      }
+    }
+    collectMobileIcons() {
       for (const selector of _SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
-        const container = activeDocument.querySelector(selector);
+        const container = this.rootDoc.querySelector(selector);
         if (container) {
           const icons = container.querySelectorAll(
             _SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
           );
           if (icons.length > 0) {
-            this.processIconList(Array.from(icons));
-            return;
+            return Array.from(icons);
           }
         }
       }
-      const ribbonActions = activeDocument.querySelectorAll(".side-dock-ribbon-action");
+      const ribbonActions = this.rootDoc.querySelectorAll(".side-dock-ribbon-action");
       if (ribbonActions.length > 0) {
-        this.processIconList(Array.from(ribbonActions));
-        return;
+        return Array.from(ribbonActions);
       }
-      const allClickable = activeDocument.querySelectorAll(".clickable-icon");
-      const filtered = Array.from(allClickable).filter(
+      const allClickable = this.rootDoc.querySelectorAll(".clickable-icon");
+      return Array.from(allClickable).filter(
         (el) => !_SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
           (ancestor) => el.closest(ancestor) !== null
         )
       );
-      if (filtered.length > 0) {
-        this.processIconList(filtered);
-      }
     }
     processIconList(icons) {
       const actionMap = /* @__PURE__ */ new Map();
@@ -1242,22 +1594,22 @@ var SidebarOrganizer = (() => {
         try {
           const element = el;
           const action = this.identifyAction(element);
-          if (!action)
-            return;
+          if (!action) return;
           actionMap.set(action.actionId, action);
+          if (!actionMap.has(action.legacyId)) {
+            actionMap.set(action.legacyId, action);
+          }
         } catch (e) {
           console.warn("Sidebar Organizer: failed to process icon", e);
         }
       });
-      if (actionMap.size === 0)
-        return;
+      if (actionMap.size === 0) return;
       const assignedActionIds = /* @__PURE__ */ new Set();
       const sortedCustomGroups = [...this.settings.customGroups].sort((a, b) => a.order - b.order);
       for (const customGroup of sortedCustomGroups) {
         try {
-          const groupActions = customGroup.actionIds.map((id) => actionMap.get(id)).filter((a) => !!a);
-          if (groupActions.length === 0)
-            continue;
+          const groupActions = customGroup.actionIds.map((id) => actionMap.get(id)).filter((a) => !!a && !assignedActionIds.has(a.actionId));
+          if (groupActions.length === 0) continue;
           groupActions.forEach((a) => assignedActionIds.add(a.actionId));
           const mainAction = groupActions[0];
           const otherActions = groupActions.slice(1);
@@ -1273,41 +1625,33 @@ var SidebarOrganizer = (() => {
         }
       }
     }
-    addBadge(element, count) {
-      if (element.querySelector(".sidebar-organizer-badge"))
-        return;
-      const badge = activeDocument.createElement("span");
-      badge.className = "sidebar-organizer-badge";
-      badge.textContent = String(count);
-      element.appendChild(badge);
-    }
     bindPopupMenu(mainElement, title, actions) {
-      if (mainElement.hasAttribute("data-popup-bound"))
-        return;
+      if (mainElement.hasAttribute("data-popup-bound")) return;
       mainElement.setAttribute("data-popup-bound", "true");
-      if (this.useMobileInteraction()) {
-        const clickHandler = (e) => {
-          if (!e.isTrusted)
-            return;
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-          if (!mainElement.hasAttribute("data-popup-bound"))
-            return;
-          if (this.popupEl && this.currentPopupAnchor === mainElement) {
-            this.hideMenu();
-          } else {
-            if (this.popupEl) {
-              this.cleanupPopupHandlers();
-              this.popupEl.remove();
-              this.popupEl = null;
-            }
-            this.showMenu(mainElement, title, actions);
+      if (mainElement.hasAttribute("aria-label")) {
+        mainElement.setAttribute("data-original-label", mainElement.getAttribute("aria-label") || "");
+        mainElement.removeAttribute("aria-label");
+      }
+      const clickHandler = (e) => {
+        if (!e.isTrusted) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (!mainElement.hasAttribute("data-popup-bound")) return;
+        if (this.popupEl && this.currentPopupAnchor === mainElement) {
+          this.hideMenu();
+        } else {
+          if (this.popupEl) {
+            this.cleanupPopupHandlers();
+            this.popupEl.remove();
+            this.popupEl = null;
           }
-        };
+          this.showMenu(mainElement, title, actions);
+        }
+      };
+      if (this.useMobileInteraction()) {
         const touchBlocker = (e) => {
-          if (!e.isTrusted)
-            return;
+          if (!e.isTrusted) return;
           e.stopImmediatePropagation();
           e.stopPropagation();
         };
@@ -1327,31 +1671,28 @@ var SidebarOrganizer = (() => {
         return;
       }
       const mouseEnterHandler = () => {
-        if (!mainElement.hasAttribute("data-popup-bound"))
-          return;
+        if (!mainElement.hasAttribute("data-popup-bound")) return;
         this.hoveredIconEl = mainElement;
         if (this.hideTimeout) {
           window.clearTimeout(this.hideTimeout);
           this.hideTimeout = null;
         }
-        if (this.popupEl && this.currentPopupAnchor === mainElement)
+        if (this.popupEl && this.currentPopupAnchor === mainElement) return;
+        if (this.isHiding) {
+          this.pendingShow = { anchor: mainElement, title, actions };
           return;
-        if (this.isHiding)
-          return;
+        }
         if (this.showTimeout) {
           window.clearTimeout(this.showTimeout);
         }
         this.showTimeout = window.setTimeout(() => {
-          if (!mainElement.hasAttribute("data-popup-bound"))
-            return;
-          if (this.hoveredIconEl !== mainElement)
-            return;
+          if (!mainElement.hasAttribute("data-popup-bound")) return;
+          if (this.hoveredIconEl !== mainElement) return;
           this.showMenu(mainElement, title, actions);
         }, 180);
       };
       const mouseLeaveHandler = () => {
-        if (!mainElement.hasAttribute("data-popup-bound"))
-          return;
+        if (!mainElement.hasAttribute("data-popup-bound")) return;
         this.hoveredIconEl = null;
         if (this.showTimeout) {
           window.clearTimeout(this.showTimeout);
@@ -1361,24 +1702,28 @@ var SidebarOrganizer = (() => {
       };
       mainElement.addEventListener("mouseenter", mouseEnterHandler);
       mainElement.addEventListener("mouseleave", mouseLeaveHandler);
-      this.boundElements.set(mainElement, { mouseEnter: mouseEnterHandler, mouseLeave: mouseLeaveHandler });
+      mainElement.addEventListener("click", clickHandler, { capture: true });
+      this.boundElements.set(mainElement, {
+        mouseEnter: mouseEnterHandler,
+        mouseLeave: mouseLeaveHandler,
+        click: clickHandler
+      });
     }
     scheduleHide() {
-      if (this.hideTimeout)
-        window.clearTimeout(this.hideTimeout);
+      if (this.hideTimeout) window.clearTimeout(this.hideTimeout);
       this.hideTimeout = window.setTimeout(() => {
-        if (this.popupHovered)
-          return;
-        if (this.hoveredIconEl)
-          return;
+        if (this.popupHovered) return;
+        if (this.hoveredIconEl) return;
         this.hideMenu();
       }, 300);
     }
     showMenu(mainElement, title, actions) {
-      if (this.isHiding)
+      if (this.unloaded) return;
+      if (this.isHiding) {
+        this.pendingShow = { anchor: mainElement, title, actions };
         return;
-      if (this.popupEl && this.currentPopupAnchor === mainElement)
-        return;
+      }
+      if (this.popupEl && this.currentPopupAnchor === mainElement) return;
       if (this.popupEl) {
         this.cleanupPopupHandlers();
         this.popupEl.remove();
@@ -1392,22 +1737,40 @@ var SidebarOrganizer = (() => {
         window.clearTimeout(this.showTimeout);
         this.showTimeout = null;
       }
-      this.popupEl = activeDocument.createElement("div");
+      this.popupEl = this.rootDoc.createElement("div");
       this.popupEl.className = "sidebar-organizer-popup";
-      activeDocument.body.appendChild(this.popupEl);
+      if (this.settings.popupRounded) {
+        this.popupEl.style.setProperty("--popup-radius", `${this.settings.popupRadius}px`);
+      } else {
+        this.popupEl.classList.add("square");
+      }
+      if (this.settings.waterDrop) {
+        this.popupEl.classList.add("water-drop");
+      }
+      this.rootDoc.body.appendChild(this.popupEl);
       this.currentPopupAnchor = mainElement;
+      this.escKeyHandler = (e) => {
+        if (e.key === "Escape") {
+          this.hideMenu();
+        }
+      };
+      this.rootDoc.addEventListener("keydown", this.escKeyHandler, true);
       const popup = this.popupEl;
       if (this.useMobileInteraction()) {
         this.documentClickHandler = (e) => {
           const target = e.target;
-          if (!this.popupEl)
-            return;
+          if (!this.popupEl) return;
           if (!this.popupEl.contains(target) && target !== mainElement && !mainElement.contains(target)) {
             this.hideMenu();
           }
         };
-        window.setTimeout(() => {
-          activeDocument.addEventListener("click", this.documentClickHandler);
+        this.clickDeferTimer = window.setTimeout(() => {
+          this.clickDeferTimer = null;
+          const h = this.documentClickHandler;
+          if (h && !this.mobileClickBound) {
+            this.rootDoc.addEventListener("click", h);
+            this.mobileClickBound = true;
+          }
         }, 0);
       } else {
         this.popupMouseEnterHandler = () => {
@@ -1433,7 +1796,7 @@ var SidebarOrganizer = (() => {
         const iconEl = itemEl.createDiv("sidebar-organizer-action-icon");
         setSvgContent(iconEl, action.icon);
         const labelEl = itemEl.createDiv("sidebar-organizer-action-label");
-        labelEl.textContent = this.extractActionLabel(action.actionName, title);
+        labelEl.textContent = extractActionLabel(action.actionName);
         itemEl.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -1442,7 +1805,9 @@ var SidebarOrganizer = (() => {
         });
       }
       this.positionPopup(popup, mainElement);
-      if (this.settings.blurEffect) {
+      if (this.settings.liquidGlass) {
+        this.applyLiquidGlass(popup);
+      } else if (this.settings.blurEffect) {
         popup.classList.add("blur-effect");
         popup.style.setProperty("--blur-amount", `${this.settings.blurIntensity}px`);
       }
@@ -1451,14 +1816,15 @@ var SidebarOrganizer = (() => {
       });
     }
     hideMenu() {
-      if (!this.popupEl)
-        return;
+      if (!this.popupEl) return;
       this.isHiding = true;
       this.cleanupPopupHandlers();
       const popup = this.popupEl;
       popup.classList.remove("visible");
       popup.classList.add("hiding");
-      window.setTimeout(() => {
+      if (this.hideTimer) window.clearTimeout(this.hideTimer);
+      this.hideTimer = window.setTimeout(() => {
+        this.hideTimer = null;
         this.popupHovered = false;
         if (popup && popup.parentElement) {
           popup.remove();
@@ -1468,6 +1834,11 @@ var SidebarOrganizer = (() => {
           this.currentPopupAnchor = null;
         }
         this.isHiding = false;
+        const pending = this.pendingShow;
+        this.pendingShow = null;
+        if (pending) {
+          this.showMenu(pending.anchor, pending.title, pending.actions);
+        }
       }, 250);
     }
     positionPopup(popup, anchor) {
@@ -1475,7 +1846,8 @@ var SidebarOrganizer = (() => {
       const popupWidth = Math.max(popup.offsetWidth, 190);
       const isLeftSide = rect.left < window.innerWidth / 2;
       if (isLeftSide) {
-        popup.style.left = `${rect.right + 8}px`;
+        const left = Math.min(rect.right + 8, window.innerWidth - popupWidth - 8);
+        popup.style.left = `${Math.max(8, left)}px`;
         popup.classList.remove("popup-right");
       } else {
         const leftPos = Math.max(8, rect.left - popupWidth - 8);
@@ -1493,25 +1865,24 @@ var SidebarOrganizer = (() => {
       }
     }
     identifyAction(element) {
-      var _a, _b;
+      var _a;
       const ariaLabel = element.getAttribute("aria-label") || "";
-      const tooltip = ((_a = element.querySelector(".tooltip")) == null ? void 0 : _a.textContent) || "";
       const dataView = element.getAttribute("data-view") || "";
-      const svgIcon = ((_b = element.querySelector("svg")) == null ? void 0 : _b.outerHTML) || "";
-      const displayName = ariaLabel || tooltip;
-      if (!displayName)
-        return null;
+      const svgIcon = ((_a = element.querySelector("svg")) == null ? void 0 : _a.outerHTML) || "";
+      const displayName = ariaLabel;
+      if (!displayName) return null;
       const pluginInfo = this.matchPlugin(displayName, dataView);
-      if (!pluginInfo)
-        return null;
-      const actionId = dataView || displayName.toLowerCase().replace(/\s+/g, "-");
+      if (!pluginInfo) return null;
+      const baseId = dataView || displayName.toLowerCase().replace(/\s+/g, "-");
+      const actionId = `${pluginInfo.pluginId}:${baseId}`;
       return {
         element,
         pluginId: pluginInfo.pluginId,
         pluginName: pluginInfo.pluginName,
         actionName: displayName,
         icon: svgIcon,
-        actionId
+        actionId,
+        legacyId: baseId
       };
     }
     matchPlugin(displayName, dataView) {
@@ -1534,15 +1905,21 @@ var SidebarOrganizer = (() => {
         return { pluginId: prefix, pluginName: prefix };
       }
       const nameLower = displayName.toLowerCase();
-      for (const [id, manifest] of this.installedPlugins) {
+      const sortedPlugins = [...this.installedPlugins.entries()].sort((a, b) => b[1].name.length - a[1].name.length);
+      for (const [id, manifest] of sortedPlugins) {
+        if (manifest.name.toLowerCase() === nameLower) {
+          return { pluginId: id, pluginName: manifest.name };
+        }
+      }
+      for (const [id, manifest] of sortedPlugins) {
         const pluginName = manifest.name.toLowerCase();
-        if (nameLower.includes(pluginName) || pluginName === nameLower) {
+        if (pluginName && nameLower.includes(pluginName)) {
           return { pluginId: id, pluginName: manifest.name };
         }
       }
       const firstPart = nameLower.split(/[\s:：\-–—]+/)[0];
       if (firstPart && firstPart.length > 1) {
-        for (const [id, manifest] of this.installedPlugins) {
+        for (const [id, manifest] of sortedPlugins) {
           const pluginName = manifest.name.toLowerCase();
           if (pluginName.includes(firstPart) || firstPart.includes(pluginName)) {
             return { pluginId: id, pluginName: manifest.name };
@@ -1554,20 +1931,6 @@ var SidebarOrganizer = (() => {
         pluginId: safeId || "unknown",
         pluginName: displayName
       };
-    }
-    extractActionLabel(fullName, pluginName) {
-      let label = fullName;
-      const separators = [":", "\uFF1A", "-", "\u2013", "\u2014", "|"];
-      for (const sep of separators) {
-        if (fullName.includes(sep)) {
-          const parts = fullName.split(sep);
-          if (parts.length > 1) {
-            label = parts.slice(1).join(sep).trim();
-            break;
-          }
-        }
-      }
-      return label || fullName;
     }
     applyCustomIcon(element, svgContent) {
       const svgEl = element.querySelector("svg");
@@ -1616,6 +1979,11 @@ var SidebarOrganizer = (() => {
         window.clearTimeout(this.showTimeout);
         this.showTimeout = null;
       }
+      if (this.hideTimer) {
+        window.clearTimeout(this.hideTimer);
+        this.hideTimer = null;
+      }
+      this.pendingShow = null;
       this.cleanupAllListeners();
       if (this.popupEl) {
         this.popupEl.remove();
@@ -1626,24 +1994,28 @@ var SidebarOrganizer = (() => {
       this.isHiding = false;
       this.hoveredIconEl = null;
       this.currentPopupAnchor = null;
-      activeDocument.querySelectorAll("[data-original-svg]").forEach((el) => {
+      this.rootDoc.querySelectorAll("[data-original-svg]").forEach((el) => {
         try {
           this.restoreOriginalIcon(el);
         } catch (e) {
           console.warn("Sidebar Organizer: failed to restore icon", e);
         }
       });
-      activeDocument.querySelectorAll(".sidebar-organizer-hidden").forEach((el) => {
+      this.rootDoc.querySelectorAll(".sidebar-organizer-hidden").forEach((el) => {
         el.classList.remove("sidebar-organizer-hidden");
       });
-      activeDocument.querySelectorAll(".sidebar-organizer-badge").forEach((el) => {
+      this.rootDoc.querySelectorAll(".sidebar-organizer-badge").forEach((el) => {
         try {
           el.remove();
         } catch (e) {
         }
       });
-      activeDocument.querySelectorAll("[data-popup-bound]").forEach((el) => {
+      this.rootDoc.querySelectorAll("[data-popup-bound]").forEach((el) => {
         el.removeAttribute("data-popup-bound");
+      });
+      this.rootDoc.querySelectorAll("[data-original-label]").forEach((el) => {
+        el.setAttribute("aria-label", el.getAttribute("data-original-label") || "");
+        el.removeAttribute("data-original-label");
       });
     }
     getAllActions() {
@@ -1651,8 +2023,7 @@ var SidebarOrganizer = (() => {
       const seen = /* @__PURE__ */ new Set();
       const addAction = (el) => {
         const action = this.identifyAction(el);
-        if (!action)
-          return;
+        if (!action) return;
         if (!seen.has(action.actionId)) {
           seen.add(action.actionId);
           actions.push(action);
@@ -1660,51 +2031,26 @@ var SidebarOrganizer = (() => {
       };
       if (this.hasDesktopRibbon()) {
         ["left", "right"].forEach((side) => {
-          const ribbon = activeDocument.querySelector(`.workspace-ribbon.mod-${side}`);
-          if (!ribbon)
-            return;
+          const ribbon = this.rootDoc.querySelector(`.workspace-ribbon.mod-${side}`);
+          if (!ribbon) return;
           ribbon.querySelectorAll(".side-dock-ribbon-action, .clickable-icon, .workspace-ribbon-action").forEach(addAction);
         });
       } else {
-        this.collectMobileActions(addAction);
+        this.collectMobileIcons().forEach(addAction);
       }
       return actions;
     }
-    collectMobileActions(addAction) {
-      for (const selector of _SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS) {
-        const container = activeDocument.querySelector(selector);
-        if (container) {
-          const icons = container.querySelectorAll(
-            _SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS
-          );
-          if (icons.length > 0) {
-            icons.forEach(addAction);
-            return;
-          }
-        }
-      }
-      const ribbonActions = activeDocument.querySelectorAll(".side-dock-ribbon-action");
-      if (ribbonActions.length > 0) {
-        ribbonActions.forEach(addAction);
-        return;
-      }
-      const allClickable = activeDocument.querySelectorAll(".clickable-icon");
-      Array.from(allClickable).filter((el) => !_SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS.some(
-        (ancestor) => el.closest(ancestor) !== null
-      )).forEach(addAction);
-    }
   };
-  var SidebarOrganizerPlugin = _SidebarOrganizerPlugin;
   // 移动端侧边栏图标容器选择器（按优先级）
-  SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS = [
+  _SidebarOrganizerPlugin.MOBILE_RIBBON_SELECTORS = [
     ".workspace-drawer-ribbon .side-dock-actions",
     ".workspace-drawer-ribbon",
     ".workspace-drawer .side-dock-actions"
   ];
   // 移动端图标元素选择器
-  SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS = ".side-dock-ribbon-action, .clickable-icon";
+  _SidebarOrganizerPlugin.MOBILE_ICON_SELECTORS = ".side-dock-ribbon-action, .clickable-icon";
   // 需要排除的容器（避免匹配非侧边栏元素）
-  SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS = [
+  _SidebarOrganizerPlugin.MOBILE_EXCLUDE_ANCESTORS = [
     ".workspace-leaf",
     ".view-header",
     ".status-bar",
@@ -1714,6 +2060,7 @@ var SidebarOrganizer = (() => {
     ".workspace-tab-header-container",
     ".setting-item"
   ];
+  var SidebarOrganizerPlugin = _SidebarOrganizerPlugin;
   var main_default = SidebarOrganizerPlugin;
   return __toCommonJS(main_exports);
 })();

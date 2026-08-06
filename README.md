@@ -1,5 +1,8 @@
 # Sidebar Organizer
 
+> This plugin modifies the Obsidian **ribbon** (the icon strip at the side of the window), not the sidebar itself. Thanks to [ksdavidc](https://github.com/ksdavidc) for the terminology reminder in [#1](https://github.com/zhywjml/obsidian-sidebar-organizer/issues/1).
+> 本插件修改的是 Obsidian 的 **ribbon**（窗口侧边的图标条），而非侧边栏本身。感谢 [ksdavidc](https://github.com/ksdavidc) 在 [issue #1](https://github.com/zhywjml/obsidian-sidebar-organizer/issues/1) 中的术语提醒。
+
 [中文](#中文) | [English](#english) | [日本語](#日本語) | [한국어](#한국어)
 ---
 

@@ -1,7 +1,7 @@
-import { App, Modal, Notice, Setting, TextComponent } from 'obsidian';
+import { App, Modal, Notice, Setting } from 'obsidian';
 import type { SidebarOrganizerPlugin } from './main';
-import type { CustomGroup, SidebarAction, Language } from './types';
-import { translate, getPluginLanguage } from './i18n';
+import type { CustomGroup, SidebarAction } from './types';
+import { createTranslator } from './i18n';
 import { setSvgContent } from './sidebar';
 
 export class SimpleGroupModal extends Modal {
@@ -9,7 +9,6 @@ export class SimpleGroupModal extends Modal {
 	existingGroup: CustomGroup | null;
 	onSave: () => void;
 
-	private step = 1;
 	private selectedActions: Set<string> = new Set();
 	private groupName = '';
 	private groupIcon = '';
@@ -21,11 +20,10 @@ export class SimpleGroupModal extends Modal {
 	private iconInput!: HTMLTextAreaElement;
 	private previewEl!: HTMLElement;
 
-	private t(key: string, params?: Record<string, string | number>): string {
-		const vault = this.app.vault as unknown as { config?: { locale?: string } };
-		const lang = getPluginLanguage(this.plugin.settings, vault?.config?.locale);
-		return translate(lang, key, params);
-	}
+	private t = createTranslator(
+		() => this.plugin.settings,
+		() => (this.app.vault as unknown as { config?: { locale?: string } }).config?.locale
+	);
 
 	constructor(
 		app: App,
@@ -98,6 +96,8 @@ export class SimpleGroupModal extends Modal {
 		for (const [pluginName, actions] of pluginGroups) {
 			const groupEl = this.availableContainer.createDiv('action-group');
 
+			const groupActions = groupEl.createDiv('group-actions');
+
 			const groupHeader = groupEl.createDiv('action-group-header');
 			const allSelected = actions.every(a => this.selectedActions.has(a.actionId));
 			if (allSelected && actions.length > 0) {
@@ -125,10 +125,9 @@ export class SimpleGroupModal extends Modal {
 					}
 				});
 				groupHeader.classList.toggle('all-selected', !allInGroup);
-				this.updateSelectedList(assignedElsewhere);
+				this.updateSelectedList();
 			});
 
-			const groupActions = groupEl.createDiv('group-actions');
 			for (const action of actions) {
 				const isSelected = this.selectedActions.has(action.actionId);
 
@@ -151,7 +150,7 @@ export class SimpleGroupModal extends Modal {
 						this.selectedActions.add(action.actionId);
 						itemEl.classList.add('in-group');
 					}
-					this.updateSelectedList(assignedElsewhere);
+					this.updateSelectedList();
 					const allNowSelected = actions.every(a => this.selectedActions.has(a.actionId));
 					if (allNowSelected) {
 						groupHeader.classList.add('all-selected');
@@ -169,7 +168,7 @@ export class SimpleGroupModal extends Modal {
 			.setHeading();
 
 		this.selectedContainer = rightPanel.createDiv('actions-list selected-list');
-		this.updateSelectedList(assignedElsewhere);
+		this.updateSelectedList();
 
 		// 按钮
 		const buttonContainer = contentEl.createDiv('modal-button-container');
@@ -187,7 +186,7 @@ export class SimpleGroupModal extends Modal {
 			});
 	}
 
-	private updateSelectedList(assignedElsewhere: Set<string>) {
+	private updateSelectedList() {
 		this.selectedContainer.empty();
 
 		const selectedActions = this.allActions.filter(a => this.selectedActions.has(a.actionId));
@@ -215,7 +214,7 @@ export class SimpleGroupModal extends Modal {
 			removeBtn.addEventListener('click', (e) => {
 				e.stopPropagation();
 				this.selectedActions.delete(action.actionId);
-				this.updateSelectedList(assignedElsewhere);
+				this.updateSelectedList();
 				// Sync: update left panel using data-action-id instead of name matching
 				this.availableContainer.querySelectorAll('.action-item-draggable').forEach(el => {
 					if (el.getAttribute('data-action-id') === action.actionId) {

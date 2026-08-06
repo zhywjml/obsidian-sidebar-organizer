@@ -19,6 +19,7 @@ export interface SidebarAction {
 	actionName: string;
 	icon: string;
 	actionId: string;
+	legacyId: string;
 }
 
 export interface CustomGroup {
@@ -33,6 +34,11 @@ export interface SidebarOrganizerSettings {
 	enabled: boolean;
 	blurEffect: boolean;
 	blurIntensity: number;
+	popupRounded: boolean;
+	popupRadius: number;
+	liquidGlass: boolean;
+	liquidGlassBlur: number;
+	waterDrop: boolean;
 	customGroups: CustomGroup[];
 	language: string;
 }
@@ -41,6 +47,11 @@ export const DEFAULT_SETTINGS: SidebarOrganizerSettings = {
 	enabled: true,
 	blurEffect: true,
 	blurIntensity: 16,
+	popupRounded: true,
+	popupRadius: 12,
+	liquidGlass: false,
+	liquidGlassBlur: 1.5,
+	waterDrop: false,
 	customGroups: [],
 	language: 'auto',
 };
