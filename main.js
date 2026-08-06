@@ -1308,7 +1308,7 @@ var SidebarOrganizer = (() => {
     updateLiquidGlassMap(w, h) {
       if (!this.liquidGlassFeImage || this.liquidGlassMapSize === w * h) return;
       this.liquidGlassMapSize = w * h;
-      const canvas = this.rootDoc.createEl("canvas");
+      const canvas = this.rootDoc.createElement("canvas");
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext("2d");
@@ -1737,7 +1737,7 @@ var SidebarOrganizer = (() => {
         window.clearTimeout(this.showTimeout);
         this.showTimeout = null;
       }
-      this.popupEl = this.rootDoc.createEl("div");
+      this.popupEl = this.rootDoc.createElement("div");
       this.popupEl.className = "sidebar-organizer-popup";
       if (this.settings.popupRounded) {
         this.popupEl.style.setProperty("--popup-radius", `${this.settings.popupRadius}px`);
