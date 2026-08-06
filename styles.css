@@ -673,9 +673,9 @@ body .sidebar-organizer-hidden {
 	margin-top: 4px;
 }
 /* 删除分组按钮确认态（第二次点击才真正删除） */
-.sidebar-organizer-delete-confirm {
-	background: var(--background-modifier-error) !important;
-	color: var(--text-on-accent) !important;
+.sidebar-organizer-custom-group-item .group-actions button.mod-warning.sidebar-organizer-delete-confirm {
+	background: var(--background-modifier-error);
+	color: var(--text-on-accent);
 }
 
 /* 方形弹窗（关闭圆角） */
@@ -764,4 +764,15 @@ body .sidebar-organizer-hidden {
 		border-radius: 50%;
 		opacity: 0;
 	}
+}
+
+/* 液态玻璃 SVG 位移滤镜容器（隐藏） */
+.sidebar-organizer-lg-filter {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+	z-index: 99998;
 }

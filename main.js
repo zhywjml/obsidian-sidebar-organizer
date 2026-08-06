@@ -1271,9 +1271,9 @@ var SidebarOrganizer = (() => {
       if (this.liquidGlassFilterId) return this.liquidGlassFilterId;
       const NS = "http://www.w3.org/2000/svg";
       const svg = doc.createElementNS(NS, "svg");
+      svg.setAttribute("class", "sidebar-organizer-lg-filter");
       svg.setAttribute("width", "0");
       svg.setAttribute("height", "0");
-      svg.setAttribute("style", "position:fixed;top:0;left:0;pointer-events:none;z-index:99998");
       const defs = doc.createElementNS(NS, "defs");
       const filter = doc.createElementNS(NS, "filter");
       this.liquidGlassFilterId = "sidebar-organizer-lg-" + Math.random().toString(36).slice(2, 9);
@@ -1308,7 +1308,7 @@ var SidebarOrganizer = (() => {
     updateLiquidGlassMap(w, h) {
       if (!this.liquidGlassFeImage || this.liquidGlassMapSize === w * h) return;
       this.liquidGlassMapSize = w * h;
-      const canvas = this.rootDoc.createElement("canvas");
+      const canvas = this.rootDoc.createEl("canvas");
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext("2d");
@@ -1737,7 +1737,7 @@ var SidebarOrganizer = (() => {
         window.clearTimeout(this.showTimeout);
         this.showTimeout = null;
       }
-      this.popupEl = this.rootDoc.createElement("div");
+      this.popupEl = this.rootDoc.createEl("div");
       this.popupEl.className = "sidebar-organizer-popup";
       if (this.settings.popupRounded) {
         this.popupEl.style.setProperty("--popup-radius", `${this.settings.popupRadius}px`);

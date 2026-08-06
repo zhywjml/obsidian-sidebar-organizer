@@ -142,9 +142,9 @@ export class SidebarOrganizerPlugin extends Plugin {
 
 		const NS = 'http://www.w3.org/2000/svg';
 		const svg = doc.createElementNS(NS, 'svg');
+		svg.setAttribute('class', 'sidebar-organizer-lg-filter');
 		svg.setAttribute('width', '0');
 		svg.setAttribute('height', '0');
-		svg.setAttribute('style', 'position:fixed;top:0;left:0;pointer-events:none;z-index:99998');
 
 		const defs = doc.createElementNS(NS, 'defs');
 		const filter = doc.createElementNS(NS, 'filter');
@@ -157,7 +157,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		filter.setAttribute('width', '1');
 		filter.setAttribute('height', '1');
 
-		const feImage = doc.createElementNS(NS, 'feImage') as SVGFEImageElement;
+		const feImage = doc.createElementNS(NS, 'feImage');
 		feImage.setAttribute('width', '1');
 		feImage.setAttribute('height', '1');
 
@@ -186,7 +186,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		if (!this.liquidGlassFeImage || this.liquidGlassMapSize === w * h) return;
 		this.liquidGlassMapSize = w * h;
 
-		const canvas = this.rootDoc.createElement('canvas');
+		const canvas = this.rootDoc.createEl('canvas');
 		canvas.width = w;
 		canvas.height = h;
 		const ctx = canvas.getContext('2d');
@@ -333,7 +333,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			for (const selector of mobileTargets) {
 				const el = this.rootDoc.querySelector(selector);
 				if (el) {
-					this.mutationObserver!.observe(el, { childList: true, subtree: true });
+					this.mutationObserver.observe(el, { childList: true, subtree: true });
 					this.observedTargets.push(el);
 					observed = true;
 					break;
@@ -341,7 +341,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			}
 			// 回退：观察 body 顶层，当抽屉出现时触发重新扫描
 			if (!observed) {
-				this.mutationObserver!.observe(this.rootDoc.body, { childList: true, subtree: false });
+				this.mutationObserver.observe(this.rootDoc.body, { childList: true, subtree: false });
 				this.observedTargets.push(this.rootDoc.body);
 			}
 		}
@@ -703,7 +703,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 			this.showTimeout = null;
 		}
 
-		this.popupEl = this.rootDoc.createElement('div');
+		this.popupEl = this.rootDoc.createEl('div');
 		this.popupEl.className = 'sidebar-organizer-popup';
 		if (this.settings.popupRounded) {
 			this.popupEl.style.setProperty('--popup-radius', `${this.settings.popupRadius}px`);
@@ -1034,7 +1034,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 		});
 
 		this.rootDoc.querySelectorAll('.sidebar-organizer-badge').forEach(el => {
-			try { el.remove(); } catch (e) { /* element may already be detached */ }
+			try { el.remove(); } catch { /* element may already be detached */ }
 		});
 
 		this.rootDoc.querySelectorAll('[data-popup-bound]').forEach(el => {

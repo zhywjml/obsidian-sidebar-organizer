@@ -65,7 +65,7 @@ export class SimpleGroupModal extends Modal {
 		// 获取已分配到其他分组的 actionIds
 		const assignedElsewhere = new Set<string>();
 		this.plugin.settings.customGroups.forEach(g => {
-			if (this.existingGroup && g.id === this.existingGroup!.id) return;
+			if (this.existingGroup && g.id === this.existingGroup.id) return;
 			g.actionIds.forEach(id => assignedElsewhere.add(id));
 		});
 
