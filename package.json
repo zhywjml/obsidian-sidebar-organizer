@@ -7,6 +7,7 @@
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"lint": "eslint src",
 		"test": "node tests/core.test.mjs"
 	},
 	"keywords": [
@@ -20,8 +21,11 @@
 	"devDependencies": {
 		"@types/node": "^16.11.6",
 		"esbuild": "^0.25.12",
+		"eslint": "^9.39.4",
+		"eslint-plugin-obsidianmd": "^0.4.2",
 		"obsidian": "^1.13.1",
 		"tslib": "2.4.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.70.0"
 	}
 }
