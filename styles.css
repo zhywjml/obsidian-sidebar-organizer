@@ -232,6 +232,20 @@ body .sidebar-organizer-hidden {
 	white-space: nowrap;
 }
 
+/* 已绑定快捷键徽标（右对齐） */
+.sidebar-organizer-action-hotkey {
+	flex-shrink: 0;
+	padding: 1px 6px;
+	border-radius: 4px;
+	font-size: 11px;
+	line-height: 1.5;
+	color: var(--text-muted);
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	white-space: nowrap;
+	letter-spacing: 0.02em;
+}
+
 /* ==================== 暗色主题调整 ==================== */
 
 .theme-dark .sidebar-organizer-popup {

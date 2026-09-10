@@ -6,6 +6,7 @@ const translations: Record<string, Record<string, string>> = {
 	zh: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: '将同一插件的多个侧边栏图标合并为一个，悬停显示功能菜单',
+		general: '通用',
 
 		enableOrganizer: '启用侧边栏整理',
 		enableOrganizerDesc: '开启/关闭侧边栏图标合并功能',
@@ -21,7 +22,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: '圆角大小',
 		popupRadiusDesc: '弹窗圆角半径（当前: {value}px）',
 		liquidGlass: '液态玻璃效果',
-		liquidGlassDesc: '实验性：模拟 iOS 26 液态玻璃质感（磨砂 + 边缘高光 + 光泽），渲染开销较高',
+		liquidGlassDesc: '实验性：模拟 iOS 26 液态玻璃质感（磨砂 + 边缘高光 + 光泽），渲染开销较高；开启后毛玻璃效果不生效',
 		liquidGlassBlur: '模糊程度',
 		liquidGlassBlurDesc: '液态玻璃背景模糊强度（当前: {value}px）',
 		waterDrop: '水滴动效',
@@ -91,6 +92,7 @@ const translations: Record<string, Record<string, string>> = {
 	en: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: 'Merge multiple sidebar icons from the same plugin into one, hover to show function menu',
+		general: 'General',
 
 		enableOrganizer: 'Enable Sidebar Organizer',
 		enableOrganizerDesc: 'Turn on/off sidebar icon merging function',
@@ -106,7 +108,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: 'Corner radius',
 		popupRadiusDesc: 'Popup corner radius (current: {value}px)',
 		liquidGlass: 'Liquid glass effect',
-		liquidGlassDesc: 'Experimental: iOS 26-style liquid glass (frost, rim highlight, sheen); higher rendering cost',
+		liquidGlassDesc: 'Experimental: iOS 26-style liquid glass (frost, rim highlight, sheen); higher rendering cost; overrides the blur effect when enabled',
 		liquidGlassBlur: 'Blur amount',
 		liquidGlassBlurDesc: 'Liquid glass background blur strength (current: {value}px)',
 		waterDrop: 'Water Drop Effect',
@@ -176,6 +178,7 @@ const translations: Record<string, Record<string, string>> = {
 	ja: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: '同じプラグインの複数のサイドバーアイコンを1つにまとめ、ホバーで機能メニューを表示',
+		general: '一般',
 
 		enableOrganizer: 'サイドバー整理を有効化',
 		enableOrganizerDesc: 'サイドバーアイコンの統合機能をオン/オフ',
@@ -191,7 +194,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: '角丸の大きさ',
 		popupRadiusDesc: 'ポップアップの角丸半径（現在: {value}px）',
 		liquidGlass: 'リキッドグラス効果',
-		liquidGlassDesc: '実験的: iOS 26 風のリキッドグラス表現（すりガラス+縁のハイライト+光沢）。描画負荷が高め',
+		liquidGlassDesc: '実験的：iOS 26 風のリキッドグラス（磨砂＋縁のハイライト＋光沢）。描画負荷が高め；有効時はブラー効果は無効になります',
 		liquidGlassBlur: 'ぼかし量',
 		liquidGlassBlurDesc: 'リキッドグラスの背景ぼかし強度（現在: {value}px）',
 		waterDrop: '水滴エフェクト',
@@ -261,6 +264,7 @@ const translations: Record<string, Record<string, string>> = {
 	ko: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: '동일한 플러그인의 여러 사이드바 아이콘을 하나로 통합하고, 마우스 오버로 기능 메뉴 표시',
+		general: '일반',
 
 		enableOrganizer: '사이드바 정리 활성화',
 		enableOrganizerDesc: '사이드바 아이콘 통합 기능 켜기/끄기',
@@ -276,7 +280,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: '모서리 둥근 정도',
 		popupRadiusDesc: '팝업 모서리 반경 (현재: {value}px)',
 		liquidGlass: '리퀴드 글래스 효과',
-		liquidGlassDesc: '실험적: iOS 26 스타일 리퀴드 글래스(프로스트+테두리 하이라이트+광택). 렌더링 부하가 높음',
+		liquidGlassDesc: '실험적: iOS 26 스타일 리퀴드 글래스(프로스트 + 가장자리 하이라이트 + 광택). 렌더링 비용이 높으며, 켜면 블러 효과가 적용되지 않습니다',
 		liquidGlassBlur: '흐림 정도',
 		liquidGlassBlurDesc: '리퀴드 글래스 배경 흐림 강도 (현재: {value}px)',
 		waterDrop: '물방울 효과',
@@ -346,6 +350,7 @@ const translations: Record<string, Record<string, string>> = {
 	de: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: 'Mehrere Sidebar-Symbole desselben Plugins zu einem zusammenfassen, Hover zeigt Funktionsmenü',
+		general: 'Allgemein',
 
 		enableOrganizer: 'Sidebar-Organisation aktivieren',
 		enableOrganizerDesc: 'Funktion zum Zusammenfassen von Sidebar-Symbolen ein-/ausschalten',
@@ -361,7 +366,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: 'Eckenradius',
 		popupRadiusDesc: 'Popup-Eckenradius (aktuell: {value}px)',
 		liquidGlass: 'Liquid-Glass-Effekt',
-		liquidGlassDesc: 'Experimentell: iOS-26-Look (Mattglas, Kanten-Highlight, Glanz); höhere Rendering-Kosten',
+		liquidGlassDesc: 'Experimentell: Liquid Glass im iOS-26-Stil (Mattglas, Kanten-Highlight, Glanz); höhere Rendering-Kosten; ersetzt bei Aktivierung den Unschärfe-Effekt',
 		liquidGlassBlur: 'Unschärfe',
 		liquidGlassBlurDesc: 'Hintergrundunschärfe des Liquid Glass (aktuell: {value}px)',
 		waterDrop: 'Wassertropfen-Effekt',
@@ -431,6 +436,7 @@ const translations: Record<string, Record<string, string>> = {
 	ru: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: 'Объединить несколько значков боковой панели одного плагина в один, при наведении показать меню функций',
+		general: 'Общие',
 
 		enableOrganizer: 'Включить организацию боковой панели',
 		enableOrganizerDesc: 'Включить/выключить функцию объединения значков боковой панели',
@@ -446,7 +452,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: 'Радиус скругления',
 		popupRadiusDesc: 'Радиус скругления углов (сейчас: {value}px)',
 		liquidGlass: 'Эффект жидкого стекла',
-		liquidGlassDesc: 'Экспериментально: стиль Liquid Glass (iOS 26) — матовое стекло, блики и глянец; выше нагрузка на рендеринг',
+		liquidGlassDesc: 'Экспериментально: «жидкое стекло» в стиле iOS 26 (матовость, блик по краю, глянец); высокая нагрузка при отрисовке; при включении заменяет эффект размытия',
 		liquidGlassBlur: 'Размытие',
 		liquidGlassBlurDesc: 'Сила размытия фона жидкого стекла (сейчас: {value}px)',
 		waterDrop: 'Эффект капли',
@@ -516,6 +522,7 @@ const translations: Record<string, Record<string, string>> = {
 	es: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: 'Fusionar múltiples iconos de la barra lateral del mismo plugin en uno, al pasar el mouse mostrar menú de funciones',
+		general: 'General',
 
 		enableOrganizer: 'Activar organización de barra lateral',
 		enableOrganizerDesc: 'Activar/desactivar función de fusión de iconos de barra lateral',
@@ -531,7 +538,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: 'Radio de esquinas',
 		popupRadiusDesc: 'Radio de esquinas del menú (actual: {value}px)',
 		liquidGlass: 'Efecto de vidrio líquido',
-		liquidGlassDesc: 'Experimental: estilo Liquid Glass (iOS 26) — vidrio esmerilado, brillos y lustre; mayor coste de renderizado',
+		liquidGlassDesc: 'Experimental: estilo Liquid Glass (iOS 26) — vidrio esmerilado, brillos y lustre; mayor coste de renderizado; al activarlo sustituye el desenfoque',
 		liquidGlassBlur: 'Desenfoque',
 		liquidGlassBlurDesc: 'Intensidad de desenfoque del fondo (actual: {value}px)',
 		waterDrop: 'Efecto gota',
@@ -601,6 +608,7 @@ const translations: Record<string, Record<string, string>> = {
 	fr: {
 		pluginName: 'Sidebar Organizer',
 		pluginDesc: 'Fusionner plusieurs icônes de barre latérale du même plugin en une seule, survol pour afficher le menu des fonctions',
+		general: 'Général',
 
 		enableOrganizer: 'Activer l\'organisation de la barre latérale',
 		enableOrganizerDesc: 'Activer/désactiver la fonction de fusion des icônes de barre latérale',
@@ -616,7 +624,7 @@ const translations: Record<string, Record<string, string>> = {
 		popupRadius: 'Rayon des coins',
 		popupRadiusDesc: 'Rayon des coins du menu (actuel : {value}px)',
 		liquidGlass: 'Effet verre liquide',
-		liquidGlassDesc: 'Expérimental: style Liquid Glass (iOS 26) — verre dépoli, reflets et lustre; coût de rendu plus élevé',
+		liquidGlassDesc: 'Expérimental : style Liquid Glass (iOS 26) — verre dépoli, reflets et lustre ; coût de rendu plus élevé ; remplace l\'effet de flou quand il est activé',
 		liquidGlassBlur: 'Flou',
 		liquidGlassBlurDesc: 'Intensité du flou d’arrière-plan du verre liquide (actuel : {value}px)',
 		waterDrop: 'Effet goutte',
@@ -686,14 +694,15 @@ const translations: Record<string, Record<string, string>> = {
 };
 
 export function getLanguageCode(lang: string): Language {
-	if (lang.startsWith('zh')) return 'zh';
-	if (lang.startsWith('en')) return 'en';
-	if (lang.startsWith('ja')) return 'ja';
-	if (lang.startsWith('ko')) return 'ko';
-	if (lang.startsWith('de')) return 'de';
-	if (lang.startsWith('ru')) return 'ru';
-	if (lang.startsWith('es')) return 'es';
-	if (lang.startsWith('fr')) return 'fr';
+	const code = (lang || '').toLowerCase();
+	if (code.startsWith('zh')) return 'zh';
+	if (code.startsWith('en')) return 'en';
+	if (code.startsWith('ja')) return 'ja';
+	if (code.startsWith('ko')) return 'ko';
+	if (code.startsWith('de')) return 'de';
+	if (code.startsWith('ru')) return 'ru';
+	if (code.startsWith('es')) return 'es';
+	if (code.startsWith('fr')) return 'fr';
 	return 'en';
 }
 

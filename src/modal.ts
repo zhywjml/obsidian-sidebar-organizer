@@ -2,6 +2,7 @@ import { App, Modal, Notice, Setting } from 'obsidian';
 import type { SidebarOrganizerPlugin } from './main';
 import type { CustomGroup, SidebarAction } from './types';
 import { createTranslator } from './i18n';
+import { getObsidianLocale } from './locale';
 import { setSvgContent } from './sidebar';
 
 export class SimpleGroupModal extends Modal {
@@ -22,7 +23,7 @@ export class SimpleGroupModal extends Modal {
 
 	private t = createTranslator(
 		() => this.plugin.settings,
-		() => (this.app.vault as unknown as { config?: { locale?: string } }).config?.locale
+		() => getObsidianLocale(this.app)
 	);
 
 	constructor(
@@ -37,7 +38,6 @@ export class SimpleGroupModal extends Modal {
 		this.existingGroup = existingGroup;
 
 		if (existingGroup) {
-			this.selectedActions = new Set(existingGroup.actionIds);
 			this.groupName = existingGroup.name;
 			this.groupIcon = existingGroup.icon || '';
 		}
@@ -47,6 +47,12 @@ export class SimpleGroupModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 		this.allActions = this.plugin.getAllActions();
+		if (this.existingGroup) {
+			// 旧数据可能保存着失效/旧格式 id：先解析为当前规范 id，避免保存时把旧 id 写回
+			this.selectedActions = new Set(
+				this.plugin.resolveActionIdsForCurrentActions(this.allActions, this.existingGroup.actionIds)
+			);
+		}
 		this.renderStep1();
 	}
 
@@ -62,11 +68,12 @@ export class SimpleGroupModal extends Modal {
 			cls: 'sidebar-organizer-hint'
 		});
 
-		// 获取已分配到其他分组的 actionIds
+		// 获取已分配到其他分组的 actionIds（先解析旧格式 id 到当前 action，避免误判可用性）
 		const assignedElsewhere = new Set<string>();
 		this.plugin.settings.customGroups.forEach(g => {
 			if (this.existingGroup && g.id === this.existingGroup.id) return;
-			g.actionIds.forEach(id => assignedElsewhere.add(id));
+			this.plugin.resolveActionIdsForCurrentActions(this.allActions, g.actionIds)
+				.forEach(id => assignedElsewhere.add(id));
 		});
 
 		// 按插件分组归类功能

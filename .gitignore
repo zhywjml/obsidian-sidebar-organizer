@@ -17,6 +17,7 @@ npm-debug.log*
 
 # Development
 .claude/
+/.omo/
 /.crew/
 /.crew
 !.crew/artifacts/

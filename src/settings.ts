@@ -3,6 +3,7 @@ import {
 } from 'obsidian';
 import type { SidebarOrganizerPlugin } from './main';
 import { createTranslator } from './i18n';
+import { getObsidianLocale } from './locale';
 import { setSvgContent } from './sidebar';
 import { SimpleGroupModal } from './modal';
 
@@ -16,7 +17,7 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 
 	private t = createTranslator(
 		() => this.plugin.settings,
-		() => (this.app.vault as unknown as { config?: { locale?: string } }).config?.locale
+		() => getObsidianLocale(this.app)
 	);
 
 
@@ -31,6 +32,22 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 			text: this.t('pluginDesc'),
 			cls: 'sidebar-organizer-desc'
 		});
+
+		// ---- 通用 ----
+		new Setting(containerEl)
+			.setName(this.t('general'))
+			.setHeading();
+
+		new Setting(containerEl)
+			.setName(this.t('enableOrganizer'))
+			.setDesc(this.t('enableOrganizerDesc'))
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enabled)
+				.onChange(async (value) => {
+					this.plugin.settings.enabled = value;
+					await this.plugin.saveSettings();
+					this.plugin.applyOrganizerState();
+				}));
 
 		new Setting(containerEl)
 			.setName(this.t('language'))
@@ -62,19 +79,9 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName(this.t('enableOrganizer'))
-			.setDesc(this.t('enableOrganizerDesc'))
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enabled)
-				.onChange(async (value) => {
-					this.plugin.settings.enabled = value;
-					await this.plugin.saveSettings();
-					this.plugin.applyOrganizerState();
-				}));
-
-		new Setting(containerEl)
 			.setName(this.t('popupAppearance'))
 			.setHeading();
+		// 毛玻璃效果 + 模糊强度（强度随开关显隐）
 		new Setting(containerEl)
 			.setName(this.t('blurEffect'))
 			.setDesc(this.t('blurEffectDesc'))
@@ -83,50 +90,23 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.blurEffect = value;
 					await this.plugin.saveSettings();
+					updateDependentVisibility();
 				}));
 
-		const liquidBlurSetting = new Setting(containerEl)
+		const blurIntensitySetting = new Setting(containerEl)
 			.setName(this.t('blurIntensity'))
-			.setDesc(this.t('blurIntensityDesc', { value: this.plugin.settings.blurIntensity }));
-		liquidBlurSetting.addSlider(slider => slider
-			.setValue(this.plugin.settings.blurIntensity)
-			.setLimits(0, 30, 1)
-			.onChange(async (value) => {
-				this.plugin.settings.blurIntensity = value;
-				await this.plugin.saveSettings();
-				// 拖动时实时刷新描述中的当前值
-				liquidBlurSetting.descEl.textContent = this.t('blurIntensityDesc', { value });
-			}));
-
-		// 圆角弹窗开关（在上）
-		new Setting(containerEl)
-			.setName(this.t('popupRounded'))
-			.setDesc(this.t('popupRoundedDesc'))
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.popupRounded)
-				.onChange(async (value) => {
-					this.plugin.settings.popupRounded = value;
-					await this.plugin.saveSettings();
-					radiusSetting.settingEl.style.display = value ? '' : 'none';
-				}));
-
-		// 圆角大小滑块（在下，随开关显隐）
-		let radiusSetting: Setting;
-		radiusSetting = new Setting(containerEl)
-			.setName(this.t('popupRadius'))
-			.setDesc(this.t('popupRadiusDesc').replace('{value}', String(this.plugin.settings.popupRadius)))
+			.setDesc(this.t('blurIntensityDesc', { value: this.plugin.settings.blurIntensity }))
 			.addSlider(slider => slider
-				.setValue(this.plugin.settings.popupRadius)
-				.setLimits(0, 24, 1)
+				.setValue(this.plugin.settings.blurIntensity)
+				.setLimits(0, 30, 1)
 				.onChange(async (value) => {
-					this.plugin.settings.popupRadius = value;
+					this.plugin.settings.blurIntensity = value;
 					await this.plugin.saveSettings();
-					const desc = radiusSetting.settingEl.querySelector('.setting-item-description');
-					if (desc) desc.textContent = this.t('popupRadiusDesc').replace('{value}', String(value));
+					// 拖动时实时刷新描述中的当前值
+					blurIntensitySetting.descEl.textContent = this.t('blurIntensityDesc', { value });
 				}));
-		radiusSetting.settingEl.style.display = this.plugin.settings.popupRounded ? '' : 'none';
 
-		// 液态玻璃开关（在上）
+		// 液态玻璃效果 + 模糊强度（与毛玻璃互斥，开启时毛玻璃不生效）
 		new Setting(containerEl)
 			.setName(this.t('liquidGlass'))
 			.setDesc(this.t('liquidGlassDesc'))
@@ -135,12 +115,10 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.liquidGlass = value;
 					await this.plugin.saveSettings();
-					glassBlurSetting.settingEl.style.display = value ? '' : 'none';
+					updateDependentVisibility();
 				}));
 
-		// 液态玻璃模糊滑块（在下，随开关显隐）
-		let glassBlurSetting: Setting;
-		glassBlurSetting = new Setting(containerEl)
+		const glassBlurSetting = new Setting(containerEl)
 			.setName(this.t('liquidGlassBlur'))
 			.setDesc(this.t('liquidGlassBlurDesc').replace('{value}', String(this.plugin.settings.liquidGlassBlur)))
 			.addSlider(slider => slider
@@ -152,8 +130,33 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 					const desc = glassBlurSetting.settingEl.querySelector('.setting-item-description');
 					if (desc) desc.textContent = this.t('liquidGlassBlurDesc').replace('{value}', String(value));
 				}));
-		glassBlurSetting.settingEl.style.display = this.plugin.settings.liquidGlass ? '' : 'none';
 
+		// 圆角弹窗 + 圆角大小（大小随开关显隐）
+		new Setting(containerEl)
+			.setName(this.t('popupRounded'))
+			.setDesc(this.t('popupRoundedDesc'))
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.popupRounded)
+				.onChange(async (value) => {
+					this.plugin.settings.popupRounded = value;
+					await this.plugin.saveSettings();
+					updateDependentVisibility();
+				}));
+
+		const radiusSetting = new Setting(containerEl)
+			.setName(this.t('popupRadius'))
+			.setDesc(this.t('popupRadiusDesc').replace('{value}', String(this.plugin.settings.popupRadius)))
+			.addSlider(slider => slider
+				.setValue(this.plugin.settings.popupRadius)
+				.setLimits(0, 24, 1)
+				.onChange(async (value) => {
+					this.plugin.settings.popupRadius = value;
+					await this.plugin.saveSettings();
+					const desc = radiusSetting.settingEl.querySelector('.setting-item-description');
+					if (desc) desc.textContent = this.t('popupRadiusDesc').replace('{value}', String(value));
+				}));
+
+		// 水滴动效
 		new Setting(containerEl)
 			.setName(this.t('waterDrop'))
 			.setDesc(this.t('waterDropDesc'))
@@ -163,6 +166,15 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 					this.plugin.settings.waterDrop = value;
 					await this.plugin.saveSettings();
 				}));
+
+		// 从属设置随开关显隐：模糊强度（毛玻璃生效时）/ 液态玻璃模糊 / 圆角大小
+		const updateDependentVisibility = (): void => {
+			const { blurEffect, liquidGlass, popupRounded } = this.plugin.settings;
+			blurIntensitySetting.settingEl.style.display = blurEffect && !liquidGlass ? '' : 'none';
+			glassBlurSetting.settingEl.style.display = liquidGlass ? '' : 'none';
+			radiusSetting.settingEl.style.display = popupRounded ? '' : 'none';
+		};
+		updateDependentVisibility();
 
 		new Setting(containerEl)
 			.setName(this.t('customGroups'))
@@ -174,7 +186,6 @@ export class SidebarOrganizerSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName(this.t('createGroup'))
-			.setDesc(this.t('customGroupsDesc'))
 			.addButton(btn => btn
 				.setButtonText(this.t('createGroup'))
 				.onClick(() => {

@@ -10,6 +10,29 @@ export interface PluginsContainer {
 	manifests?: Record<string, PluginManifest>;
 }
 
+/** Obsidian 运行时热键对象（对应公开类型中的 Hotkey） */
+export interface HotkeyBinding {
+	modifiers: string[];
+	key: string;
+}
+
+/** Obsidian 运行时命令对象（commands.commands 的值） */
+export interface CommandEntry {
+	id: string;
+	name: string;
+	hotkeys?: HotkeyBinding[];
+}
+
+/** app.commands 运行时容器（未在公开 API 中声明） */
+export interface CommandsContainer {
+	commands?: Record<string, CommandEntry>;
+}
+
+/** app.hotkeyManager 运行时容器（未在公开 API 中声明） */
+export interface HotkeyManagerContainer {
+	getHotkeys?: (commandId: string) => HotkeyBinding[] | null;
+}
+
 export type Language = 'zh' | 'en' | 'ja' | 'ko' | 'de' | 'ru' | 'es' | 'fr';
 
 export interface SidebarAction {

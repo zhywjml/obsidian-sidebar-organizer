@@ -3,7 +3,7 @@ name: Release Obsidian Plugin
 on:
   push:
     tags:
-      - "*"
+      - "[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
   contents: write
@@ -15,18 +15,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify tag matches manifest version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          manifest_version="$(node -p "require('./manifest.json').version")"
+          if [ "$tag" != "$manifest_version" ]; then
+            echo "::error::Tag '$tag' does not match manifest.json version '$manifest_version'"
+            exit 1
+          fi
+          echo "Building release $tag"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
-      - run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: |
             main.js
             styles.css
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:

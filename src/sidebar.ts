@@ -67,18 +67,35 @@ export function hardenSvg(svg: SVGSVGElement): void {
  * 从完整功能名中提取短标签（去掉 "插件名: " 之类的前缀）
  */
 export function extractActionLabel(fullName: string): string {
-	let label = fullName;
-	const separators = [':', '：', '-', '\u2013', '\u2014', '|'];
-	for (const sep of separators) {
+	// 冒号：插件/分类前缀的标准分隔符
+	for (const sep of [':', '：']) {
 		if (fullName.includes(sep)) {
 			const parts = fullName.split(sep);
 			if (parts.length > 1) {
-				label = parts.slice(1).join(sep).trim();
-				break;
+				const label = parts.slice(1).join(sep).trim();
+				if (label) return label;
 			}
 		}
 	}
-	return label || fullName;
+
+	// 连字符：仅「空格 - 空格」才算分隔符，
+	// 避免 "Read-only mode"、"well-known" 这类词内连字符被误切
+	const dash = fullName.match(/\s[-–—]\s/);
+	if (dash && dash.index !== undefined) {
+		const label = fullName.slice(dash.index + dash[0].length).trim();
+		if (label) return label;
+	}
+
+	// 竖线
+	if (fullName.includes('|')) {
+		const parts = fullName.split('|');
+		if (parts.length > 1) {
+			const label = parts.slice(1).join('|').trim();
+			if (label) return label;
+		}
+	}
+
+	return fullName;
 }
 
 /**

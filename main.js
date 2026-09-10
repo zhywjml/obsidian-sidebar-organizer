@@ -35,7 +35,7 @@ var SidebarOrganizer = (() => {
     SidebarOrganizerPlugin: () => SidebarOrganizerPlugin,
     default: () => main_default
   });
-  var import_obsidian3 = __require("obsidian");
+  var import_obsidian4 = __require("obsidian");
 
   // src/types.ts
   var DEFAULT_SETTINGS = {
@@ -56,6 +56,7 @@ var SidebarOrganizer = (() => {
     zh: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "\u5C06\u540C\u4E00\u63D2\u4EF6\u7684\u591A\u4E2A\u4FA7\u8FB9\u680F\u56FE\u6807\u5408\u5E76\u4E3A\u4E00\u4E2A\uFF0C\u60AC\u505C\u663E\u793A\u529F\u80FD\u83DC\u5355",
+      general: "\u901A\u7528",
       enableOrganizer: "\u542F\u7528\u4FA7\u8FB9\u680F\u6574\u7406",
       enableOrganizerDesc: "\u5F00\u542F/\u5173\u95ED\u4FA7\u8FB9\u680F\u56FE\u6807\u5408\u5E76\u529F\u80FD",
       popupAppearance: "\u5F39\u51FA\u83DC\u5355\u5916\u89C2",
@@ -68,7 +69,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "\u5706\u89D2\u5927\u5C0F",
       popupRadiusDesc: "\u5F39\u7A97\u5706\u89D2\u534A\u5F84\uFF08\u5F53\u524D: {value}px\uFF09",
       liquidGlass: "\u6DB2\u6001\u73BB\u7483\u6548\u679C",
-      liquidGlassDesc: "\u5B9E\u9A8C\u6027\uFF1A\u6A21\u62DF iOS 26 \u6DB2\u6001\u73BB\u7483\u8D28\u611F\uFF08\u78E8\u7802 + \u8FB9\u7F18\u9AD8\u5149 + \u5149\u6CFD\uFF09\uFF0C\u6E32\u67D3\u5F00\u9500\u8F83\u9AD8",
+      liquidGlassDesc: "\u5B9E\u9A8C\u6027\uFF1A\u6A21\u62DF iOS 26 \u6DB2\u6001\u73BB\u7483\u8D28\u611F\uFF08\u78E8\u7802 + \u8FB9\u7F18\u9AD8\u5149 + \u5149\u6CFD\uFF09\uFF0C\u6E32\u67D3\u5F00\u9500\u8F83\u9AD8\uFF1B\u5F00\u542F\u540E\u6BDB\u73BB\u7483\u6548\u679C\u4E0D\u751F\u6548",
       liquidGlassBlur: "\u6A21\u7CCA\u7A0B\u5EA6",
       liquidGlassBlurDesc: "\u6DB2\u6001\u73BB\u7483\u80CC\u666F\u6A21\u7CCA\u5F3A\u5EA6\uFF08\u5F53\u524D: {value}px\uFF09",
       waterDrop: "\u6C34\u6EF4\u52A8\u6548",
@@ -128,6 +129,7 @@ var SidebarOrganizer = (() => {
     en: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "Merge multiple sidebar icons from the same plugin into one, hover to show function menu",
+      general: "General",
       enableOrganizer: "Enable Sidebar Organizer",
       enableOrganizerDesc: "Turn on/off sidebar icon merging function",
       popupAppearance: "Popup Appearance",
@@ -140,7 +142,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "Corner radius",
       popupRadiusDesc: "Popup corner radius (current: {value}px)",
       liquidGlass: "Liquid glass effect",
-      liquidGlassDesc: "Experimental: iOS 26-style liquid glass (frost, rim highlight, sheen); higher rendering cost",
+      liquidGlassDesc: "Experimental: iOS 26-style liquid glass (frost, rim highlight, sheen); higher rendering cost; overrides the blur effect when enabled",
       liquidGlassBlur: "Blur amount",
       liquidGlassBlurDesc: "Liquid glass background blur strength (current: {value}px)",
       waterDrop: "Water Drop Effect",
@@ -200,6 +202,7 @@ var SidebarOrganizer = (() => {
     ja: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "\u540C\u3058\u30D7\u30E9\u30B0\u30A4\u30F3\u306E\u8907\u6570\u306E\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u30921\u3064\u306B\u307E\u3068\u3081\u3001\u30DB\u30D0\u30FC\u3067\u6A5F\u80FD\u30E1\u30CB\u30E5\u30FC\u3092\u8868\u793A",
+      general: "\u4E00\u822C",
       enableOrganizer: "\u30B5\u30A4\u30C9\u30D0\u30FC\u6574\u7406\u3092\u6709\u52B9\u5316",
       enableOrganizerDesc: "\u30B5\u30A4\u30C9\u30D0\u30FC\u30A2\u30A4\u30B3\u30F3\u306E\u7D71\u5408\u6A5F\u80FD\u3092\u30AA\u30F3/\u30AA\u30D5",
       popupAppearance: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u5916\u89B3",
@@ -212,7 +215,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "\u89D2\u4E38\u306E\u5927\u304D\u3055",
       popupRadiusDesc: "\u30DD\u30C3\u30D7\u30A2\u30C3\u30D7\u306E\u89D2\u4E38\u534A\u5F84\uFF08\u73FE\u5728: {value}px\uFF09",
       liquidGlass: "\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u52B9\u679C",
-      liquidGlassDesc: "\u5B9F\u9A13\u7684: iOS 26 \u98A8\u306E\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u8868\u73FE\uFF08\u3059\u308A\u30AC\u30E9\u30B9+\u7E01\u306E\u30CF\u30A4\u30E9\u30A4\u30C8+\u5149\u6CA2\uFF09\u3002\u63CF\u753B\u8CA0\u8377\u304C\u9AD8\u3081",
+      liquidGlassDesc: "\u5B9F\u9A13\u7684\uFF1AiOS 26 \u98A8\u306E\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\uFF08\u78E8\u7802\uFF0B\u7E01\u306E\u30CF\u30A4\u30E9\u30A4\u30C8\uFF0B\u5149\u6CA2\uFF09\u3002\u63CF\u753B\u8CA0\u8377\u304C\u9AD8\u3081\uFF1B\u6709\u52B9\u6642\u306F\u30D6\u30E9\u30FC\u52B9\u679C\u306F\u7121\u52B9\u306B\u306A\u308A\u307E\u3059",
       liquidGlassBlur: "\u307C\u304B\u3057\u91CF",
       liquidGlassBlurDesc: "\u30EA\u30AD\u30C3\u30C9\u30B0\u30E9\u30B9\u306E\u80CC\u666F\u307C\u304B\u3057\u5F37\u5EA6\uFF08\u73FE\u5728: {value}px\uFF09",
       waterDrop: "\u6C34\u6EF4\u30A8\u30D5\u30A7\u30AF\u30C8",
@@ -272,6 +275,7 @@ var SidebarOrganizer = (() => {
     ko: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "\uB3D9\uC77C\uD55C \uD50C\uB7EC\uADF8\uC778\uC758 \uC5EC\uB7EC \uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58\uC744 \uD558\uB098\uB85C \uD1B5\uD569\uD558\uACE0, \uB9C8\uC6B0\uC2A4 \uC624\uBC84\uB85C \uAE30\uB2A5 \uBA54\uB274 \uD45C\uC2DC",
+      general: "\uC77C\uBC18",
       enableOrganizer: "\uC0AC\uC774\uB4DC\uBC14 \uC815\uB9AC \uD65C\uC131\uD654",
       enableOrganizerDesc: "\uC0AC\uC774\uB4DC\uBC14 \uC544\uC774\uCF58 \uD1B5\uD569 \uAE30\uB2A5 \uCF1C\uAE30/\uB044\uAE30",
       popupAppearance: "\uD31D\uC5C5 \uBAA8\uC591",
@@ -284,7 +288,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "\uBAA8\uC11C\uB9AC \uB465\uADFC \uC815\uB3C4",
       popupRadiusDesc: "\uD31D\uC5C5 \uBAA8\uC11C\uB9AC \uBC18\uACBD (\uD604\uC7AC: {value}px)",
       liquidGlass: "\uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4 \uD6A8\uACFC",
-      liquidGlassDesc: "\uC2E4\uD5D8\uC801: iOS 26 \uC2A4\uD0C0\uC77C \uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4(\uD504\uB85C\uC2A4\uD2B8+\uD14C\uB450\uB9AC \uD558\uC774\uB77C\uC774\uD2B8+\uAD11\uD0DD). \uB80C\uB354\uB9C1 \uBD80\uD558\uAC00 \uB192\uC74C",
+      liquidGlassDesc: "\uC2E4\uD5D8\uC801: iOS 26 \uC2A4\uD0C0\uC77C \uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4(\uD504\uB85C\uC2A4\uD2B8 + \uAC00\uC7A5\uC790\uB9AC \uD558\uC774\uB77C\uC774\uD2B8 + \uAD11\uD0DD). \uB80C\uB354\uB9C1 \uBE44\uC6A9\uC774 \uB192\uC73C\uBA70, \uCF1C\uBA74 \uBE14\uB7EC \uD6A8\uACFC\uAC00 \uC801\uC6A9\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4",
       liquidGlassBlur: "\uD750\uB9BC \uC815\uB3C4",
       liquidGlassBlurDesc: "\uB9AC\uD034\uB4DC \uAE00\uB798\uC2A4 \uBC30\uACBD \uD750\uB9BC \uAC15\uB3C4 (\uD604\uC7AC: {value}px)",
       waterDrop: "\uBB3C\uBC29\uC6B8 \uD6A8\uACFC",
@@ -344,6 +348,7 @@ var SidebarOrganizer = (() => {
     de: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "Mehrere Sidebar-Symbole desselben Plugins zu einem zusammenfassen, Hover zeigt Funktionsmen\xFC",
+      general: "Allgemein",
       enableOrganizer: "Sidebar-Organisation aktivieren",
       enableOrganizerDesc: "Funktion zum Zusammenfassen von Sidebar-Symbolen ein-/ausschalten",
       popupAppearance: "Popup-Optik",
@@ -356,7 +361,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "Eckenradius",
       popupRadiusDesc: "Popup-Eckenradius (aktuell: {value}px)",
       liquidGlass: "Liquid-Glass-Effekt",
-      liquidGlassDesc: "Experimentell: iOS-26-Look (Mattglas, Kanten-Highlight, Glanz); h\xF6here Rendering-Kosten",
+      liquidGlassDesc: "Experimentell: Liquid Glass im iOS-26-Stil (Mattglas, Kanten-Highlight, Glanz); h\xF6here Rendering-Kosten; ersetzt bei Aktivierung den Unsch\xE4rfe-Effekt",
       liquidGlassBlur: "Unsch\xE4rfe",
       liquidGlassBlurDesc: "Hintergrundunsch\xE4rfe des Liquid Glass (aktuell: {value}px)",
       waterDrop: "Wassertropfen-Effekt",
@@ -416,6 +421,7 @@ var SidebarOrganizer = (() => {
     ru: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "\u041E\u0431\u044A\u0435\u0434\u0438\u043D\u0438\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u043D\u0430\u0447\u043A\u043E\u0432 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u043F\u043B\u0430\u0433\u0438\u043D\u0430 \u0432 \u043E\u0434\u0438\u043D, \u043F\u0440\u0438 \u043D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0438 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043C\u0435\u043D\u044E \u0444\u0443\u043D\u043A\u0446\u0438\u0439",
+      general: "\u041E\u0431\u0449\u0438\u0435",
       enableOrganizer: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0446\u0438\u044E \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438",
       enableOrganizerDesc: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C/\u0432\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u043E\u0431\u044A\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F \u0437\u043D\u0430\u0447\u043A\u043E\u0432 \u0431\u043E\u043A\u043E\u0432\u043E\u0439 \u043F\u0430\u043D\u0435\u043B\u0438",
       popupAppearance: "\u0412\u043D\u0435\u0448\u043D\u0438\u0439 \u0432\u0438\u0434 \u043C\u0435\u043D\u044E",
@@ -428,7 +434,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u043A\u0440\u0443\u0433\u043B\u0435\u043D\u0438\u044F",
       popupRadiusDesc: "\u0420\u0430\u0434\u0438\u0443\u0441 \u0441\u043A\u0440\u0443\u0433\u043B\u0435\u043D\u0438\u044F \u0443\u0433\u043B\u043E\u0432 (\u0441\u0435\u0439\u0447\u0430\u0441: {value}px)",
       liquidGlass: "\u042D\u0444\u0444\u0435\u043A\u0442 \u0436\u0438\u0434\u043A\u043E\u0433\u043E \u0441\u0442\u0435\u043A\u043B\u0430",
-      liquidGlassDesc: "\u042D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E: \u0441\u0442\u0438\u043B\u044C Liquid Glass (iOS 26) \u2014 \u043C\u0430\u0442\u043E\u0432\u043E\u0435 \u0441\u0442\u0435\u043A\u043B\u043E, \u0431\u043B\u0438\u043A\u0438 \u0438 \u0433\u043B\u044F\u043D\u0435\u0446; \u0432\u044B\u0448\u0435 \u043D\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043D\u0430 \u0440\u0435\u043D\u0434\u0435\u0440\u0438\u043D\u0433",
+      liquidGlassDesc: "\u042D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E: \xAB\u0436\u0438\u0434\u043A\u043E\u0435 \u0441\u0442\u0435\u043A\u043B\u043E\xBB \u0432 \u0441\u0442\u0438\u043B\u0435 iOS 26 (\u043C\u0430\u0442\u043E\u0432\u043E\u0441\u0442\u044C, \u0431\u043B\u0438\u043A \u043F\u043E \u043A\u0440\u0430\u044E, \u0433\u043B\u044F\u043D\u0435\u0446); \u0432\u044B\u0441\u043E\u043A\u0430\u044F \u043D\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043F\u0440\u0438 \u043E\u0442\u0440\u0438\u0441\u043E\u0432\u043A\u0435; \u043F\u0440\u0438 \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0438 \u0437\u0430\u043C\u0435\u043D\u044F\u0435\u0442 \u044D\u0444\u0444\u0435\u043A\u0442 \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F",
       liquidGlassBlur: "\u0420\u0430\u0437\u043C\u044B\u0442\u0438\u0435",
       liquidGlassBlurDesc: "\u0421\u0438\u043B\u0430 \u0440\u0430\u0437\u043C\u044B\u0442\u0438\u044F \u0444\u043E\u043D\u0430 \u0436\u0438\u0434\u043A\u043E\u0433\u043E \u0441\u0442\u0435\u043A\u043B\u0430 (\u0441\u0435\u0439\u0447\u0430\u0441: {value}px)",
       waterDrop: "\u042D\u0444\u0444\u0435\u043A\u0442 \u043A\u0430\u043F\u043B\u0438",
@@ -488,6 +494,7 @@ var SidebarOrganizer = (() => {
     es: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "Fusionar m\xFAltiples iconos de la barra lateral del mismo plugin en uno, al pasar el mouse mostrar men\xFA de funciones",
+      general: "General",
       enableOrganizer: "Activar organizaci\xF3n de barra lateral",
       enableOrganizerDesc: "Activar/desactivar funci\xF3n de fusi\xF3n de iconos de barra lateral",
       popupAppearance: "Apariencia del men\xFA",
@@ -500,7 +507,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "Radio de esquinas",
       popupRadiusDesc: "Radio de esquinas del men\xFA (actual: {value}px)",
       liquidGlass: "Efecto de vidrio l\xEDquido",
-      liquidGlassDesc: "Experimental: estilo Liquid Glass (iOS 26) \u2014 vidrio esmerilado, brillos y lustre; mayor coste de renderizado",
+      liquidGlassDesc: "Experimental: estilo Liquid Glass (iOS 26) \u2014 vidrio esmerilado, brillos y lustre; mayor coste de renderizado; al activarlo sustituye el desenfoque",
       liquidGlassBlur: "Desenfoque",
       liquidGlassBlurDesc: "Intensidad de desenfoque del fondo (actual: {value}px)",
       waterDrop: "Efecto gota",
@@ -560,6 +567,7 @@ var SidebarOrganizer = (() => {
     fr: {
       pluginName: "Sidebar Organizer",
       pluginDesc: "Fusionner plusieurs ic\xF4nes de barre lat\xE9rale du m\xEAme plugin en une seule, survol pour afficher le menu des fonctions",
+      general: "G\xE9n\xE9ral",
       enableOrganizer: "Activer l'organisation de la barre lat\xE9rale",
       enableOrganizerDesc: "Activer/d\xE9sactiver la fonction de fusion des ic\xF4nes de barre lat\xE9rale",
       popupAppearance: "Apparence du menu",
@@ -572,7 +580,7 @@ var SidebarOrganizer = (() => {
       popupRadius: "Rayon des coins",
       popupRadiusDesc: "Rayon des coins du menu (actuel : {value}px)",
       liquidGlass: "Effet verre liquide",
-      liquidGlassDesc: "Exp\xE9rimental: style Liquid Glass (iOS 26) \u2014 verre d\xE9poli, reflets et lustre; co\xFBt de rendu plus \xE9lev\xE9",
+      liquidGlassDesc: "Exp\xE9rimental : style Liquid Glass (iOS 26) \u2014 verre d\xE9poli, reflets et lustre ; co\xFBt de rendu plus \xE9lev\xE9 ; remplace l'effet de flou quand il est activ\xE9",
       liquidGlassBlur: "Flou",
       liquidGlassBlurDesc: "Intensit\xE9 du flou d\u2019arri\xE8re-plan du verre liquide (actuel : {value}px)",
       waterDrop: "Effet goutte",
@@ -631,14 +639,15 @@ var SidebarOrganizer = (() => {
     }
   };
   function getLanguageCode(lang) {
-    if (lang.startsWith("zh")) return "zh";
-    if (lang.startsWith("en")) return "en";
-    if (lang.startsWith("ja")) return "ja";
-    if (lang.startsWith("ko")) return "ko";
-    if (lang.startsWith("de")) return "de";
-    if (lang.startsWith("ru")) return "ru";
-    if (lang.startsWith("es")) return "es";
-    if (lang.startsWith("fr")) return "fr";
+    const code = (lang || "").toLowerCase();
+    if (code.startsWith("zh")) return "zh";
+    if (code.startsWith("en")) return "en";
+    if (code.startsWith("ja")) return "ja";
+    if (code.startsWith("ko")) return "ko";
+    if (code.startsWith("de")) return "de";
+    if (code.startsWith("ru")) return "ru";
+    if (code.startsWith("es")) return "es";
+    if (code.startsWith("fr")) return "fr";
     return "en";
   }
   function getPluginLanguage(settings, locale) {
@@ -659,6 +668,32 @@ var SidebarOrganizer = (() => {
   }
   function createTranslator(getSettings, getLocale) {
     return (key, params) => translate(getPluginLanguage(getSettings(), getLocale()), key, params);
+  }
+
+  // src/locale.ts
+  var import_obsidian = __require("obsidian");
+  function getObsidianLocale(app) {
+    var _a;
+    try {
+      const language = (0, import_obsidian.getLanguage)();
+      if (language) return language;
+    } catch (e) {
+    }
+    try {
+      const stored = window.localStorage.getItem("language");
+      if (stored) return stored;
+    } catch (e) {
+    }
+    try {
+      const navigatorLanguage = window.navigator.language;
+      if (navigatorLanguage) return navigatorLanguage;
+    } catch (e) {
+    }
+    try {
+      return (_a = app.vault.config) == null ? void 0 : _a.locale;
+    } catch (e) {
+      return void 0;
+    }
   }
 
   // src/sidebar.ts
@@ -708,18 +743,28 @@ var SidebarOrganizer = (() => {
     svg.querySelectorAll("*").forEach(scrub);
   }
   function extractActionLabel(fullName) {
-    let label = fullName;
-    const separators = [":", "\uFF1A", "-", "\u2013", "\u2014", "|"];
-    for (const sep of separators) {
+    for (const sep of [":", "\uFF1A"]) {
       if (fullName.includes(sep)) {
         const parts = fullName.split(sep);
         if (parts.length > 1) {
-          label = parts.slice(1).join(sep).trim();
-          break;
+          const label = parts.slice(1).join(sep).trim();
+          if (label) return label;
         }
       }
     }
-    return label || fullName;
+    const dash = fullName.match(/\s[-–—]\s/);
+    if (dash && dash.index !== void 0) {
+      const label = fullName.slice(dash.index + dash[0].length).trim();
+      if (label) return label;
+    }
+    if (fullName.includes("|")) {
+      const parts = fullName.split("|");
+      if (parts.length > 1) {
+        const label = parts.slice(1).join("|").trim();
+        if (label) return label;
+      }
+    }
+    return fullName;
   }
   function sanitizeSvgColors(svg) {
     try {
@@ -745,12 +790,228 @@ var SidebarOrganizer = (() => {
     }
   }
 
+  // src/hotkeys.ts
+  function normalizeName(value) {
+    return value.trim().toLowerCase();
+  }
+  function nameCandidates(displayName) {
+    const candidates = [];
+    for (const name of [displayName, extractActionLabel(displayName)]) {
+      const trimmed = name.trim();
+      if (trimmed && !candidates.includes(trimmed)) candidates.push(trimmed);
+    }
+    return candidates;
+  }
+  function isSamePluginCommand(command, pluginId) {
+    return !!pluginId && (command.id === pluginId || command.id.startsWith(`${pluginId}:`));
+  }
+  function stripCommandPrefix(name) {
+    const trimmed = name.trim();
+    const match = trimmed.match(/^[^:：]+[:：]\s*(.+)$/);
+    return match ? match[1].trim() : trimmed;
+  }
+  function commandEntries(commands) {
+    return Object.values(commands).filter(
+      (c) => !!c && typeof c.name === "string" && c.name.trim().length > 0
+    );
+  }
+  function findExactCommand(displayName, pluginId, commands) {
+    var _a;
+    const entries = commandEntries(commands);
+    for (const name of nameCandidates(displayName)) {
+      const target = normalizeName(name);
+      if (!target) continue;
+      const exact = entries.filter(
+        (c) => normalizeName(c.name) === target || normalizeName(stripCommandPrefix(c.name)) === target
+      );
+      const hit = (_a = exact.find((c) => isSamePluginCommand(c, pluginId))) != null ? _a : exact[0];
+      if (hit) return hit;
+    }
+    return null;
+  }
+  function findLooseCommand(displayName, pluginId, commands) {
+    var _a;
+    const byLengthDesc = commandEntries(commands).sort((a, b) => b.name.length - a.name.length);
+    for (const name of nameCandidates(displayName)) {
+      const target = normalizeName(name);
+      if (target.length < 2) continue;
+      const loose = byLengthDesc.filter((c) => {
+        const commandName = normalizeName(c.name);
+        return commandName.includes(target) || target.includes(commandName);
+      });
+      const hit = (_a = loose.find((c) => isSamePluginCommand(c, pluginId))) != null ? _a : loose[0];
+      if (hit) return hit;
+    }
+    return null;
+  }
+  function resolveActionHotkey(displayName, pluginId, commands, getHotkeys) {
+    var _a;
+    const command = (_a = findExactCommand(displayName, pluginId, commands)) != null ? _a : findLooseCommand(displayName, pluginId, commands);
+    if (!command) return null;
+    const managed = getHotkeys == null ? void 0 : getHotkeys(command.id);
+    const bound = managed && managed.length > 0 ? managed : command.hotkeys;
+    return bound && bound.length > 0 ? bound[0] : null;
+  }
+  var MODIFIER_ORDER = ["mod", "meta", "cmd", "command", "ctrl", "control", "alt", "opt", "option", "shift"];
+  var MAC_MODIFIER_SYMBOLS = {
+    mod: "\u2318",
+    meta: "\u2318",
+    cmd: "\u2318",
+    command: "\u2318",
+    ctrl: "\u2303",
+    control: "\u2303",
+    alt: "\u2325",
+    opt: "\u2325",
+    option: "\u2325",
+    shift: "\u21E7"
+  };
+  var PC_MODIFIER_LABELS = {
+    mod: "Ctrl",
+    ctrl: "Ctrl",
+    control: "Ctrl",
+    cmd: "Ctrl",
+    command: "Ctrl",
+    meta: "Meta",
+    alt: "Alt",
+    opt: "Alt",
+    option: "Alt",
+    shift: "Shift"
+  };
+  var MAC_KEY_SYMBOLS = {
+    enter: "\u21A9",
+    return: "\u21A9",
+    backspace: "\u232B",
+    delete: "\u2326",
+    del: "\u2326",
+    tab: "\u21E5",
+    escape: "\u238B",
+    esc: "\u238B",
+    arrowup: "\u2191",
+    arrowdown: "\u2193",
+    arrowleft: "\u2190",
+    arrowright: "\u2192",
+    up: "\u2191",
+    down: "\u2193",
+    left: "\u2190",
+    right: "\u2192",
+    " ": "Space",
+    space: "Space",
+    spacebar: "Space",
+    pageup: "PgUp",
+    pagedown: "PgDn",
+    home: "Home",
+    end: "End"
+  };
+  var PC_KEY_LABELS = {
+    enter: "Enter",
+    return: "Enter",
+    backspace: "Backspace",
+    delete: "Del",
+    del: "Del",
+    tab: "Tab",
+    escape: "Esc",
+    esc: "Esc",
+    arrowup: "\u2191",
+    arrowdown: "\u2193",
+    arrowleft: "\u2190",
+    arrowright: "\u2192",
+    up: "\u2191",
+    down: "\u2193",
+    left: "\u2190",
+    right: "\u2192",
+    " ": "Space",
+    space: "Space",
+    spacebar: "Space",
+    pageup: "PgUp",
+    pagedown: "PgDn",
+    home: "Home",
+    end: "End"
+  };
+  function formatKey(key, isMac) {
+    if (!key) return "";
+    const special = (isMac ? MAC_KEY_SYMBOLS : PC_KEY_LABELS)[key.toLowerCase()];
+    if (special) return special;
+    const trimmed = key.trim();
+    if (!trimmed) return "";
+    return trimmed.length === 1 ? trimmed.toUpperCase() : trimmed;
+  }
+  function formatHotkey(hotkey, isMac) {
+    var _a;
+    if (!hotkey || !hotkey.key) return "";
+    const key = formatKey(hotkey.key, isMac);
+    if (!key) return "";
+    const rawModifiers = Array.isArray(hotkey.modifiers) ? hotkey.modifiers : [];
+    const ordered = [...rawModifiers].sort((a, b) => {
+      const indexA = MODIFIER_ORDER.indexOf(normalizeName(a));
+      const indexB = MODIFIER_ORDER.indexOf(normalizeName(b));
+      return (indexA === -1 ? MODIFIER_ORDER.length : indexA) - (indexB === -1 ? MODIFIER_ORDER.length : indexB);
+    });
+    const seen = /* @__PURE__ */ new Set();
+    const modifiers = [];
+    for (const modifier of ordered) {
+      const lower = normalizeName(modifier);
+      const label = (_a = (isMac ? MAC_MODIFIER_SYMBOLS : PC_MODIFIER_LABELS)[lower]) != null ? _a : modifier.trim();
+      if (label && !seen.has(label)) {
+        seen.add(label);
+        modifiers.push(label);
+      }
+    }
+    if (modifiers.length === 0) return key;
+    return [...modifiers, key].join(isMac ? " " : " + ");
+  }
+
+  // src/actionIndex.ts
+  var COMMAND_ACTION_PREFIX = "cmd:";
+  function commandActionId(commandId) {
+    return COMMAND_ACTION_PREFIX + commandId;
+  }
+  function normalizeSignature(value) {
+    return value.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+  }
+  function shouldKeepUnresolvedId(storedId, installedIds) {
+    if (!storedId) return false;
+    if (storedId.startsWith(COMMAND_ACTION_PREFIX)) return true;
+    const colon = storedId.indexOf(":");
+    if (colon === -1) return true;
+    if (colon === 0) return false;
+    return installedIds.has(storedId.slice(0, colon));
+  }
+  function buildActionAliasIndex(actions) {
+    const byId = /* @__PURE__ */ new Map();
+    const bySignature = /* @__PURE__ */ new Map();
+    for (const action of actions) {
+      if (action.actionId && !byId.has(action.actionId)) byId.set(action.actionId, action);
+      if (action.legacyId && !byId.has(action.legacyId)) byId.set(action.legacyId, action);
+      const signature = normalizeSignature(action.actionName);
+      if (signature && !bySignature.has(signature)) bySignature.set(signature, action);
+    }
+    return { byId, bySignature };
+  }
+  function resolveStoredActionId(storedId, index) {
+    const direct = index.byId.get(storedId);
+    if (direct) return direct;
+    if (!storedId || storedId.startsWith(COMMAND_ACTION_PREFIX)) return null;
+    const colon = storedId.indexOf(":");
+    const suffix = colon >= 0 ? storedId.slice(colon + 1) : storedId;
+    if (suffix !== storedId) {
+      const byLegacy = index.byId.get(suffix);
+      if (byLegacy) return byLegacy;
+    }
+    for (const candidate of [storedId, suffix]) {
+      const signature = normalizeSignature(candidate);
+      if (!signature) continue;
+      const hit = index.bySignature.get(signature);
+      if (hit) return hit;
+    }
+    return null;
+  }
+
   // src/settings.ts
-  var import_obsidian2 = __require("obsidian");
+  var import_obsidian3 = __require("obsidian");
 
   // src/modal.ts
-  var import_obsidian = __require("obsidian");
-  var SimpleGroupModal = class extends import_obsidian.Modal {
+  var import_obsidian2 = __require("obsidian");
+  var SimpleGroupModal = class extends import_obsidian2.Modal {
     constructor(app, plugin, onSave, existingGroup = null) {
       super(app);
       this.selectedActions = /* @__PURE__ */ new Set();
@@ -759,16 +1020,12 @@ var SidebarOrganizer = (() => {
       this.allActions = [];
       this.t = createTranslator(
         () => this.plugin.settings,
-        () => {
-          var _a;
-          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
-        }
+        () => getObsidianLocale(this.app)
       );
       this.plugin = plugin;
       this.onSave = onSave;
       this.existingGroup = existingGroup;
       if (existingGroup) {
-        this.selectedActions = new Set(existingGroup.actionIds);
         this.groupName = existingGroup.name;
         this.groupIcon = existingGroup.icon || "";
       }
@@ -777,12 +1034,17 @@ var SidebarOrganizer = (() => {
       const { contentEl } = this;
       contentEl.empty();
       this.allActions = this.plugin.getAllActions();
+      if (this.existingGroup) {
+        this.selectedActions = new Set(
+          this.plugin.resolveActionIdsForCurrentActions(this.allActions, this.existingGroup.actionIds)
+        );
+      }
       this.renderStep1();
     }
     renderStep1() {
       const { contentEl } = this;
       contentEl.empty();
-      new import_obsidian.Setting(contentEl).setName(this.existingGroup ? `${this.t("editGroupTitle")} - ${this.t("selectFunctions")}` : `${this.t("createGroupTitle")} - ${this.t("selectFunctions")}`).setHeading();
+      new import_obsidian2.Setting(contentEl).setName(this.existingGroup ? `${this.t("editGroupTitle")} - ${this.t("selectFunctions")}` : `${this.t("createGroupTitle")} - ${this.t("selectFunctions")}`).setHeading();
       contentEl.createEl("p", {
         text: this.t("selectFunctionsDesc"),
         cls: "sidebar-organizer-hint"
@@ -790,7 +1052,7 @@ var SidebarOrganizer = (() => {
       const assignedElsewhere = /* @__PURE__ */ new Set();
       this.plugin.settings.customGroups.forEach((g) => {
         if (this.existingGroup && g.id === this.existingGroup.id) return;
-        g.actionIds.forEach((id) => assignedElsewhere.add(id));
+        this.plugin.resolveActionIdsForCurrentActions(this.allActions, g.actionIds).forEach((id) => assignedElsewhere.add(id));
       });
       const pluginGroups = /* @__PURE__ */ new Map();
       for (const action of this.allActions) {
@@ -804,7 +1066,7 @@ var SidebarOrganizer = (() => {
       }
       const container = contentEl.createDiv("simple-group-container");
       const leftPanel = container.createDiv("panel-left");
-      new import_obsidian.Setting(leftPanel).setName(this.t("availableFunctions")).setHeading();
+      new import_obsidian2.Setting(leftPanel).setName(this.t("availableFunctions")).setHeading();
       this.availableContainer = leftPanel.createDiv("actions-list");
       for (const [pluginName, actions] of pluginGroups) {
         const groupEl = this.availableContainer.createDiv("action-group");
@@ -864,14 +1126,14 @@ var SidebarOrganizer = (() => {
         }
       }
       const rightPanel = container.createDiv("panel-right");
-      new import_obsidian.Setting(rightPanel).setName(this.t("groupFunctions")).setHeading();
+      new import_obsidian2.Setting(rightPanel).setName(this.t("groupFunctions")).setHeading();
       this.selectedContainer = rightPanel.createDiv("actions-list selected-list");
       this.updateSelectedList();
       const buttonContainer = contentEl.createDiv("modal-button-container");
       buttonContainer.createEl("button", { text: this.t("cancel") }).addEventListener("click", () => this.close());
       buttonContainer.createEl("button", { text: this.t("nextStep"), cls: "mod-cta" }).addEventListener("click", () => {
         if (this.selectedActions.size === 0) {
-          new import_obsidian.Notice(this.t("pleaseSelectOne"));
+          new import_obsidian2.Notice(this.t("pleaseSelectOne"));
           return;
         }
         this.renderStep2();
@@ -920,8 +1182,8 @@ var SidebarOrganizer = (() => {
     renderStep2() {
       const { contentEl } = this;
       contentEl.empty();
-      new import_obsidian.Setting(contentEl).setName(this.existingGroup ? `${this.t("editGroupTitle")} - ${this.t("setNameAndIcon")}` : `${this.t("createGroupTitle")} - ${this.t("setNameAndIcon")}`).setHeading();
-      new import_obsidian.Setting(contentEl).setName(this.t("groupName")).setDesc(this.t("groupNameDesc")).addText((text) => {
+      new import_obsidian2.Setting(contentEl).setName(this.existingGroup ? `${this.t("editGroupTitle")} - ${this.t("setNameAndIcon")}` : `${this.t("createGroupTitle")} - ${this.t("setNameAndIcon")}`).setHeading();
+      new import_obsidian2.Setting(contentEl).setName(this.t("groupName")).setDesc(this.t("groupNameDesc")).addText((text) => {
         this.nameInput = text.inputEl;
         text.setPlaceholder(this.t("groupNamePlaceholder"));
         text.setValue(this.groupName);
@@ -929,7 +1191,7 @@ var SidebarOrganizer = (() => {
           this.groupName = value;
         });
       });
-      new import_obsidian.Setting(contentEl).setName(this.t("customIcon")).setHeading();
+      new import_obsidian2.Setting(contentEl).setName(this.t("customIcon")).setHeading();
       const iconSection = contentEl.createDiv("icon-section");
       this.previewEl = iconSection.createDiv("icon-preview-small");
       this.updatePreview();
@@ -967,11 +1229,11 @@ var SidebarOrganizer = (() => {
         void (async () => {
           const name = this.nameInput.value.trim();
           if (!name) {
-            new import_obsidian.Notice(this.t("pleaseEnterName"));
+            new import_obsidian2.Notice(this.t("pleaseEnterName"));
             return;
           }
           if (this.selectedActions.size === 0) {
-            new import_obsidian.Notice(this.t("pleaseSelectOne"));
+            new import_obsidian2.Notice(this.t("pleaseSelectOne"));
             return;
           }
           if (this.existingGroup) {
@@ -1003,7 +1265,7 @@ var SidebarOrganizer = (() => {
           await this.plugin.saveSettings();
           this.close();
           this.onSave();
-          new import_obsidian.Notice(this.existingGroup ? this.t("groupUpdated") : this.t("groupCreated"));
+          new import_obsidian2.Notice(this.existingGroup ? this.t("groupUpdated") : this.t("groupCreated"));
         })();
       });
     }
@@ -1023,90 +1285,91 @@ var SidebarOrganizer = (() => {
   };
 
   // src/settings.ts
-  var SidebarOrganizerSettingTab = class extends import_obsidian2.PluginSettingTab {
+  var SidebarOrganizerSettingTab = class extends import_obsidian3.PluginSettingTab {
     constructor(app, plugin) {
       super(app, plugin);
       this.t = createTranslator(
         () => this.plugin.settings,
-        () => {
-          var _a;
-          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
-        }
+        () => getObsidianLocale(this.app)
       );
       this.plugin = plugin;
     }
     display() {
       const { containerEl } = this;
       containerEl.empty();
-      new import_obsidian2.Setting(containerEl).setName(this.t("pluginName")).setHeading();
+      new import_obsidian3.Setting(containerEl).setName(this.t("pluginName")).setHeading();
       containerEl.createEl("p", {
         text: this.t("pluginDesc"),
         cls: "sidebar-organizer-desc"
       });
-      new import_obsidian2.Setting(containerEl).setName(this.t("language")).setDesc(this.t("languageDesc")).addDropdown((dropdown) => dropdown.addOption("auto", this.t("auto")).addOption("zh", "\u4E2D\u6587").addOption("en", "English").addOption("ja", "\u65E5\u672C\u8A9E").addOption("ko", "\uD55C\uAD6D\uC5B4").addOption("de", "Deutsch").addOption("ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439").addOption("es", "Espa\xF1ol").addOption("fr", "Fran\xE7ais").setValue(this.plugin.settings.language).onChange(async (value) => {
-        this.plugin.settings.language = value;
-        await this.plugin.saveSettings();
-        this.display();
-      }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("refreshSidebar")).setDesc(this.t("refreshSidebarDesc")).addButton((btn) => btn.setButtonText(this.t("refreshBtn")).onClick(() => {
-        this.plugin.restoreOriginalIcons();
-        this.plugin.loadInstalledPlugins();
-        this.plugin.organizeSidebars();
-        this.display();
-        new import_obsidian2.Notice(this.t("refreshNotice"));
-      }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("enableOrganizer")).setDesc(this.t("enableOrganizerDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.enabled).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName(this.t("general")).setHeading();
+      new import_obsidian3.Setting(containerEl).setName(this.t("enableOrganizer")).setDesc(this.t("enableOrganizerDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.enabled).onChange(async (value) => {
         this.plugin.settings.enabled = value;
         await this.plugin.saveSettings();
         this.plugin.applyOrganizerState();
       }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("popupAppearance")).setHeading();
-      new import_obsidian2.Setting(containerEl).setName(this.t("blurEffect")).setDesc(this.t("blurEffectDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.blurEffect).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName(this.t("language")).setDesc(this.t("languageDesc")).addDropdown((dropdown) => dropdown.addOption("auto", this.t("auto")).addOption("zh", "\u4E2D\u6587").addOption("en", "English").addOption("ja", "\u65E5\u672C\u8A9E").addOption("ko", "\uD55C\uAD6D\uC5B4").addOption("de", "Deutsch").addOption("ru", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439").addOption("es", "Espa\xF1ol").addOption("fr", "Fran\xE7ais").setValue(this.plugin.settings.language).onChange(async (value) => {
+        this.plugin.settings.language = value;
+        await this.plugin.saveSettings();
+        this.display();
+      }));
+      new import_obsidian3.Setting(containerEl).setName(this.t("refreshSidebar")).setDesc(this.t("refreshSidebarDesc")).addButton((btn) => btn.setButtonText(this.t("refreshBtn")).onClick(() => {
+        this.plugin.restoreOriginalIcons();
+        this.plugin.loadInstalledPlugins();
+        this.plugin.organizeSidebars();
+        this.display();
+        new import_obsidian3.Notice(this.t("refreshNotice"));
+      }));
+      new import_obsidian3.Setting(containerEl).setName(this.t("popupAppearance")).setHeading();
+      new import_obsidian3.Setting(containerEl).setName(this.t("blurEffect")).setDesc(this.t("blurEffectDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.blurEffect).onChange(async (value) => {
         this.plugin.settings.blurEffect = value;
         await this.plugin.saveSettings();
+        updateDependentVisibility();
       }));
-      const liquidBlurSetting = new import_obsidian2.Setting(containerEl).setName(this.t("blurIntensity")).setDesc(this.t("blurIntensityDesc", { value: this.plugin.settings.blurIntensity }));
-      liquidBlurSetting.addSlider((slider) => slider.setValue(this.plugin.settings.blurIntensity).setLimits(0, 30, 1).onChange(async (value) => {
+      const blurIntensitySetting = new import_obsidian3.Setting(containerEl).setName(this.t("blurIntensity")).setDesc(this.t("blurIntensityDesc", { value: this.plugin.settings.blurIntensity })).addSlider((slider) => slider.setValue(this.plugin.settings.blurIntensity).setLimits(0, 30, 1).onChange(async (value) => {
         this.plugin.settings.blurIntensity = value;
         await this.plugin.saveSettings();
-        liquidBlurSetting.descEl.textContent = this.t("blurIntensityDesc", { value });
+        blurIntensitySetting.descEl.textContent = this.t("blurIntensityDesc", { value });
       }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("popupRounded")).setDesc(this.t("popupRoundedDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.popupRounded).onChange(async (value) => {
-        this.plugin.settings.popupRounded = value;
-        await this.plugin.saveSettings();
-        radiusSetting.settingEl.style.display = value ? "" : "none";
-      }));
-      let radiusSetting;
-      radiusSetting = new import_obsidian2.Setting(containerEl).setName(this.t("popupRadius")).setDesc(this.t("popupRadiusDesc").replace("{value}", String(this.plugin.settings.popupRadius))).addSlider((slider) => slider.setValue(this.plugin.settings.popupRadius).setLimits(0, 24, 1).onChange(async (value) => {
-        this.plugin.settings.popupRadius = value;
-        await this.plugin.saveSettings();
-        const desc = radiusSetting.settingEl.querySelector(".setting-item-description");
-        if (desc) desc.textContent = this.t("popupRadiusDesc").replace("{value}", String(value));
-      }));
-      radiusSetting.settingEl.style.display = this.plugin.settings.popupRounded ? "" : "none";
-      new import_obsidian2.Setting(containerEl).setName(this.t("liquidGlass")).setDesc(this.t("liquidGlassDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.liquidGlass).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName(this.t("liquidGlass")).setDesc(this.t("liquidGlassDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.liquidGlass).onChange(async (value) => {
         this.plugin.settings.liquidGlass = value;
         await this.plugin.saveSettings();
-        glassBlurSetting.settingEl.style.display = value ? "" : "none";
+        updateDependentVisibility();
       }));
-      let glassBlurSetting;
-      glassBlurSetting = new import_obsidian2.Setting(containerEl).setName(this.t("liquidGlassBlur")).setDesc(this.t("liquidGlassBlurDesc").replace("{value}", String(this.plugin.settings.liquidGlassBlur))).addSlider((slider) => slider.setValue(this.plugin.settings.liquidGlassBlur).setLimits(0, 10, 0.5).onChange(async (value) => {
+      const glassBlurSetting = new import_obsidian3.Setting(containerEl).setName(this.t("liquidGlassBlur")).setDesc(this.t("liquidGlassBlurDesc").replace("{value}", String(this.plugin.settings.liquidGlassBlur))).addSlider((slider) => slider.setValue(this.plugin.settings.liquidGlassBlur).setLimits(0, 10, 0.5).onChange(async (value) => {
         this.plugin.settings.liquidGlassBlur = value;
         await this.plugin.saveSettings();
         const desc = glassBlurSetting.settingEl.querySelector(".setting-item-description");
         if (desc) desc.textContent = this.t("liquidGlassBlurDesc").replace("{value}", String(value));
       }));
-      glassBlurSetting.settingEl.style.display = this.plugin.settings.liquidGlass ? "" : "none";
-      new import_obsidian2.Setting(containerEl).setName(this.t("waterDrop")).setDesc(this.t("waterDropDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.waterDrop).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName(this.t("popupRounded")).setDesc(this.t("popupRoundedDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.popupRounded).onChange(async (value) => {
+        this.plugin.settings.popupRounded = value;
+        await this.plugin.saveSettings();
+        updateDependentVisibility();
+      }));
+      const radiusSetting = new import_obsidian3.Setting(containerEl).setName(this.t("popupRadius")).setDesc(this.t("popupRadiusDesc").replace("{value}", String(this.plugin.settings.popupRadius))).addSlider((slider) => slider.setValue(this.plugin.settings.popupRadius).setLimits(0, 24, 1).onChange(async (value) => {
+        this.plugin.settings.popupRadius = value;
+        await this.plugin.saveSettings();
+        const desc = radiusSetting.settingEl.querySelector(".setting-item-description");
+        if (desc) desc.textContent = this.t("popupRadiusDesc").replace("{value}", String(value));
+      }));
+      new import_obsidian3.Setting(containerEl).setName(this.t("waterDrop")).setDesc(this.t("waterDropDesc")).addToggle((toggle) => toggle.setValue(this.plugin.settings.waterDrop).onChange(async (value) => {
         this.plugin.settings.waterDrop = value;
         await this.plugin.saveSettings();
       }));
-      new import_obsidian2.Setting(containerEl).setName(this.t("customGroups")).setHeading();
+      const updateDependentVisibility = () => {
+        const { blurEffect, liquidGlass, popupRounded } = this.plugin.settings;
+        blurIntensitySetting.settingEl.style.display = blurEffect && !liquidGlass ? "" : "none";
+        glassBlurSetting.settingEl.style.display = liquidGlass ? "" : "none";
+        radiusSetting.settingEl.style.display = popupRounded ? "" : "none";
+      };
+      updateDependentVisibility();
+      new import_obsidian3.Setting(containerEl).setName(this.t("customGroups")).setHeading();
       containerEl.createEl("p", {
         text: this.t("customGroupsDesc"),
         cls: "sidebar-organizer-hint"
       });
-      new import_obsidian2.Setting(containerEl).setName(this.t("createGroup")).setDesc(this.t("customGroupsDesc")).addButton((btn) => btn.setButtonText(this.t("createGroup")).onClick(() => {
+      new import_obsidian3.Setting(containerEl).setName(this.t("createGroup")).addButton((btn) => btn.setButtonText(this.t("createGroup")).onClick(() => {
         const modal = new SimpleGroupModal(this.app, this.plugin, () => {
           this.plugin.restoreOriginalIcons();
           this.plugin.organizeSidebars();
@@ -1156,12 +1419,12 @@ var SidebarOrganizer = (() => {
               this.plugin.restoreOriginalIcons();
               this.plugin.organizeSidebars();
               this.display();
-              new import_obsidian2.Notice(this.t("groupDeleted"));
+              new import_obsidian3.Notice(this.t("groupDeleted"));
             })();
           });
         }
       }
-      new import_obsidian2.Setting(containerEl).setName(this.t("usageInstructions")).setHeading();
+      new import_obsidian3.Setting(containerEl).setName(this.t("usageInstructions")).setHeading();
       const usageList = containerEl.createEl("ul");
       usageList.createEl("li", { text: this.t("instruction1") });
       usageList.createEl("li", { text: this.t("instruction2") });
@@ -1171,7 +1434,7 @@ var SidebarOrganizer = (() => {
   };
 
   // src/main.ts
-  var _SidebarOrganizerPlugin = class _SidebarOrganizerPlugin extends import_obsidian3.Plugin {
+  var _SidebarOrganizerPlugin = class _SidebarOrganizerPlugin extends import_obsidian4.Plugin {
     constructor() {
       super(...arguments);
       this.installedPlugins = /* @__PURE__ */ new Map();
@@ -1199,10 +1462,7 @@ var SidebarOrganizer = (() => {
       this.observedTargets = [];
       this.t = createTranslator(
         () => this.settings,
-        () => {
-          var _a;
-          return (_a = this.app.vault.config) == null ? void 0 : _a.locale;
-        }
+        () => getObsidianLocale(this.app)
       );
       // ---- 液态玻璃（实验性）：SVG feDisplacementMap 边缘折射 ----
       this.liquidGlassFilterId = null;
@@ -1228,7 +1488,7 @@ var SidebarOrganizer = (() => {
      * 使用 Platform.isMobile 因为即使平板有桌面布局，交互仍偏触控。
      */
     useMobileInteraction() {
-      return import_obsidian3.Platform.isMobile;
+      return import_obsidian4.Platform.isMobile;
     }
     async onload() {
       await this.loadSettings();
@@ -1240,7 +1500,7 @@ var SidebarOrganizer = (() => {
           this.settings.enabled = !this.settings.enabled;
           void this.saveSettings();
           this.applyOrganizerState();
-          new import_obsidian3.Notice(this.t(this.settings.enabled ? "toggleEnabled" : "toggleDisabled"));
+          new import_obsidian4.Notice(this.t(this.settings.enabled ? "toggleEnabled" : "toggleDisabled"));
         }
       });
       this.addCommand({
@@ -1250,7 +1510,7 @@ var SidebarOrganizer = (() => {
           this.restoreOriginalIcons();
           this.loadInstalledPlugins();
           this.organizeSidebars();
-          new import_obsidian3.Notice(this.t("refreshNotice"));
+          new import_obsidian4.Notice(this.t("refreshNotice"));
         }
       });
       this.app.workspace.onLayoutReady(() => {
@@ -1589,26 +1849,31 @@ var SidebarOrganizer = (() => {
       );
     }
     processIconList(icons) {
-      const actionMap = /* @__PURE__ */ new Map();
+      const actions = [];
+      const seenActionIds = /* @__PURE__ */ new Set();
       icons.forEach((el) => {
         try {
           const element = el;
           const action = this.identifyAction(element);
-          if (!action) return;
-          actionMap.set(action.actionId, action);
-          if (!actionMap.has(action.legacyId)) {
-            actionMap.set(action.legacyId, action);
-          }
+          if (!action || seenActionIds.has(action.actionId)) return;
+          seenActionIds.add(action.actionId);
+          actions.push(action);
         } catch (e) {
           console.warn("Sidebar Organizer: failed to process icon", e);
         }
       });
-      if (actionMap.size === 0) return;
+      if (actions.length === 0) return;
       const assignedActionIds = /* @__PURE__ */ new Set();
+      let settingsChanged = false;
       const sortedCustomGroups = [...this.settings.customGroups].sort((a, b) => a.order - b.order);
       for (const customGroup of sortedCustomGroups) {
         try {
-          const groupActions = customGroup.actionIds.map((id) => actionMap.get(id)).filter((a) => !!a && !assignedActionIds.has(a.actionId));
+          const reconciled = this.reconcileStoredActionIds(actions, customGroup.actionIds);
+          if (reconciled.changed) {
+            customGroup.actionIds = reconciled.storedIds;
+            settingsChanged = true;
+          }
+          const groupActions = reconciled.groupActions.filter((a) => !assignedActionIds.has(a.actionId));
           if (groupActions.length === 0) continue;
           groupActions.forEach((a) => assignedActionIds.add(a.actionId));
           const mainAction = groupActions[0];
@@ -1624,6 +1889,41 @@ var SidebarOrganizer = (() => {
           console.warn(`Sidebar Organizer: failed to process group "${customGroup.name}"`, e);
         }
       }
+      if (settingsChanged) {
+        console.info("Sidebar Organizer: normalized stored action ids");
+        void this.saveSettings();
+      }
+    }
+    /**
+     * 将分组存储的 actionIds 解析到当前 action：
+     * - 能解析的替换为稳定 id（cmd:<命令 id>，不随界面语言变化），并按 action 去重；
+     * - 解析不到但值得保留的（cmd: id、前缀是已安装插件的 id，插件可能暂时被禁用）保留原样；
+     * - 其余解析不到的（旧语言/旧格式残留）清理掉。
+     */
+    reconcileStoredActionIds(actions, storedIds) {
+      const index = buildActionAliasIndex(actions);
+      const seen = /* @__PURE__ */ new Set();
+      const groupActions = [];
+      const nextIds = [];
+      for (const storedId of storedIds) {
+        const action = resolveStoredActionId(storedId, index);
+        if (action) {
+          if (seen.has(action.actionId)) continue;
+          seen.add(action.actionId);
+          groupActions.push(action);
+          nextIds.push(action.actionId);
+          continue;
+        }
+        if (shouldKeepUnresolvedId(storedId, this.installedPlugins) && !nextIds.includes(storedId)) {
+          nextIds.push(storedId);
+        }
+      }
+      const changed = nextIds.length !== storedIds.length || nextIds.some((id, i) => id !== storedIds[i]);
+      return { groupActions, storedIds: nextIds, changed };
+    }
+    /** 供编辑弹窗调用：把已存 actionIds 解析为当前规范 id（保留暂时不可用的 id） */
+    resolveActionIdsForCurrentActions(actions, storedIds) {
+      return this.reconcileStoredActionIds(actions, storedIds).storedIds;
     }
     bindPopupMenu(mainElement, title, actions) {
       if (mainElement.hasAttribute("data-popup-bound")) return;
@@ -1797,6 +2097,10 @@ var SidebarOrganizer = (() => {
         setSvgContent(iconEl, action.icon);
         const labelEl = itemEl.createDiv("sidebar-organizer-action-label");
         labelEl.textContent = extractActionLabel(action.actionName);
+        const hotkeyText = this.getActionHotkeyText(action);
+        if (hotkeyText) {
+          itemEl.createDiv("sidebar-organizer-action-hotkey").textContent = hotkeyText;
+        }
         itemEl.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -1865,7 +2169,7 @@ var SidebarOrganizer = (() => {
       }
     }
     identifyAction(element) {
-      var _a;
+      var _a, _b;
       const ariaLabel = element.getAttribute("aria-label") || "";
       const dataView = element.getAttribute("data-view") || "";
       const svgIcon = ((_a = element.querySelector("svg")) == null ? void 0 : _a.outerHTML) || "";
@@ -1874,7 +2178,8 @@ var SidebarOrganizer = (() => {
       const pluginInfo = this.matchPlugin(displayName, dataView);
       if (!pluginInfo) return null;
       const baseId = dataView || displayName.toLowerCase().replace(/\s+/g, "-");
-      const actionId = `${pluginInfo.pluginId}:${baseId}`;
+      const exactCommand = findExactCommand(displayName, pluginInfo.pluginId, (_b = this.getCommandRegistry()) != null ? _b : {});
+      const actionId = exactCommand ? commandActionId(exactCommand.id) : `${pluginInfo.pluginId}:${baseId}`;
       return {
         element,
         pluginId: pluginInfo.pluginId,
@@ -1931,6 +2236,43 @@ var SidebarOrganizer = (() => {
         pluginId: safeId || "unknown",
         pluginName: displayName
       };
+    }
+    /** 读取未公开的命令注册表（app.commands.commands），不可用时返回 null */
+    getCommandRegistry() {
+      var _a, _b;
+      try {
+        return (_b = (_a = this.app.commands) == null ? void 0 : _a.commands) != null ? _b : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    /**
+     * 解析功能项绑定的快捷键展示文本（无绑定或匹配不到命令时返回 null）。
+     * commands / hotkeyManager 属于未公开的运行时 API，读取失败静默降级。
+     */
+    getActionHotkeyText(action) {
+      try {
+        const commands = this.getCommandRegistry();
+        if (!commands) return null;
+        const hotkeyManager = this.app.hotkeyManager;
+        const hotkey = resolveActionHotkey(
+          action.actionName,
+          action.pluginId,
+          commands,
+          (commandId) => {
+            var _a, _b;
+            return (_b = (_a = hotkeyManager == null ? void 0 : hotkeyManager.getHotkeys) == null ? void 0 : _a.call(hotkeyManager, commandId)) != null ? _b : null;
+          }
+        );
+        return hotkey ? formatHotkey(hotkey, _SidebarOrganizerPlugin.useSymbolHotkeyStyle()) : null;
+      } catch (e) {
+        console.warn("Sidebar Organizer: failed to resolve hotkey", e);
+        return null;
+      }
+    }
+    /** macOS 与 iOS（含 iPad 外接键盘）统一使用符号风格展示快捷键 */
+    static useSymbolHotkeyStyle() {
+      return import_obsidian4.Platform.isMacOS || import_obsidian4.Platform.isIosApp;
     }
     applyCustomIcon(element, svgContent) {
       const svgEl = element.querySelector("svg");

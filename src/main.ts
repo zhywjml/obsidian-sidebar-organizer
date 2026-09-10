@@ -1,7 +1,10 @@
 import { Plugin, Notice, PluginManifest, Platform } from 'obsidian';
-import { SidebarOrganizerSettings, DEFAULT_SETTINGS, SidebarAction, VaultConfig, PluginsContainer } from './types';
+import { SidebarOrganizerSettings, DEFAULT_SETTINGS, SidebarAction, PluginsContainer, CommandsContainer, HotkeyManagerContainer, CommandEntry } from './types';
 import { createTranslator } from './i18n';
+import { getObsidianLocale } from './locale';
 import { parseSvg, sanitizeSvgColors, setSvgContent, extractActionLabel } from './sidebar';
+import { resolveActionHotkey, formatHotkey, findExactCommand } from './hotkeys';
+import { buildActionAliasIndex, commandActionId, resolveStoredActionId, shouldKeepUnresolvedId } from './actionIndex';
 import { SidebarOrganizerSettingTab } from './settings';
 
 interface BoundEventHandlers {
@@ -86,7 +89,7 @@ export class SidebarOrganizerPlugin extends Plugin {
 
 	t = createTranslator(
 		() => this.settings,
-		() => (this.app.vault as unknown as { config?: VaultConfig }).config?.locale
+		() => getObsidianLocale(this.app)
 	);
 
 	async onload() {
@@ -508,34 +511,38 @@ export class SidebarOrganizerPlugin extends Plugin {
 	}
 
 	private processIconList(icons: Element[]) {
-		const actionMap = new Map<string, SidebarAction>();
+		const actions: SidebarAction[] = [];
+		const seenActionIds = new Set<string>();
 
 		icons.forEach((el) => {
 			try {
 				const element = el as HTMLElement;
 				const action = this.identifyAction(element);
-				if (!action) return;
-				actionMap.set(action.actionId, action);
-				// 兼容旧版本保存的分组数据：无 pluginId 前缀的 actionId 也能命中
-				if (!actionMap.has(action.legacyId)) {
-					actionMap.set(action.legacyId, action);
-				}
+				if (!action || seenActionIds.has(action.actionId)) return;
+				seenActionIds.add(action.actionId);
+				actions.push(action);
 			} catch (e) {
 				console.warn('Sidebar Organizer: failed to process icon', e);
 			}
 		});
 
-		if (actionMap.size === 0) return;
+		if (actions.length === 0) return;
 
 		const assignedActionIds = new Set<string>();
+		let settingsChanged = false;
 
 		const sortedCustomGroups = [...this.settings.customGroups].sort((a, b) => a.order - b.order);
 		for (const customGroup of sortedCustomGroups) {
 			try {
+				// 解析存储 id 到当前 action：兼容旧格式、规范化为稳定 id、清理历史失效 id
+				const reconciled = this.reconcileStoredActionIds(actions, customGroup.actionIds);
+				if (reconciled.changed) {
+					customGroup.actionIds = reconciled.storedIds;
+					settingsChanged = true;
+				}
+
 				// 跳过已被其他分组占用的 action，防止重复图标、图标覆盖和弹窗静默失效
-				const groupActions = customGroup.actionIds
-					.map(id => actionMap.get(id))
-					.filter((a): a is SidebarAction => !!a && !assignedActionIds.has(a.actionId));
+				const groupActions = reconciled.groupActions.filter(a => !assignedActionIds.has(a.actionId));
 
 				if (groupActions.length === 0) continue;
 
@@ -557,6 +564,51 @@ export class SidebarOrganizerPlugin extends Plugin {
 				console.warn(`Sidebar Organizer: failed to process group "${customGroup.name}"`, e);
 			}
 		}
+
+		if (settingsChanged) {
+			console.info('Sidebar Organizer: normalized stored action ids');
+			void this.saveSettings();
+		}
+	}
+
+	/**
+	 * 将分组存储的 actionIds 解析到当前 action：
+	 * - 能解析的替换为稳定 id（cmd:<命令 id>，不随界面语言变化），并按 action 去重；
+	 * - 解析不到但值得保留的（cmd: id、前缀是已安装插件的 id，插件可能暂时被禁用）保留原样；
+	 * - 其余解析不到的（旧语言/旧格式残留）清理掉。
+	 */
+	private reconcileStoredActionIds(actions: SidebarAction[], storedIds: string[]): {
+		groupActions: SidebarAction[];
+		storedIds: string[];
+		changed: boolean;
+	} {
+		const index = buildActionAliasIndex(actions);
+		const seen = new Set<string>();
+		const groupActions: SidebarAction[] = [];
+		const nextIds: string[] = [];
+
+		for (const storedId of storedIds) {
+			const action = resolveStoredActionId(storedId, index);
+			if (action) {
+				if (seen.has(action.actionId)) continue;
+				seen.add(action.actionId);
+				groupActions.push(action);
+				nextIds.push(action.actionId);
+				continue;
+			}
+			if (shouldKeepUnresolvedId(storedId, this.installedPlugins) && !nextIds.includes(storedId)) {
+				nextIds.push(storedId);
+			}
+		}
+
+		const changed = nextIds.length !== storedIds.length ||
+			nextIds.some((id, i) => id !== storedIds[i]);
+		return { groupActions, storedIds: nextIds, changed };
+	}
+
+	/** 供编辑弹窗调用：把已存 actionIds 解析为当前规范 id（保留暂时不可用的 id） */
+	resolveActionIdsForCurrentActions(actions: SidebarAction[], storedIds: string[]): string[] {
+		return this.reconcileStoredActionIds(actions, storedIds).storedIds;
 	}
 
 	private bindPopupMenu(mainElement: HTMLElement, title: string, actions: SidebarAction[]) {
@@ -777,6 +829,11 @@ export class SidebarOrganizerPlugin extends Plugin {
 			const labelEl = itemEl.createDiv('sidebar-organizer-action-label');
 			labelEl.textContent = extractActionLabel(action.actionName);
 
+			const hotkeyText = this.getActionHotkeyText(action);
+			if (hotkeyText) {
+				itemEl.createDiv('sidebar-organizer-action-hotkey').textContent = hotkeyText;
+			}
+
 			itemEl.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
@@ -876,9 +933,11 @@ export class SidebarOrganizerPlugin extends Plugin {
 		const pluginInfo = this.matchPlugin(displayName, dataView);
 		if (!pluginInfo) return null;
 
-		// actionId 带 pluginId 前缀，避免不同插件同名 aria-label 互相覆盖
+		// actionId 优先使用命令 id（cmd: 前缀）保证跨界面语言稳定；
+		// 匹配不到命令时退回 pluginId:baseId（带前缀避免不同插件同名 aria-label 互相覆盖）
 		const baseId = dataView || displayName.toLowerCase().replace(/\s+/g, '-');
-		const actionId = `${pluginInfo.pluginId}:${baseId}`;
+		const exactCommand = findExactCommand(displayName, pluginInfo.pluginId, this.getCommandRegistry() ?? {});
+		const actionId = exactCommand ? commandActionId(exactCommand.id) : `${pluginInfo.pluginId}:${baseId}`;
 
 		return {
 			element,
@@ -947,6 +1006,43 @@ export class SidebarOrganizerPlugin extends Plugin {
 			pluginId: safeId || 'unknown',
 			pluginName: displayName
 		};
+	}
+
+	/** 读取未公开的命令注册表（app.commands.commands），不可用时返回 null */
+	private getCommandRegistry(): Record<string, CommandEntry> | null {
+		try {
+			return (this.app as unknown as { commands?: CommandsContainer }).commands?.commands ?? null;
+		} catch {
+			return null;
+		}
+	}
+
+	/**
+	 * 解析功能项绑定的快捷键展示文本（无绑定或匹配不到命令时返回 null）。
+	 * commands / hotkeyManager 属于未公开的运行时 API，读取失败静默降级。
+	 */
+	private getActionHotkeyText(action: SidebarAction): string | null {
+		try {
+			const commands = this.getCommandRegistry();
+			if (!commands) return null;
+
+			const hotkeyManager = (this.app as unknown as { hotkeyManager?: HotkeyManagerContainer }).hotkeyManager;
+			const hotkey = resolveActionHotkey(
+				action.actionName,
+				action.pluginId,
+				commands,
+				(commandId) => hotkeyManager?.getHotkeys?.(commandId) ?? null
+			);
+			return hotkey ? formatHotkey(hotkey, SidebarOrganizerPlugin.useSymbolHotkeyStyle()) : null;
+		} catch (e) {
+			console.warn('Sidebar Organizer: failed to resolve hotkey', e);
+			return null;
+		}
+	}
+
+	/** macOS 与 iOS（含 iPad 外接键盘）统一使用符号风格展示快捷键 */
+	private static useSymbolHotkeyStyle(): boolean {
+		return Platform.isMacOS || Platform.isIosApp;
 	}
 
 	private applyCustomIcon(element: HTMLElement, svgContent: string): boolean {
