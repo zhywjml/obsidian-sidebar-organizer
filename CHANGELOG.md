@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.1] - 2026-09-10
+
+### 🐛 修复 Fixes
+
+- 修复社区审核警告（obsidianmd/no-unsupported-api）：`getLanguage()`（Obsidian 1.8.7+ 的公开 API）改用 `requireApiVersion('1.8.7')` 运行时守卫调用；`minAppVersion` 继续保持 0.15.0，旧版本行为与回退链完全不变
+
 ## [1.7.0] - 2026-09-10
 
 ### ✨ 新增 Features
@@ -68,6 +74,12 @@
 ---
 
 # Changelog
+
+## [1.7.1] - 2026-09-10
+
+### 🐛 Fixes
+
+- Fixed a community review warning (obsidianmd/no-unsupported-api): `getLanguage()` (a public API added in Obsidian 1.8.7) is now called behind a `requireApiVersion('1.8.7')` runtime guard; `minAppVersion` stays at 0.15.0 and older versions keep the exact same fallback chain
 
 ## [1.7.0] - 2026-09-10
 
