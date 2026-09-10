@@ -674,10 +674,12 @@ var SidebarOrganizer = (() => {
   var import_obsidian = __require("obsidian");
   function getObsidianLocale(app) {
     var _a;
-    try {
-      const language = (0, import_obsidian.getLanguage)();
-      if (language) return language;
-    } catch (e) {
+    if ((0, import_obsidian.requireApiVersion)("1.8.7")) {
+      try {
+        const language = (0, import_obsidian.getLanguage)();
+        if (language) return language;
+      } catch (e) {
+      }
     }
     try {
       const stored = window.localStorage.getItem("language");
